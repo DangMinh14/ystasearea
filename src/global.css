@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 48px clamp(16px, 4vw, 32px);
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+#app {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  body {
+    padding: 32px 16px;
+  }
+}

@@ -1,0 +1,39 @@
+.welcome {
+  min-height: calc(100vh - 96px);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  cursor: pointer;
+  padding: 0 12px;
+}
+
+.welcome__card {
+  background: var(--color-surface);
+  border-radius: 28px;
+  padding: 56px 40px;
+  box-shadow: var(--shadow-card);
+  max-width: 720px;
+  backdrop-filter: blur(4px);
+}
+
+.welcome__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--color-badge-bg);
+  color: var(--color-primary);
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.welcome__title {
+  margin: 0 0 12px;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+}
+
+.welcome__subtitle {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 1.05rem;
+}
