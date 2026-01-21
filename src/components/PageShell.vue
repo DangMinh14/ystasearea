@@ -14,6 +14,9 @@ const isDark = ref(true)
 const isWelcome = ref(true)
 const locale = ref<Locale>('vi')
 const currentVideoIndex = ref(0)
+const quote = ref<{ content: string; author: string } | null>(null)
+const quoteLoading = ref(false)
+const quoteError = ref('')
 
 const playlist = [
   { id: '8scL5oJX6CM', title: 'Video 1' },
@@ -60,6 +63,36 @@ const hello = () => {
   alert('Xin chào từ ystasearea.space!')
 }
 
+const loadDailyQuote = async () => {
+  quoteLoading.value = true
+  quoteError.value = ''
+  try {
+    const response = await fetch('/api/quote')
+    if (!response.ok) {
+      throw new Error('Quote request failed')
+    }
+    const data = await response.json()
+    if (Array.isArray(data)) {
+      const first = data[0]
+      if (!first?.q) {
+        throw new Error('Invalid quote payload')
+      }
+      quote.value = { content: first.q, author: first.a ?? 'Unknown' }
+      return
+    }
+
+    if (!data?.content) {
+      throw new Error('Invalid quote payload')
+    }
+
+    quote.value = { content: data.content, author: data.author ?? 'Unknown' }
+  } catch (error) {
+    quoteError.value = 'error'
+  } finally {
+    quoteLoading.value = false
+  }
+}
+
 onMounted(() => {
   const savedTheme = localStorage.getItem(THEME_KEY)
   if (savedTheme === 'light') {
@@ -70,6 +103,7 @@ onMounted(() => {
     locale.value = savedLocale
   }
   applyTheme()
+  loadDailyQuote()
 })
 </script>
 
@@ -95,6 +129,12 @@ onMounted(() => {
       :nav-posts="t.navPosts"
       :nav-projects="t.navProjects"
       :nav-contact="t.navContact"
+      :daily-quote-title="t.dailyQuoteTitle"
+      :daily-quote-loading="t.dailyQuoteLoading"
+      :daily-quote-error="t.dailyQuoteError"
+      :quote="quote"
+      :quote-loading="quoteLoading"
+      :quote-error="quoteError"
       :music-title="t.musicTitle"
       :music-text="t.musicText"
       :player-prev="t.playerPrev"

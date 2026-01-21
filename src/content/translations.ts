@@ -10,6 +10,9 @@ type TranslationKeys = {
   navPosts: string
   navProjects: string
   navContact: string
+  dailyQuoteTitle: string
+  dailyQuoteLoading: string
+  dailyQuoteError: string
   musicTitle: string
   musicText: string
   playerPrev: string
@@ -30,11 +33,14 @@ export const translations: Record<Locale, TranslationKeys> = {
     welcomeTitle: 'Blog của Minh Đăng (Estasy)',
     welcomeSubtitle: 'Nhấn vào màn hình để đi vào trang chính thức.',
     headerEyebrow: 'Blog của Minh Đăng (Estasy)',
-    headerTitle: 'Trang chính thức',
+    headerTitle: '',
     navHome: 'Trang chủ',
     navPosts: 'Bài viết',
     navProjects: 'Dự án',
     navContact: 'Liên hệ',
+    dailyQuoteTitle: 'Daily quote',
+    dailyQuoteLoading: 'Đang tải trích dẫn...',
+    dailyQuoteError: 'Không thể tải trích dẫn lúc này.',
     musicTitle: 'Music corner',
     musicText: 'Trình phát nhạc yêu thích của mình — nghe thử một chút nhé.',
     playerPrev: 'Video trước',
@@ -53,11 +59,14 @@ export const translations: Record<Locale, TranslationKeys> = {
     welcomeTitle: "Minh Đăng (Estasy)'s Blog",
     welcomeSubtitle: 'Tap the screen to enter the official site.',
     headerEyebrow: "Minh Đăng (Estasy)'s Blog",
-    headerTitle: 'Official Home',
+    headerTitle: '',
     navHome: 'Home',
     navPosts: 'Posts',
     navProjects: 'Projects',
     navContact: 'Contact',
+    dailyQuoteTitle: 'Daily quote',
+    dailyQuoteLoading: 'Loading quote...',
+    dailyQuoteError: 'Unable to load quote right now.',
     musicTitle: 'Music corner',
     musicText: 'A simple music player — enjoy a quick listen.',
     playerPrev: 'Previous video',

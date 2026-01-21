@@ -89,6 +89,28 @@
   color: var(--color-muted);
 }
 
+.layout__quote {
+  display: grid;
+  gap: 12px;
+}
+
+.layout__quote-body {
+  display: grid;
+  gap: 8px;
+}
+
+.layout__quote-text {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.layout__quote-author {
+  margin: 0;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
 .layout__player-controls {
   display: flex;
   flex-wrap: wrap;

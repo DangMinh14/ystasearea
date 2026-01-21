@@ -15,6 +15,12 @@ type MainLayoutProps = {
   navPosts: string
   navProjects: string
   navContact: string
+  dailyQuoteTitle: string
+  dailyQuoteLoading: string
+  dailyQuoteError: string
+  quote: { content: string; author: string } | null
+  quoteLoading: boolean
+  quoteError: string
   musicTitle: string
   musicText: string
   playerPrev: string
@@ -52,7 +58,7 @@ const selectVideo = (index: number) => {
     <header class="layout__header">
       <div>
         <p class="layout__eyebrow">{{ headerEyebrow }}</p>
-        <h1 class="layout__title">{{ headerTitle }}</h1>
+        <h1 v-if="headerTitle" class="layout__title">{{ headerTitle }}</h1>
       </div>
     </header>
 
@@ -67,6 +73,15 @@ const selectVideo = (index: number) => {
       </aside>
 
       <section class="layout__content">
+        <article class="layout__card layout__quote">
+          <h2 class="layout__card-title">{{ dailyQuoteTitle }}</h2>
+          <p v-if="quoteLoading" class="layout__card-text">{{ dailyQuoteLoading }}</p>
+          <p v-else-if="quoteError" class="layout__card-text">{{ dailyQuoteError }}</p>
+          <div v-else-if="quote" class="layout__quote-body">
+            <p class="layout__quote-text">“{{ quote.content }}”</p>
+            <p class="layout__quote-author">— {{ quote.author }}</p>
+          </div>
+        </article>
         <article class="layout__card">
           <h2 class="layout__card-title">{{ musicTitle }}</h2>
           <p class="layout__card-text">{{ musicText }}</p>
