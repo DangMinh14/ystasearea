@@ -30,6 +30,21 @@
   display: inline-flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.app__header-peach {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+  transform: translateY(-6px);
+  filter: drop-shadow(0 6px 16px rgba(248, 113, 113, 0.35));
+  pointer-events: none;
+  z-index: 0;
 }
 
 .app__eyebrow {
@@ -39,17 +54,39 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 1.1rem;
+  position: relative;
+  z-index: 2;
 }
 
 .app__title {
   margin: 0;
   font-size: clamp(1.6rem, 3vw, 2.2rem);
+  position: relative;
+  z-index: 2;
 }
 
 .app__header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.app__settings-mobile {
+  display: none;
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 8;
+}
+
+.app__settings-mobile .layout__button--ghost {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
 }
 
 .app__nav {
@@ -101,12 +138,20 @@
 
 @media (max-width: 900px) {
   .app__header {
-    flex-wrap: wrap;
-    align-items: center;
+    display: none;
+  }
+
+  .app__settings-mobile {
+    display: block;
   }
 
   .app__brand {
     order: 1;
+  }
+
+  .app__header-peach {
+    width: 100px;
+    transform: translateY(-4px);
   }
 
   .app__nav-toggle {

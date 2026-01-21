@@ -67,7 +67,43 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 4;
+  z-index: 1;
+}
+
+[data-theme='lunar'] .player__decorations::before,
+[data-theme='lunar'] .player__decorations::after {
+  position: absolute;
+  content: '';
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff7d1, #fbbf24 45%, #f59e0b 100%);
+  box-shadow: 0 10px 24px rgba(245, 158, 11, 0.35);
+  opacity: 0.85;
+  animation: lunar-float 6s ease-in-out infinite;
+}
+
+[data-theme='lunar'] .player__decorations::before {
+  left: 24px;
+  bottom: 10px;
+}
+
+[data-theme='lunar'] .player__decorations::after {
+  left: 170px;
+  top: -10px;
+  width: 46px;
+  height: 46px;
+  animation-delay: 1.4s;
+}
+
+[data-theme='lunar'] .player__decorations .player__note {
+  color: rgba(248, 113, 113, 0.95);
+  text-shadow: 0 8px 20px rgba(248, 113, 113, 0.45);
+}
+
+[data-theme='lunar'] .player__visual--playing .player__disc {
+  box-shadow: 0 10px 28px rgba(245, 158, 11, 0.4);
+  border-color: rgba(245, 158, 11, 0.45);
 }
 
 .player__note {
@@ -272,5 +308,17 @@
   100% {
     transform: translateY(-26px) translateX(-12px) scale(0.9);
     opacity: 0;
+  }
+}
+
+@keyframes lunar-float {
+  0% {
+    transform: translateY(6px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(6deg);
+  }
+  100% {
+    transform: translateY(6px) rotate(0deg);
   }
 }

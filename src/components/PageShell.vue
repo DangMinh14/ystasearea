@@ -6,6 +6,7 @@ import SettingsMenu from './SettingsMenu.vue'
 import { translations, type Locale } from '../content/translations'
 import bgVideo from '../assets/bg.mp4'
 import chibi from '../assets/chibi.png'
+import peachBlossom from '../assets/peach-blossom.png'
 import './PageShell.css'
 
 const THEME_KEY = 'ystasearea-theme'
@@ -340,6 +341,13 @@ watch(weatherLocation, () => {
       <RouterLink class="app__brand" to="/home">
         <p class="app__eyebrow">{{ t.headerEyebrow }}</p>
         <h1 v-if="t.headerTitle" class="app__title">{{ t.headerTitle }}</h1>
+        <img
+          v-if="theme === 'lunar'"
+          class="app__header-peach"
+          :src="peachBlossom"
+          alt="Peach blossom"
+          loading="lazy"
+        />
       </RouterLink>
       <button
         class="app__nav-toggle"
@@ -390,6 +398,25 @@ watch(weatherLocation, () => {
         />
       </div>
     </header>
+    <div class="app__settings-mobile">
+      <SettingsMenu
+        label="⚙️"
+        :theme-label="t.themeLabel"
+        :theme-select-label="t.themeSelectLabel"
+        :language-label="t.languageLabel"
+        :current-theme="theme"
+        :theme-options="[
+          { value: 'light', label: t.lightLabel, icon: 'sun' },
+          { value: 'dark', label: t.darkLabel, icon: 'moon' },
+          { value: 'christmas', label: t.christmasLabel, icon: 'tree' },
+          { value: 'lunar', label: t.lunarLabel, icon: 'sparkles' },
+          { value: 'halloween', label: t.halloweenLabel, icon: 'pumpkin' },
+        ]"
+        :current-locale="locale"
+        @change-theme="setTheme"
+        @change-locale="changeLocale"
+      />
+    </div>
     <MainLayout
       :cat-image-url="catImageUrl"
       :cat-title="t.catTitle"
