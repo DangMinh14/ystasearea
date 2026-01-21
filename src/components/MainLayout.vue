@@ -7,6 +7,7 @@ const emit = defineEmits<{
   (e: 'prev-video'): void
   (e: 'select-video', index: number): void
   (e: 'refresh-cat'): void
+  (e: 'refresh-dog'): void
 }>()
 
 type MainLayoutProps = {
@@ -15,6 +16,11 @@ type MainLayoutProps = {
   catButton: string
   catLoading: boolean
   catLoadingText: string
+  dogImageUrl: string
+  dogTitle: string
+  dogButton: string
+  dogLoading: boolean
+  dogLoadingText: string
   dailyQuoteTitle: string
   dailyQuoteLoading: string
   dailyQuoteError: string
@@ -68,6 +74,28 @@ const selectVideo = (index: number) => {
               class="layout__cat-image"
               :src="catImageUrl"
               alt="Random cat"
+              loading="lazy"
+            />
+          </div>
+        </div>
+        <div class="layout__cat layout__cat--dog">
+          <div class="layout__cat-header">
+            <p class="layout__cat-title">{{ dogTitle }}</p>
+            <button class="layout__cat-button" type="button" @click="emit('refresh-dog')">
+              {{ dogButton }}
+            </button>
+          </div>
+          <div v-if="dogLoading" class="layout__cat-loading">
+            <span class="layout__cat-spinner" aria-hidden="true"></span>
+            <span class="layout__cat-loading-text">{{ dogLoadingText }}</span>
+          </div>
+          <div v-else class="layout__cat-media">
+            <div v-if="!dogImageUrl" class="layout__cat-skeleton"></div>
+            <img
+              v-else
+              class="layout__cat-image"
+              :src="dogImageUrl"
+              alt="Random dog"
               loading="lazy"
             />
           </div>

@@ -26,6 +26,9 @@ type TranslationKeys = {
   catTitle: string
   catButton: string
   catLoading: string
+  dogTitle: string
+  dogButton: string
+  dogLoading: string
   musicTitle: string
   musicText: string
   playerPrev: string
@@ -71,6 +74,9 @@ export const translations: Record<Locale, TranslationKeys> = {
     catTitle: 'Một chút mèo cho ngày mới',
     catButton: 'Đổi mèo',
     catLoading: 'Mèo đang đến ...',
+    dogTitle: 'Một chút chó cho ngày mới',
+    dogButton: 'Đổi chó',
+    dogLoading: 'Chó đang đến ...',
     musicTitle: 'Music corner',
     musicText: 'Trình phát nhạc yêu thích của mình — nghe thử một chút nhé.',
     playerPrev: 'Video trước',
@@ -114,6 +120,9 @@ export const translations: Record<Locale, TranslationKeys> = {
     catTitle: 'A little cat for your day',
     catButton: 'New cat',
     catLoading: 'Cat incoming ...',
+    dogTitle: 'A little dog for your day',
+    dogButton: 'New dog',
+    dogLoading: 'Dog incoming ...',
     musicTitle: 'Music corner',
     musicText: 'A simple music player — enjoy a quick listen.',
     playerPrev: 'Previous video',

@@ -17,6 +17,8 @@ const locale = ref<Locale>('vi')
 const currentVideoIndex = ref(0)
 const catImageUrl = ref('')
 const catLoading = ref(false)
+const dogImageUrl = ref('')
+const dogLoading = ref(false)
 const quote = ref<{ content: string; author: string } | null>(null)
 const quoteLoading = ref(false)
 const quoteError = ref('')
@@ -145,6 +147,24 @@ const loadCatImage = async () => {
   }
 }
 
+const loadDogImage = async () => {
+  dogLoading.value = true
+  try {
+    const response = await fetch('https://dog.ceo/api/breeds/image/random')
+    if (!response.ok) {
+      throw new Error('Dog request failed')
+    }
+    const data = await response.json()
+    if (data?.message) {
+      dogImageUrl.value = data.message
+    }
+  } catch (error) {
+    dogImageUrl.value = ''
+  } finally {
+    dogLoading.value = false
+  }
+}
+
 const loadDailyQuote = async () => {
   quoteLoading.value = true
   quoteError.value = ''
@@ -233,6 +253,7 @@ onMounted(() => {
   applyTheme()
   loadDailyQuote()
   loadCatImage()
+  loadDogImage()
   loadWeather()
 })
 
@@ -428,6 +449,11 @@ watch(weatherLocation, () => {
       :cat-button="t.catButton"
       :cat-loading="catLoading"
       :cat-loading-text="t.catLoading"
+      :dog-image-url="dogImageUrl"
+      :dog-title="t.dogTitle"
+      :dog-button="t.dogButton"
+      :dog-loading="dogLoading"
+      :dog-loading-text="t.dogLoading"
       :daily-quote-title="t.dailyQuoteTitle"
       :daily-quote-loading="t.dailyQuoteLoading"
       :daily-quote-error="t.dailyQuoteError"
@@ -445,6 +471,7 @@ watch(weatherLocation, () => {
       @prev-video="goPrevVideo"
       @select-video="selectVideo"
       @refresh-cat="loadCatImage"
+      @refresh-dog="loadDogImage"
     />
   </main>
 </template>

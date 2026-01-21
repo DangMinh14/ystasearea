@@ -44,11 +44,12 @@
 }
 
 .layout__cat {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(79, 70, 229, 0.12);
   display: grid;
   gap: 12px;
+}
+
+.layout__cat--dog {
+  margin-top: 16px;
 }
 
 .layout__cat-header {
