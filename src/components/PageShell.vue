@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import MainLayout from './MainLayout.vue'
+import MusicPlayer from './MusicPlayer.vue'
 import SettingsMenu from './SettingsMenu.vue'
 import { translations, type Locale } from '../content/translations'
 import bgVideo from '../assets/bg.mp4'
@@ -45,8 +46,17 @@ const playlist = [
   { id: '8scL5oJX6CM', title: 'Cigarettes After Sex Playlist' },
   { id: 'tbfumVRH7Ls', title: 'Hoa - Doãn Hoài Nam' },
   { id: 'SO_zCJkZdkY', title: 'Mơ - Doãn Hoài Nam' },
-  { id: 'f3jlAJ6CxDo', title: 'Bóng- Doãn Hoài Nam' },
+  { id: 'f3jlAJ6CxDo', title: 'Bóng - Doãn Hoài Nam' },
 ]
+
+const mp3Modules = import.meta.glob('../assets/mp3/*.mp3', { eager: true, as: 'url' })
+const mp3Tracks = Object.entries(mp3Modules)
+  .map(([path, url]) => {
+    const fileName = decodeURIComponent(path.split('/').pop() ?? '')
+    const title = fileName.replace(/\.mp3$/i, '').replace(/_/g, ' ').trim()
+    return { title, url }
+  })
+  .sort((a, b) => a.title.localeCompare(b.title))
 
 const t = computed(() => translations[locale.value])
 
@@ -374,5 +384,6 @@ watch(weatherLocation, () => {
       @select-video="selectVideo"
       @refresh-cat="loadCatImage"
     />
+    <MusicPlayer :tracks="mp3Tracks" />
   </main>
 </template>

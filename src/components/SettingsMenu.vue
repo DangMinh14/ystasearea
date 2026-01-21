@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { Locale } from '../content/translations'
 import './SettingsMenu.css'
 import americaFlag from '../assets/america_flag.png'
@@ -27,6 +27,7 @@ const emit = defineEmits<{
 }>()
 
 const isOpen = ref(false)
+const rootRef = ref<HTMLElement | null>(null)
 const themeIcon = (icon: 'sun' | 'moon' | 'tree' | 'sparkles' | 'pumpkin') => {
   if (icon === 'moon') return '🌙'
   if (icon === 'tree') return '🎄'
@@ -49,10 +50,25 @@ const handleLocale = (locale: Locale) => {
   isOpen.value = false
   emit('change-locale', locale)
 }
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (!rootRef.value) return
+  if (!rootRef.value.contains(event.target as Node)) {
+    isOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
 
 <template>
-  <div class="layout__settings">
+  <div ref="rootRef" class="layout__settings">
     <button class="layout__button layout__button--ghost" type="button" @click="toggleMenu">
       {{ label }}
     </button>
