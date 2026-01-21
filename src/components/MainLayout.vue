@@ -10,10 +10,6 @@ const emit = defineEmits<{
 }>()
 
 type MainLayoutProps = {
-  navHome: string
-  navPosts: string
-  navProjects: string
-  navContact: string
   catImageUrl: string
   catTitle: string
   catButton: string
@@ -54,13 +50,7 @@ const selectVideo = (index: number) => {
   <section class="layout">
     <div class="layout__body">
       <aside class="layout__sidebar">
-        <nav class="layout__nav">
-          <a class="layout__nav-link" href="#">{{ navHome }}</a>
-          <a class="layout__nav-link" href="#">{{ navPosts }}</a>
-          <a class="layout__nav-link" href="#">{{ navProjects }}</a>
-          <a class="layout__nav-link" href="#">{{ navContact }}</a>
-        </nav>
-        <div class="layout__cat">
+        <div class="layout__cat" id="contact">
           <div class="layout__cat-header">
             <p class="layout__cat-title">{{ catTitle }}</p>
             <button class="layout__cat-button" type="button" @click="emit('refresh-cat')">
@@ -85,7 +75,7 @@ const selectVideo = (index: number) => {
       </aside>
 
       <section class="layout__content">
-        <article class="layout__card layout__quote">
+        <article class="layout__card layout__quote" id="posts">
           <h2 class="layout__card-title">{{ dailyQuoteTitle }}</h2>
           <p v-if="quoteLoading" class="layout__card-text">{{ dailyQuoteLoading }}</p>
           <p v-else-if="quoteError" class="layout__card-text">{{ dailyQuoteError }}</p>
@@ -94,7 +84,7 @@ const selectVideo = (index: number) => {
             <p class="layout__quote-author">— {{ quote.author }}</p>
           </div>
         </article>
-        <article class="layout__card">
+        <article class="layout__card" id="projects">
           <h2 class="layout__card-title">{{ musicTitle }}</h2>
           <p class="layout__card-text">{{ musicText }}</p>
           <div class="layout__player-controls">

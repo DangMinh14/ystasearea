@@ -21,6 +21,7 @@ const repeatMode = ref<'off' | 'all' | 'one'>('all')
 const currentTime = ref(0)
 const duration = ref(0)
 const volume = ref(0.7)
+const lastVolume = ref(0.7)
 const isListOpen = ref(false)
 const rootRef = ref<HTMLElement | null>(null)
 
@@ -36,6 +37,12 @@ const formatTime = (value: number) => {
 
 const elapsedLabel = computed(() => formatTime(currentTime.value))
 const durationLabel = computed(() => formatTime(duration.value))
+const volumeIcon = computed(() => {
+  if (volume.value === 0) return 'fa-volume-xmark'
+  if (volume.value <= 0.25) return 'fa-volume-off'
+  if (volume.value <= 0.6) return 'fa-volume-low'
+  return 'fa-volume-high'
+})
 
 const syncAudio = () => {
   const audio = audioRef.value
@@ -118,6 +125,23 @@ const handleVolume = (event: Event) => {
   const target = event.target as HTMLInputElement
   volume.value = Number(target.value)
   audio.volume = volume.value
+  if (volume.value > 0) {
+    lastVolume.value = volume.value
+  }
+}
+
+const toggleMute = () => {
+  const audio = audioRef.value
+  if (!audio) return
+  if (volume.value === 0) {
+    const restored = lastVolume.value > 0 ? lastVolume.value : 0.7
+    volume.value = restored
+    audio.volume = restored
+    return
+  }
+  lastVolume.value = volume.value
+  volume.value = 0
+  audio.volume = 0
 }
 
 const handleEnded = () => {
@@ -194,6 +218,18 @@ onUnmounted(() => {
 <template>
   <div ref="rootRef" class="player">
     <audio ref="audioRef" @timeupdate="handleTimeUpdate" @loadedmetadata="handleTimeUpdate" @ended="handleEnded"></audio>
+    <div class="player__decorations" :class="{ 'player__decorations--playing': isPlaying }" aria-hidden="true">
+      <span class="player__note player__note--1">♪</span>
+      <span class="player__note player__note--2">♫</span>
+      <span class="player__note player__note--3">♬</span>
+      <span class="player__note player__note--4">♪</span>
+      <span class="player__note player__note--5">♫</span>
+    </div>
+    <div class="player__visual" :class="{ 'player__visual--playing': isPlaying }" aria-hidden="true">
+      <div class="player__disc">
+        <span class="player__disc-core"></span>
+      </div>
+    </div>
     <div class="player__info">
       <p class="player__title">
         {{ currentTrack?.title || 'No track' }}
@@ -252,8 +288,23 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="player__volume">
-      <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
-      <input class="player__range" type="range" min="0" max="1" step="0.01" :value="volume" @input="handleVolume" />
+      <button
+        class="player__button player__button--ghost"
+        type="button"
+        :title="volume === 0 ? 'Bật âm lượng' : 'Tắt âm lượng'"
+        @click="toggleMute"
+      >
+        <i class="fa-solid" :class="volumeIcon" aria-hidden="true"></i>
+      </button>
+      <input
+        class="player__range"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        :value="volume"
+        @input="handleVolume"
+      />
     </div>
     <div v-if="isListOpen" class="player__list">
       <button

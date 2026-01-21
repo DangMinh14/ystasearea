@@ -25,6 +25,7 @@ const weatherLocation = ref('hcm')
 const weatherLoading = ref(false)
 const weatherError = ref('')
 const weather = ref<{ temperature: number; wind: number } | null>(null)
+const isNavOpen = ref(false)
 
 const timeZones = [
   { value: 'Asia/Ho_Chi_Minh', label: 'GMT+7 (Ho Chi Minh)' },
@@ -102,6 +103,10 @@ const handleTimeZoneChange = (event: Event) => {
 const handleWeatherLocationChange = (event: Event) => {
   const target = event.target as HTMLSelectElement
   weatherLocation.value = target.value
+}
+
+const toggleNav = () => {
+  isNavOpen.value = !isNavOpen.value
 }
 
 
@@ -244,7 +249,7 @@ watch(weatherLocation, () => {
 </script>
 
 <template>
-  <main class="app">
+  <main class="app" id="home">
     <div class="app__background" aria-hidden="true">
       <video class="app__video" :src="bgVideo" autoplay muted loop playsinline></video>
     </div>
@@ -336,6 +341,35 @@ watch(weatherLocation, () => {
         <p class="app__eyebrow">{{ t.headerEyebrow }}</p>
         <h1 v-if="t.headerTitle" class="app__title">{{ t.headerTitle }}</h1>
       </RouterLink>
+      <button
+        class="app__nav-toggle"
+        type="button"
+        :aria-expanded="isNavOpen"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation"
+        @click="toggleNav"
+      >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        <span class="app__nav-toggle-text">Menu</span>
+      </button>
+      <nav
+        id="primary-navigation"
+        class="app__nav"
+        :class="{ 'app__nav--open': isNavOpen }"
+      >
+        <a class="app__nav-link" href="#home" @click="isNavOpen = false">
+          {{ t.navHome }}
+        </a>
+        <a class="app__nav-link" href="#posts" @click="isNavOpen = false">
+          {{ t.navPosts }}
+        </a>
+        <a class="app__nav-link" href="#projects" @click="isNavOpen = false">
+          {{ t.navProjects }}
+        </a>
+        <a class="app__nav-link" href="#contact" @click="isNavOpen = false">
+          {{ t.navContact }}
+        </a>
+      </nav>
       <div class="app__header-actions">
         <SettingsMenu
           :label="t.settingsLabel"
@@ -357,10 +391,6 @@ watch(weatherLocation, () => {
       </div>
     </header>
     <MainLayout
-      :nav-home="t.navHome"
-      :nav-posts="t.navPosts"
-      :nav-projects="t.navProjects"
-      :nav-contact="t.navContact"
       :cat-image-url="catImageUrl"
       :cat-title="t.catTitle"
       :cat-button="t.catButton"
