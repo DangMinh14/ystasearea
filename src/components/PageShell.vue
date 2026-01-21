@@ -289,28 +289,33 @@ watch(weatherLocation, () => {
       <span class="app__christmas-item">⭐</span>
     </div>
     <img class="app__chibi" :src="chibi" alt="Chibi decoration" loading="lazy" />
-    <aside class="app__widget app__widget--left">
-      <div class="app__widget-header">
-        <i class="fa-solid fa-clock" aria-hidden="true"></i>
-        <h2 class="app__widget-title">{{ t.clockTitle }}</h2>
+    <div class="app__widget-stack app__widget-stack--left">
+      <aside class="app__widget">
+        <div class="app__widget-header">
+          <i class="fa-solid fa-clock" aria-hidden="true"></i>
+          <h2 class="app__widget-title">{{ t.clockTitle }}</h2>
+        </div>
+        <div class="app__stat">
+          <span class="app__stat-label">{{ t.clockTimeLabel }}</span>
+          <span class="app__stat-value">{{ formattedTime }}</span>
+        </div>
+        <div class="app__stat">
+          <span class="app__stat-label">{{ t.clockDateLabel }}</span>
+          <span class="app__stat-value">{{ formattedDate }}</span>
+        </div>
+        <label class="app__field">
+          <span class="app__field-label">{{ t.clockTimezoneLabel }}</span>
+          <select class="app__select" :value="timeZone" @change="handleTimeZoneChange">
+            <option v-for="zone in timeZones" :key="zone.value" :value="zone.value">
+              {{ zone.label }}
+            </option>
+          </select>
+        </label>
+      </aside>
+      <div class="app__player-widget">
+        <MusicPlayer :tracks="mp3Tracks" />
       </div>
-      <div class="app__stat">
-        <span class="app__stat-label">{{ t.clockTimeLabel }}</span>
-        <span class="app__stat-value">{{ formattedTime }}</span>
-      </div>
-      <div class="app__stat">
-        <span class="app__stat-label">{{ t.clockDateLabel }}</span>
-        <span class="app__stat-value">{{ formattedDate }}</span>
-      </div>
-      <label class="app__field">
-        <span class="app__field-label">{{ t.clockTimezoneLabel }}</span>
-        <select class="app__select" :value="timeZone" @change="handleTimeZoneChange">
-          <option v-for="zone in timeZones" :key="zone.value" :value="zone.value">
-            {{ zone.label }}
-          </option>
-        </select>
-      </label>
-    </aside>
+    </div>
     <aside class="app__widget app__widget--right">
       <div class="app__widget-header">
         <i class="fa-solid fa-cloud-sun" aria-hidden="true"></i>
@@ -441,6 +446,5 @@ watch(weatherLocation, () => {
       @select-video="selectVideo"
       @refresh-cat="loadCatImage"
     />
-    <MusicPlayer :tracks="mp3Tracks" />
   </main>
 </template>

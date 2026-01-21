@@ -196,6 +196,13 @@
   z-index: 3;
 }
 
+.player__list-wrapper {
+  position: relative;
+  display: grid;
+  place-items: center;
+  z-index: 10;
+}
+
 .player__button {
   border: none;
   background: transparent;
@@ -233,22 +240,69 @@
   align-items: center;
   gap: 10px;
   color: var(--color-text);
-  z-index: 3;
+  position: relative;
 }
 
 .player__list {
   position: absolute;
-  right: clamp(16px, 4vw, 32px);
-  bottom: calc(100% + 12px);
-  width: min(320px, 90vw);
+  left: calc(100% + 10px);
+  top: 50%;
+  bottom: auto;
+  width: min(320px, 78vw);
   max-height: 300px;
   overflow: auto;
-  background: var(--color-surface);
+  background: var(--color-card);
   border-radius: 16px;
   box-shadow: var(--shadow-card);
-  padding: 8px;
+  padding: 0 12px 12px;
   display: grid;
   gap: 6px;
+  z-index: 20;
+  animation: list-pop 0.18s ease-out;
+  transform: translateY(-50%) translateX(0);
+  scrollbar-width: none;
+}
+
+.player__list::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.player__list-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 4px 10px;
+  background: var(--color-card);
+  border-bottom: 1px solid rgba(79, 70, 229, 0.12);
+}
+
+.player__list-title {
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+.player__list-select {
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  background: var(--color-card);
+  color: var(--color-text);
+}
+
+.app__player-widget .player__list {
+  left: calc(100% + 10px);
+  top: 50%;
+  bottom: auto;
+  right: auto;
+  width: min(220px, 80vw);
+  transform: translateY(-50%) translateX(0);
 }
 
 .player__list-item {
@@ -320,5 +374,16 @@
   }
   100% {
     transform: translateY(6px) rotate(0deg);
+  }
+}
+
+@keyframes list-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
   }
 }

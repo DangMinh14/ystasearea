@@ -283,9 +283,29 @@ onUnmounted(() => {
       >
         <i class="fa-solid" :class="repeatMode === 'one' ? 'fa-1' : 'fa-repeat'" aria-hidden="true"></i>
       </button>
-      <button class="player__button" type="button" title="Danh sách bài hát" @click="toggleList">
-        <i class="fa-solid fa-list" aria-hidden="true"></i>
-      </button>
+      <div class="player__list-wrapper">
+        <button class="player__button" type="button" title="Danh sách bài hát" @click="toggleList">
+          <i class="fa-solid fa-list" aria-hidden="true"></i>
+        </button>
+        <div v-if="isListOpen" class="player__list">
+          <div class="player__list-header">
+            <span class="player__list-title">Playlist</span>
+            <select class="player__list-select" aria-label="Chọn danh mục">
+              <option value="all">All</option>
+            </select>
+          </div>
+          <button
+            v-for="(track, index) in tracks"
+            :key="track.url"
+            class="player__list-item"
+            :class="{ 'player__list-item--active': index === currentIndex }"
+            type="button"
+            @click="selectTrack(index)"
+          >
+            {{ track.title }}
+          </button>
+        </div>
+      </div>
     </div>
     <div class="player__volume">
       <button
@@ -305,18 +325,6 @@ onUnmounted(() => {
         :value="volume"
         @input="handleVolume"
       />
-    </div>
-    <div v-if="isListOpen" class="player__list">
-      <button
-        v-for="(track, index) in tracks"
-        :key="track.url"
-        class="player__list-item"
-        :class="{ 'player__list-item--active': index === currentIndex }"
-        type="button"
-        @click="selectTrack(index)"
-      >
-        {{ track.title }}
-      </button>
     </div>
   </div>
 </template>
