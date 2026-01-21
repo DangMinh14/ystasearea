@@ -2,18 +2,19 @@
 import { computed, onMounted, ref } from 'vue'
 import MainLayout from './MainLayout.vue'
 import SettingsMenu from './SettingsMenu.vue'
-import WelcomeScreen from './WelcomeScreen.vue'
 import { translations, type Locale } from '../content/translations'
 import bgVideo from '../assets/bg.mp4'
+import chibi from '../assets/chibi.png'
 import './PageShell.css'
 
 const THEME_KEY = 'ystasearea-theme'
 const LOCALE_KEY = 'ystasearea-locale'
 
 const isDark = ref(true)
-const isWelcome = ref(true)
 const locale = ref<Locale>('vi')
 const currentVideoIndex = ref(0)
+const catImageUrl = ref('')
+const catLoading = ref(false)
 const quote = ref<{ content: string; author: string } | null>(null)
 const quoteLoading = ref(false)
 const quoteError = ref('')
@@ -42,9 +43,6 @@ const changeLocale = (nextLocale: Locale) => {
   localStorage.setItem(LOCALE_KEY, nextLocale)
 }
 
-const enterSite = () => {
-  isWelcome.value = false
-}
 
 const goNextVideo = () => {
   currentVideoIndex.value = (currentVideoIndex.value + 1) % playlist.length
@@ -61,6 +59,24 @@ const selectVideo = (index: number) => {
 
 const hello = () => {
   alert('Xin chào từ ystasearea.space!')
+}
+
+const loadCatImage = async () => {
+  catLoading.value = true
+  try {
+    const response = await fetch('https://api.thecatapi.com/v1/images/search')
+    if (!response.ok) {
+      throw new Error('Cat request failed')
+    }
+    const data = await response.json()
+    if (Array.isArray(data) && data[0]?.url) {
+      catImageUrl.value = data[0].url
+    }
+  } catch (error) {
+    catImageUrl.value = ''
+  } finally {
+    catLoading.value = false
+  }
 }
 
 const loadDailyQuote = async () => {
@@ -104,6 +120,7 @@ onMounted(() => {
   }
   applyTheme()
   loadDailyQuote()
+  loadCatImage()
 })
 </script>
 
@@ -113,22 +130,19 @@ onMounted(() => {
       <video class="app__video" :src="bgVideo" autoplay muted loop playsinline></video>
     </div>
     <div class="app__overlay" aria-hidden="true"></div>
-    <WelcomeScreen
-      v-if="isWelcome"
-      :badge="t.welcomeBadge"
-      :title="t.welcomeTitle"
-      :subtitle="t.welcomeSubtitle"
-      @enter="enterSite"
-    />
-
+    <img class="app__chibi" :src="chibi" alt="Chibi decoration" loading="lazy" />
     <MainLayout
-      v-else
       :header-eyebrow="t.headerEyebrow"
       :header-title="t.headerTitle"
       :nav-home="t.navHome"
       :nav-posts="t.navPosts"
       :nav-projects="t.navProjects"
       :nav-contact="t.navContact"
+      :cat-image-url="catImageUrl"
+      :cat-title="t.catTitle"
+      :cat-button="t.catButton"
+      :cat-loading="catLoading"
+      :cat-loading-text="t.catLoading"
       :daily-quote-title="t.dailyQuoteTitle"
       :daily-quote-loading="t.dailyQuoteLoading"
       :daily-quote-error="t.dailyQuoteError"
@@ -148,6 +162,7 @@ onMounted(() => {
       @next-video="goNextVideo"
       @prev-video="goPrevVideo"
       @select-video="selectVideo"
+      @refresh-cat="loadCatImage"
     >
       <template #settings>
         <SettingsMenu

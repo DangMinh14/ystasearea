@@ -6,6 +6,7 @@ const emit = defineEmits<{
   (e: 'next-video'): void
   (e: 'prev-video'): void
   (e: 'select-video', index: number): void
+  (e: 'refresh-cat'): void
 }>()
 
 type MainLayoutProps = {
@@ -15,6 +16,11 @@ type MainLayoutProps = {
   navPosts: string
   navProjects: string
   navContact: string
+  catImageUrl: string
+  catTitle: string
+  catButton: string
+  catLoading: boolean
+  catLoadingText: string
   dailyQuoteTitle: string
   dailyQuoteLoading: string
   dailyQuoteError: string
@@ -70,6 +76,28 @@ const selectVideo = (index: number) => {
           <a class="layout__nav-link" href="#">{{ navProjects }}</a>
           <a class="layout__nav-link" href="#">{{ navContact }}</a>
         </nav>
+        <div class="layout__cat">
+          <div class="layout__cat-header">
+            <p class="layout__cat-title">{{ catTitle }}</p>
+            <button class="layout__cat-button" type="button" @click="emit('refresh-cat')">
+              {{ catButton }}
+            </button>
+          </div>
+          <div v-if="catLoading" class="layout__cat-loading">
+            <span class="layout__cat-spinner" aria-hidden="true"></span>
+            <span class="layout__cat-loading-text">{{ catLoadingText }}</span>
+          </div>
+          <div v-else class="layout__cat-media">
+            <div v-if="!catImageUrl" class="layout__cat-skeleton"></div>
+            <img
+              v-else
+              class="layout__cat-image"
+              :src="catImageUrl"
+              alt="Random cat"
+              loading="lazy"
+            />
+          </div>
+        </div>
       </aside>
 
       <section class="layout__content">

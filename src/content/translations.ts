@@ -13,6 +13,9 @@ type TranslationKeys = {
   dailyQuoteTitle: string
   dailyQuoteLoading: string
   dailyQuoteError: string
+  catTitle: string
+  catButton: string
+  catLoading: string
   musicTitle: string
   musicText: string
   playerPrev: string
@@ -41,6 +44,9 @@ export const translations: Record<Locale, TranslationKeys> = {
     dailyQuoteTitle: 'Daily quote',
     dailyQuoteLoading: 'Đang tải trích dẫn...',
     dailyQuoteError: 'Không thể tải trích dẫn lúc này.',
+    catTitle: 'Một chút mèo cho ngày mới',
+    catButton: 'Đổi mèo',
+    catLoading: 'Mèo đang đến ...',
     musicTitle: 'Music corner',
     musicText: 'Trình phát nhạc yêu thích của mình — nghe thử một chút nhé.',
     playerPrev: 'Video trước',
@@ -67,6 +73,9 @@ export const translations: Record<Locale, TranslationKeys> = {
     dailyQuoteTitle: 'Daily quote',
     dailyQuoteLoading: 'Loading quote...',
     dailyQuoteError: 'Unable to load quote right now.',
+    catTitle: 'A little cat for your day',
+    catButton: 'New cat',
+    catLoading: 'Cat incoming ...',
     musicTitle: 'Music corner',
     musicText: 'A simple music player — enjoy a quick listen.',
     playerPrev: 'Previous video',

@@ -27,3 +27,23 @@
   background: var(--color-video-overlay);
   backdrop-filter: blur(1px);
 }
+
+.app__chibi {
+  position: fixed;
+  right: 24px;
+  bottom: 40px;
+  width: min(180px, 30vw);
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 12px 26px rgba(15, 23, 42, 0.35));
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .app__chibi {
+    right: 12px;
+    bottom: 24px;
+    width: min(140px, 38vw);
+  }
+}

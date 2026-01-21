@@ -30,6 +30,9 @@
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .layout__dropdown-item:hover {
@@ -54,6 +57,14 @@
 
 .layout__dropdown-item[aria-pressed='true'] {
   background: rgba(79, 70, 229, 0.2);
+}
+
+.layout__flag-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
 }
 
 [data-theme='dark'] .layout__settings .layout__button--ghost {
