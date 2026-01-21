@@ -55,6 +55,7 @@ const prevVideo = () => {
 const selectVideo = (index: number) => {
   emit('select-video', index)
 }
+
 </script>
 
 <template>

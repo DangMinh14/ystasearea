@@ -13,6 +13,16 @@ type TranslationKeys = {
   dailyQuoteTitle: string
   dailyQuoteLoading: string
   dailyQuoteError: string
+  clockTitle: string
+  clockTimeLabel: string
+  clockDateLabel: string
+  clockTimezoneLabel: string
+  weatherTitle: string
+  weatherLocationLabel: string
+  weatherLoading: string
+  weatherError: string
+  weatherTempLabel: string
+  weatherWindLabel: string
   catTitle: string
   catButton: string
   catLoading: string
@@ -25,9 +35,13 @@ type TranslationKeys = {
   footerButton: string
   settingsLabel: string
   themeLabel: string
+  themeSelectLabel: string
   languageLabel: string
   lightLabel: string
   darkLabel: string
+  christmasLabel: string
+  lunarLabel: string
+  halloweenLabel: string
 }
 
 export const translations: Record<Locale, TranslationKeys> = {
@@ -44,6 +58,16 @@ export const translations: Record<Locale, TranslationKeys> = {
     dailyQuoteTitle: 'Daily quote',
     dailyQuoteLoading: 'Đang tải trích dẫn...',
     dailyQuoteError: 'Không thể tải trích dẫn lúc này.',
+    clockTitle: 'Đồng hồ',
+    clockTimeLabel: 'Giờ hiện tại',
+    clockDateLabel: 'Ngày',
+    clockTimezoneLabel: 'Múi giờ',
+    weatherTitle: 'Thời tiết',
+    weatherLocationLabel: 'Khu vực',
+    weatherLoading: 'Đang tải thời tiết...',
+    weatherError: 'Không thể tải thời tiết lúc này.',
+    weatherTempLabel: 'Nhiệt độ',
+    weatherWindLabel: 'Gió',
     catTitle: 'Một chút mèo cho ngày mới',
     catButton: 'Đổi mèo',
     catLoading: 'Mèo đang đến ...',
@@ -56,9 +80,13 @@ export const translations: Record<Locale, TranslationKeys> = {
     footerButton: 'Gửi lời chào',
     settingsLabel: '⚙️ Settings',
     themeLabel: 'Theme',
+    themeSelectLabel: 'Chọn theme',
     languageLabel: 'Ngôn ngữ',
     lightLabel: 'Light',
     darkLabel: 'Dark',
+    christmasLabel: 'Giáng sinh',
+    lunarLabel: 'Tết',
+    halloweenLabel: 'Halloween',
   },
   en: {
     welcomeBadge: '✨ Welcome',
@@ -73,6 +101,16 @@ export const translations: Record<Locale, TranslationKeys> = {
     dailyQuoteTitle: 'Daily quote',
     dailyQuoteLoading: 'Loading quote...',
     dailyQuoteError: 'Unable to load quote right now.',
+    clockTitle: 'Clock',
+    clockTimeLabel: 'Current time',
+    clockDateLabel: 'Date',
+    clockTimezoneLabel: 'Time zone',
+    weatherTitle: 'Weather',
+    weatherLocationLabel: 'Location',
+    weatherLoading: 'Loading weather...',
+    weatherError: 'Unable to load weather right now.',
+    weatherTempLabel: 'Temperature',
+    weatherWindLabel: 'Wind',
     catTitle: 'A little cat for your day',
     catButton: 'New cat',
     catLoading: 'Cat incoming ...',
@@ -85,8 +123,12 @@ export const translations: Record<Locale, TranslationKeys> = {
     footerButton: 'Say hello',
     settingsLabel: '⚙️ Settings',
     themeLabel: 'Theme',
+    themeSelectLabel: 'Select theme',
     languageLabel: 'Language',
     lightLabel: 'Light',
     darkLabel: 'Dark',
+    christmasLabel: 'Christmas',
+    lunarLabel: 'Lunar New Year',
+    halloweenLabel: 'Halloween',
   },
 }

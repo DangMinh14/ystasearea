@@ -55,6 +55,27 @@
   font-weight: 700;
 }
 
+.layout__dropdown-select {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .layout__dropdown-select {
+  background: rgba(25, 16, 40, 0.85);
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+[data-theme='halloween'] .layout__dropdown-select {
+  background: rgba(27, 16, 42, 0.9);
+  border-color: rgba(249, 115, 22, 0.5);
+  color: var(--color-text);
+}
+
 .layout__dropdown-item[aria-pressed='true'] {
   background: rgba(79, 70, 229, 0.2);
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import MainLayout from './MainLayout.vue'
 import SettingsMenu from './SettingsMenu.vue'
 import { translations, type Locale } from '../content/translations'
@@ -10,7 +10,7 @@ import './PageShell.css'
 const THEME_KEY = 'ystasearea-theme'
 const LOCALE_KEY = 'ystasearea-locale'
 
-const isDark = ref(true)
+const theme = ref<'dark' | 'light' | 'christmas' | 'lunar' | 'halloween'>('dark')
 const locale = ref<Locale>('vi')
 const currentVideoIndex = ref(0)
 const catImageUrl = ref('')
@@ -18,6 +18,28 @@ const catLoading = ref(false)
 const quote = ref<{ content: string; author: string } | null>(null)
 const quoteLoading = ref(false)
 const quoteError = ref('')
+const now = ref(new Date())
+const timeZone = ref('Asia/Ho_Chi_Minh')
+const weatherLocation = ref('hcm')
+const weatherLoading = ref(false)
+const weatherError = ref('')
+const weather = ref<{ temperature: number; wind: number } | null>(null)
+
+const timeZones = [
+  { value: 'Asia/Ho_Chi_Minh', label: 'GMT+7 (Ho Chi Minh)' },
+  { value: 'Asia/Bangkok', label: 'GMT+7 (Bangkok)' },
+  { value: 'Asia/Singapore', label: 'GMT+8 (Singapore)' },
+  { value: 'Asia/Tokyo', label: 'GMT+9 (Tokyo)' },
+  { value: 'UTC', label: 'UTC' },
+]
+
+const weatherLocations = [
+  { value: 'hcm', label: 'TP. Hồ Chí Minh', lat: 10.8231, lon: 106.6297 },
+  { value: 'hanoi', label: 'Hà Nội', lat: 21.0285, lon: 105.8542 },
+  { value: 'danang', label: 'Đà Nẵng', lat: 16.0544, lon: 108.2022 },
+  { value: 'cantho', label: 'Cần Thơ', lat: 10.0452, lon: 105.7469 },
+  { value: 'haiphong', label: 'Hải Phòng', lat: 20.8449, lon: 106.6881 },
+]
 
 const playlist = [
   { id: '8scL5oJX6CM', title: 'Video 1' },
@@ -28,19 +50,48 @@ const playlist = [
 
 const t = computed(() => translations[locale.value])
 
+const formattedTime = computed(() =>
+  new Intl.DateTimeFormat(locale.value === 'vi' ? 'vi-VN' : 'en-US', {
+    timeZone: timeZone.value,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).format(now.value)
+)
+
+const formattedDate = computed(() =>
+  new Intl.DateTimeFormat(locale.value === 'vi' ? 'vi-VN' : 'en-US', {
+    timeZone: timeZone.value,
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(now.value)
+)
+
 const applyTheme = () => {
-  document.documentElement.setAttribute('data-theme', isDark.value ? 'dark' : 'light')
+  document.documentElement.setAttribute('data-theme', theme.value)
 }
 
-const toggleTheme = () => {
-  isDark.value = !isDark.value
+const setTheme = (nextTheme: 'dark' | 'light' | 'christmas' | 'lunar' | 'halloween') => {
+  theme.value = nextTheme
   applyTheme()
-  localStorage.setItem(THEME_KEY, isDark.value ? 'dark' : 'light')
+  localStorage.setItem(THEME_KEY, nextTheme)
 }
 
 const changeLocale = (nextLocale: Locale) => {
   locale.value = nextLocale
   localStorage.setItem(LOCALE_KEY, nextLocale)
+}
+
+const handleTimeZoneChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  timeZone.value = target.value
+}
+
+const handleWeatherLocationChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  weatherLocation.value = target.value
 }
 
 
@@ -109,10 +160,56 @@ const loadDailyQuote = async () => {
   }
 }
 
+const loadWeather = async () => {
+  weatherLoading.value = true
+  weatherError.value = ''
+  const location = weatherLocations.find((item) => item.value === weatherLocation.value)
+  if (!location) {
+    weatherLoading.value = false
+    weatherError.value = 'error'
+    return
+  }
+
+  try {
+    const url = new URL('https://api.open-meteo.com/v1/forecast')
+    url.searchParams.set('latitude', String(location.lat))
+    url.searchParams.set('longitude', String(location.lon))
+    url.searchParams.set('current', 'temperature_2m,wind_speed_10m')
+    url.searchParams.set('timezone', 'auto')
+
+    const response = await fetch(url.toString())
+    if (!response.ok) {
+      throw new Error('Weather request failed')
+    }
+
+    const data = await response.json()
+    const current = data?.current
+    if (!current) {
+      throw new Error('Invalid weather payload')
+    }
+
+    weather.value = {
+      temperature: current.temperature_2m,
+      wind: current.wind_speed_10m,
+    }
+  } catch (error) {
+    weatherError.value = 'error'
+    weather.value = null
+  } finally {
+    weatherLoading.value = false
+  }
+}
+
 onMounted(() => {
   const savedTheme = localStorage.getItem(THEME_KEY)
-  if (savedTheme === 'light') {
-    isDark.value = false
+  if (
+    savedTheme === 'light' ||
+    savedTheme === 'dark' ||
+    savedTheme === 'christmas' ||
+    savedTheme === 'lunar' ||
+    savedTheme === 'halloween'
+  ) {
+    theme.value = savedTheme
   }
   const savedLocale = localStorage.getItem(LOCALE_KEY)
   if (savedLocale === 'en' || savedLocale === 'vi') {
@@ -121,6 +218,19 @@ onMounted(() => {
   applyTheme()
   loadDailyQuote()
   loadCatImage()
+  loadWeather()
+})
+
+const timer = window.setInterval(() => {
+  now.value = new Date()
+}, 1000)
+
+onUnmounted(() => {
+  window.clearInterval(timer)
+})
+
+watch(weatherLocation, () => {
+  loadWeather()
 })
 </script>
 
@@ -130,7 +240,65 @@ onMounted(() => {
       <video class="app__video" :src="bgVideo" autoplay muted loop playsinline></video>
     </div>
     <div class="app__overlay" aria-hidden="true"></div>
+    <div class="app__decorations" aria-hidden="true">
+      <span class="app__petal"></span>
+      <span class="app__petal"></span>
+      <span class="app__petal"></span>
+      <span class="app__petal"></span>
+      <span class="app__petal"></span>
+      <span class="app__petal"></span>
+      <span class="app__petal"></span>
+      <span class="app__petal"></span>
+    </div>
     <img class="app__chibi" :src="chibi" alt="Chibi decoration" loading="lazy" />
+    <aside class="app__widget app__widget--left">
+      <div class="app__widget-header">
+        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+        <h2 class="app__widget-title">{{ t.clockTitle }}</h2>
+      </div>
+      <div class="app__stat">
+        <span class="app__stat-label">{{ t.clockTimeLabel }}</span>
+        <span class="app__stat-value">{{ formattedTime }}</span>
+      </div>
+      <div class="app__stat">
+        <span class="app__stat-label">{{ t.clockDateLabel }}</span>
+        <span class="app__stat-value">{{ formattedDate }}</span>
+      </div>
+      <label class="app__field">
+        <span class="app__field-label">{{ t.clockTimezoneLabel }}</span>
+        <select class="app__select" :value="timeZone" @change="handleTimeZoneChange">
+          <option v-for="zone in timeZones" :key="zone.value" :value="zone.value">
+            {{ zone.label }}
+          </option>
+        </select>
+      </label>
+    </aside>
+    <aside class="app__widget app__widget--right">
+      <div class="app__widget-header">
+        <i class="fa-solid fa-cloud-sun" aria-hidden="true"></i>
+        <h2 class="app__widget-title">{{ t.weatherTitle }}</h2>
+      </div>
+      <label class="app__field">
+        <span class="app__field-label">{{ t.weatherLocationLabel }}</span>
+        <select class="app__select" :value="weatherLocation" @change="handleWeatherLocationChange">
+          <option v-for="location in weatherLocations" :key="location.value" :value="location.value">
+            {{ location.label }}
+          </option>
+        </select>
+      </label>
+      <p v-if="weatherLoading" class="app__status">{{ t.weatherLoading }}</p>
+      <p v-else-if="weatherError" class="app__status">{{ t.weatherError }}</p>
+      <div v-else-if="weather" class="app__weather">
+        <div class="app__stat">
+          <span class="app__stat-label">{{ t.weatherTempLabel }}</span>
+          <span class="app__stat-value">{{ weather.temperature }}°C</span>
+        </div>
+        <div class="app__stat">
+          <span class="app__stat-label">{{ t.weatherWindLabel }}</span>
+          <span class="app__stat-value">{{ weather.wind }} km/h</span>
+        </div>
+      </div>
+    </aside>
     <MainLayout
       :header-eyebrow="t.headerEyebrow"
       :header-title="t.headerTitle"
@@ -168,10 +336,18 @@ onMounted(() => {
         <SettingsMenu
           :label="t.settingsLabel"
           :theme-label="t.themeLabel"
+          :theme-select-label="t.themeSelectLabel"
           :language-label="t.languageLabel"
-          :current-theme-label="isDark ? t.darkLabel : t.lightLabel"
+          :current-theme="theme"
+          :theme-options="[
+            { value: 'light', label: t.lightLabel, icon: 'sun' },
+            { value: 'dark', label: t.darkLabel, icon: 'moon' },
+            { value: 'christmas', label: t.christmasLabel, icon: 'tree' },
+            { value: 'lunar', label: t.lunarLabel, icon: 'sparkles' },
+            { value: 'halloween', label: t.halloweenLabel, icon: 'pumpkin' },
+          ]"
           :current-locale="locale"
-          @toggle-theme="toggleTheme"
+          @change-theme="setTheme"
           @change-locale="changeLocale"
         />
       </template>

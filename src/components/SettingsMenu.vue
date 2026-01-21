@@ -8,29 +8,41 @@ import vietnamFlag from '../assets/vietnam_flag.png'
 type SettingsProps = {
   label: string
   themeLabel: string
+  themeSelectLabel: string
   languageLabel: string
-  currentThemeLabel: string
+  currentTheme: 'light' | 'dark' | 'christmas' | 'lunar' | 'halloween'
+  themeOptions: {
+    value: 'light' | 'dark' | 'christmas' | 'lunar' | 'halloween'
+    label: string
+    icon: 'sun' | 'moon' | 'tree' | 'sparkles' | 'pumpkin'
+  }[]
   currentLocale: Locale
 }
 
 const props = defineProps<SettingsProps>()
 
 const emit = defineEmits<{
-  (e: 'toggle-theme'): void
+  (e: 'change-theme', theme: 'light' | 'dark' | 'christmas' | 'lunar' | 'halloween'): void
   (e: 'change-locale', locale: Locale): void
 }>()
 
 const isOpen = ref(false)
-const isDarkTheme = computed(() => props.currentThemeLabel.toLowerCase().includes('dark'))
-const themeIcon = computed(() => (isDarkTheme.value ? '🌙' : '☀️'))
+const themeIcon = (icon: 'sun' | 'moon' | 'tree' | 'sparkles' | 'pumpkin') => {
+  if (icon === 'moon') return '🌙'
+  if (icon === 'tree') return '🎄'
+  if (icon === 'sparkles') return '🧧'
+  if (icon === 'pumpkin') return '🎃'
+  return '☀️'
+}
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value
 }
 
-const handleTheme = () => {
+const handleTheme = (event: Event) => {
+  const target = event.target as HTMLSelectElement
   isOpen.value = false
-  emit('toggle-theme')
+  emit('change-theme', target.value as SettingsProps['currentTheme'])
 }
 
 const handleLocale = (locale: Locale) => {
@@ -45,10 +57,14 @@ const handleLocale = (locale: Locale) => {
       {{ label }}
     </button>
     <div v-if="isOpen" class="layout__dropdown">
-      <button class="layout__dropdown-item" type="button" @click="handleTheme">
-        <span aria-hidden="true">{{ themeIcon }}</span>
-        {{ themeLabel }}: {{ currentThemeLabel }}
-      </button>
+      <div class="layout__dropdown-group">
+        <span class="layout__dropdown-label">{{ themeSelectLabel }}</span>
+        <select class="layout__dropdown-select" :value="currentTheme" @change="handleTheme">
+          <option v-for="option in themeOptions" :key="option.value" :value="option.value">
+            {{ themeIcon(option.icon) }} {{ option.label }}
+          </option>
+        </select>
+      </div>
       <div class="layout__dropdown-group">
         <span class="layout__dropdown-label">{{ languageLabel }}</span>
         <button

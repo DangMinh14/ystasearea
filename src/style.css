@@ -37,6 +37,51 @@
   --shadow-button: 0 14px 28px rgba(109, 40, 217, 0.45);
 }
 
+[data-theme='christmas'] {
+  --color-bg: #fff7ed;
+  --color-text: #7c2d12;
+  --color-card: #ffffff;
+  --color-surface: rgba(255, 248, 240, 0.88);
+  --color-muted: #9a3412;
+  --color-primary: #b91c1c;
+  --color-primary-contrast: #ffffff;
+  --color-badge-bg: #fee2e2;
+  --color-ghost-border: rgba(185, 28, 28, 0.35);
+  --color-video-overlay: rgba(255, 237, 213, 0.6);
+  --shadow-card: 0 24px 60px rgba(124, 45, 18, 0.18);
+  --shadow-button: 0 14px 28px rgba(185, 28, 28, 0.28);
+}
+
+[data-theme='lunar'] {
+  --color-bg: #fff5e5;
+  --color-text: #7f1d1d;
+  --color-card: #ffffff;
+  --color-surface: rgba(255, 243, 224, 0.92);
+  --color-muted: #b91c1c;
+  --color-primary: #e11d48;
+  --color-primary-contrast: #fff7ed;
+  --color-badge-bg: #fee2e2;
+  --color-ghost-border: rgba(253, 224, 71, 0.75);
+  --color-video-overlay: rgba(255, 228, 196, 0.6);
+  --shadow-card: 0 26px 70px rgba(185, 28, 28, 0.22);
+  --shadow-button: 0 16px 32px rgba(250, 204, 21, 0.45);
+}
+
+[data-theme='halloween'] {
+  --color-bg: #0b0a1a;
+  --color-text: #fef3c7;
+  --color-card: #1b102a;
+  --color-surface: rgba(27, 16, 42, 0.88);
+  --color-muted: #f59e0b;
+  --color-primary: #f97316;
+  --color-primary-contrast: #0b0a1a;
+  --color-badge-bg: #2a123d;
+  --color-ghost-border: rgba(249, 115, 22, 0.4);
+  --color-video-overlay: rgba(11, 10, 26, 0.65);
+  --shadow-card: 0 24px 70px rgba(0, 0, 0, 0.55);
+  --shadow-button: 0 14px 28px rgba(249, 115, 22, 0.35);
+}
+
 * {
   box-sizing: border-box;
 }
