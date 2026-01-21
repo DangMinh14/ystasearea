@@ -1,8 +1,5 @@
 .layout__settings {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 10;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -10,11 +7,15 @@
 }
 
 .layout__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
   background: var(--color-surface);
   border-radius: 14px;
   box-shadow: var(--shadow-card);
   padding: 8px;
   min-width: 200px;
+  width: max-content;
   display: grid;
   gap: 6px;
   backdrop-filter: blur(4px);

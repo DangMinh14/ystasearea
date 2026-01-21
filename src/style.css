@@ -20,6 +20,8 @@
   --color-video-overlay: rgba(244, 243, 255, 0.55);
   --shadow-card: 0 20px 60px rgba(30, 27, 75, 0.12);
   --shadow-button: 0 12px 24px rgba(79, 70, 229, 0.25);
+  --app-video-opacity: 0.55;
+  --app-overlay-opacity: 0.45;
 }
 
 [data-theme='dark'] {
@@ -35,6 +37,8 @@
   --color-video-overlay: rgba(12, 6, 22, 0.6);
   --shadow-card: 0 24px 70px rgba(12, 6, 22, 0.55);
   --shadow-button: 0 14px 28px rgba(109, 40, 217, 0.45);
+  --app-video-opacity: 0.4;
+  --app-overlay-opacity: 0.55;
 }
 
 [data-theme='christmas'] {
@@ -50,6 +54,8 @@
   --color-video-overlay: rgba(255, 237, 213, 0.6);
   --shadow-card: 0 24px 60px rgba(124, 45, 18, 0.18);
   --shadow-button: 0 14px 28px rgba(185, 28, 28, 0.28);
+  --app-video-opacity: 0.5;
+  --app-overlay-opacity: 0.4;
 }
 
 [data-theme='lunar'] {
@@ -57,14 +63,16 @@
   --color-text: #7f1d1d;
   --color-card: #ffffff;
   --color-surface: rgba(255, 243, 224, 0.92);
-  --color-muted: #b91c1c;
-  --color-primary: #e11d48;
+  --color-muted: #991b1b;
+  --color-primary: #b91c1c;
   --color-primary-contrast: #fff7ed;
-  --color-badge-bg: #fee2e2;
-  --color-ghost-border: rgba(253, 224, 71, 0.75);
+  --color-badge-bg: #fecaca;
+  --color-ghost-border: rgba(250, 204, 21, 0.95);
   --color-video-overlay: rgba(255, 228, 196, 0.6);
   --shadow-card: 0 26px 70px rgba(185, 28, 28, 0.22);
-  --shadow-button: 0 16px 32px rgba(250, 204, 21, 0.45);
+  --shadow-button: 0 18px 34px rgba(185, 28, 28, 0.55);
+  --app-video-opacity: 0.5;
+  --app-overlay-opacity: 0.4;
 }
 
 [data-theme='halloween'] {
@@ -80,6 +88,8 @@
   --color-video-overlay: rgba(11, 10, 26, 0.65);
   --shadow-card: 0 24px 70px rgba(0, 0, 0, 0.55);
   --shadow-button: 0 14px 28px rgba(249, 115, 22, 0.35);
+  --app-video-opacity: 0.35;
+  --app-overlay-opacity: 0.55;
 }
 
 * {

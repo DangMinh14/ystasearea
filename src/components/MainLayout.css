@@ -5,18 +5,7 @@
   position: relative;
 }
 
-.layout__header,
-.layout__footer {
-  background: var(--color-surface);
-  border-radius: 20px;
-  padding: 24px 28px;
-  box-shadow: var(--shadow-card);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  backdrop-filter: blur(4px);
-}
+/* Header/footer moved to PageShell */
 
 .layout__eyebrow {
   margin: 0 0 6px;
@@ -315,9 +304,7 @@
   border: 1px solid var(--color-ghost-border);
 }
 
-.layout__footer {
-  flex-wrap: wrap;
-}
+/* footer removed */
 
 @media (max-width: 900px) {
   .layout__body {

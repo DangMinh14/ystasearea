@@ -10,8 +10,6 @@ const emit = defineEmits<{
 }>()
 
 type MainLayoutProps = {
-  headerEyebrow: string
-  headerTitle: string
   navHome: string
   navPosts: string
   navProjects: string
@@ -34,15 +32,9 @@ type MainLayoutProps = {
   playlistLabel: string
   playlist: { id: string; title: string }[]
   currentVideoIndex: number
-  footerCopy: string
-  footerButton: string
 }
 
 defineProps<MainLayoutProps>()
-
-const sayHello = () => {
-  emit('hello')
-}
 
 const nextVideo = () => {
   emit('next-video')
@@ -60,15 +52,6 @@ const selectVideo = (index: number) => {
 
 <template>
   <section class="layout">
-    <slot name="settings" />
-
-    <header class="layout__header">
-      <div>
-        <p class="layout__eyebrow">{{ headerEyebrow }}</p>
-        <h1 v-if="headerTitle" class="layout__title">{{ headerTitle }}</h1>
-      </div>
-    </header>
-
     <div class="layout__body">
       <aside class="layout__sidebar">
         <nav class="layout__nav">
@@ -155,12 +138,5 @@ const selectVideo = (index: number) => {
         </article>
       </section>
     </div>
-
-    <footer class="layout__footer">
-      <span>{{ footerCopy }}</span>
-      <button class="layout__button layout__button--primary" type="button" @click="sayHello">
-        {{ footerButton }}
-      </button>
-    </footer>
   </section>
 </template>

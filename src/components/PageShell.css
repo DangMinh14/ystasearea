@@ -4,6 +4,55 @@
   margin: 0 auto;
 }
 
+.app__header {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  padding: 20px clamp(16px, 4vw, 32px);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 6;
+}
+
+.app__header {
+  top: 0;
+  border-bottom: 1px solid rgba(79, 70, 229, 0.12);
+}
+
+.app__brand {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.app__eyebrow {
+  margin: 0 0 6px;
+  color: var(--color-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 1.1rem;
+}
+
+.app__title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.app__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
 .app__background,
 .app__overlay {
   position: fixed;
@@ -13,6 +62,7 @@
 .app__background {
   z-index: -2;
   overflow: hidden;
+  background: var(--color-bg);
 }
 
 .app__video {
@@ -20,12 +70,14 @@
   height: 100%;
   object-fit: cover;
   filter: saturate(0.9) contrast(1.05);
+  opacity: var(--app-video-opacity);
 }
 
 .app__overlay {
   z-index: -1;
   background: var(--color-video-overlay);
   backdrop-filter: blur(1px);
+  opacity: var(--app-overlay-opacity);
 }
 
 .app__decorations {
@@ -36,7 +88,13 @@
   display: none;
 }
 
-[data-theme='lunar'] .app__decorations {
+
+[data-theme='lunar'] .app__decorations--lunar {
+  display: block;
+}
+
+[data-theme='halloween'] .app__decorations--halloween,
+[data-theme='christmas'] .app__decorations--christmas {
   display: block;
 }
 
@@ -99,6 +157,126 @@
   left: 92%;
   animation-delay: 0.5s;
   animation-duration: 9s;
+}
+
+.app__halloween-item,
+.app__christmas-item {
+  position: absolute;
+  font-size: 22px;
+  opacity: 0.85;
+  animation: petal-fall 12s linear infinite;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(1) {
+  left: 6%;
+  animation-delay: 0s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(2) {
+  left: 14%;
+  animation-delay: 1.2s;
+  animation-duration: 10s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(3) {
+  left: 24%;
+  animation-delay: 2.4s;
+  animation-duration: 13s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(4) {
+  left: 36%;
+  animation-delay: 0.8s;
+  animation-duration: 11s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(5) {
+  left: 48%;
+  animation-delay: 2s;
+  animation-duration: 14s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(6) {
+  left: 60%;
+  animation-delay: 1.6s;
+  animation-duration: 12s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(7) {
+  left: 72%;
+  animation-delay: 3s;
+  animation-duration: 15s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(8) {
+  left: 84%;
+  animation-delay: 2.2s;
+  animation-duration: 9s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(9) {
+  left: 92%;
+  animation-delay: 0.4s;
+  animation-duration: 10s;
+}
+
+.app__decorations--halloween .app__halloween-item:nth-child(10) {
+  left: 30%;
+  animation-delay: 3.4s;
+  animation-duration: 12s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(1) {
+  left: 8%;
+  animation-delay: 0s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(2) {
+  left: 20%;
+  animation-delay: 1.2s;
+  animation-duration: 10s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(3) {
+  left: 32%;
+  animation-delay: 2.4s;
+  animation-duration: 13s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(4) {
+  left: 44%;
+  animation-delay: 0.8s;
+  animation-duration: 11s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(5) {
+  left: 56%;
+  animation-delay: 1.8s;
+  animation-duration: 14s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(6) {
+  left: 68%;
+  animation-delay: 2.6s;
+  animation-duration: 12s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(7) {
+  left: 78%;
+  animation-delay: 0.6s;
+  animation-duration: 15s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(8) {
+  left: 88%;
+  animation-delay: 3s;
+  animation-duration: 9s;
+}
+
+.app__decorations--christmas .app__christmas-item:nth-child(9) {
+  left: 96%;
+  animation-delay: 1.4s;
+  animation-duration: 10s;
 }
 
 .app__chibi {
@@ -212,6 +390,12 @@
     width: min(140px, 38vw);
   }
 
+  .app__header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .app__widget {
     position: static;
     width: 100%;
@@ -225,5 +409,15 @@
   }
   100% {
     transform: translateY(110vh) translateX(60px) rotate(360deg);
+  }
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(6deg);
   }
 }

@@ -42,10 +42,10 @@ const weatherLocations = [
 ]
 
 const playlist = [
-  { id: '8scL5oJX6CM', title: 'Video 1' },
-  { id: 'tbfumVRH7Ls', title: 'Video 2' },
-  { id: 'SO_zCJkZdkY', title: 'Video 3' },
-  { id: 'f3jlAJ6CxDo', title: 'Video 4' },
+  { id: '8scL5oJX6CM', title: 'Cigarettes After Sex Playlist' },
+  { id: 'tbfumVRH7Ls', title: 'Hoa - Doãn Hoài Nam' },
+  { id: 'SO_zCJkZdkY', title: 'Mơ - Doãn Hoài Nam' },
+  { id: 'f3jlAJ6CxDo', title: 'Bóng- Doãn Hoài Nam' },
 ]
 
 const t = computed(() => translations[locale.value])
@@ -103,7 +103,6 @@ const goPrevVideo = () => {
   currentVideoIndex.value =
     (currentVideoIndex.value - 1 + playlist.length) % playlist.length
 }
-
 const selectVideo = (index: number) => {
   currentVideoIndex.value = index
 }
@@ -240,7 +239,7 @@ watch(weatherLocation, () => {
       <video class="app__video" :src="bgVideo" autoplay muted loop playsinline></video>
     </div>
     <div class="app__overlay" aria-hidden="true"></div>
-    <div class="app__decorations" aria-hidden="true">
+    <div class="app__decorations app__decorations--lunar" aria-hidden="true">
       <span class="app__petal"></span>
       <span class="app__petal"></span>
       <span class="app__petal"></span>
@@ -249,6 +248,29 @@ watch(weatherLocation, () => {
       <span class="app__petal"></span>
       <span class="app__petal"></span>
       <span class="app__petal"></span>
+    </div>
+    <div class="app__decorations app__decorations--halloween" aria-hidden="true">
+      <span class="app__halloween-item">🎃</span>
+      <span class="app__halloween-item">🕸️</span>
+      <span class="app__halloween-item">💀</span>
+      <span class="app__halloween-item">🕷️</span>
+      <span class="app__halloween-item">🕸️</span>
+      <span class="app__halloween-item">🎃</span>
+      <span class="app__halloween-item">🕷️</span>
+      <span class="app__halloween-item">💀</span>
+      <span class="app__halloween-item">🎃</span>
+      <span class="app__halloween-item">🕸️</span>
+    </div>
+    <div class="app__decorations app__decorations--christmas" aria-hidden="true">
+      <span class="app__christmas-item">❄️</span>
+      <span class="app__christmas-item">✨</span>
+      <span class="app__christmas-item">🎁</span>
+      <span class="app__christmas-item">🎄</span>
+      <span class="app__christmas-item">⭐</span>
+      <span class="app__christmas-item">❄️</span>
+      <span class="app__christmas-item">✨</span>
+      <span class="app__christmas-item">🎁</span>
+      <span class="app__christmas-item">⭐</span>
     </div>
     <img class="app__chibi" :src="chibi" alt="Chibi decoration" loading="lazy" />
     <aside class="app__widget app__widget--left">
@@ -299,9 +321,32 @@ watch(weatherLocation, () => {
         </div>
       </div>
     </aside>
+    <header class="app__header">
+      <RouterLink class="app__brand" to="/home">
+        <p class="app__eyebrow">{{ t.headerEyebrow }}</p>
+        <h1 v-if="t.headerTitle" class="app__title">{{ t.headerTitle }}</h1>
+      </RouterLink>
+      <div class="app__header-actions">
+        <SettingsMenu
+          :label="t.settingsLabel"
+          :theme-label="t.themeLabel"
+          :theme-select-label="t.themeSelectLabel"
+          :language-label="t.languageLabel"
+          :current-theme="theme"
+          :theme-options="[
+            { value: 'light', label: t.lightLabel, icon: 'sun' },
+            { value: 'dark', label: t.darkLabel, icon: 'moon' },
+            { value: 'christmas', label: t.christmasLabel, icon: 'tree' },
+            { value: 'lunar', label: t.lunarLabel, icon: 'sparkles' },
+            { value: 'halloween', label: t.halloweenLabel, icon: 'pumpkin' },
+          ]"
+          :current-locale="locale"
+          @change-theme="setTheme"
+          @change-locale="changeLocale"
+        />
+      </div>
+    </header>
     <MainLayout
-      :header-eyebrow="t.headerEyebrow"
-      :header-title="t.headerTitle"
       :nav-home="t.navHome"
       :nav-posts="t.navPosts"
       :nav-projects="t.navProjects"
@@ -324,33 +369,10 @@ watch(weatherLocation, () => {
       :playlist-label="t.playlistLabel"
       :playlist="playlist"
       :current-video-index="currentVideoIndex"
-      :footer-copy="t.footerCopy"
-      :footer-button="t.footerButton"
-      @hello="hello"
       @next-video="goNextVideo"
       @prev-video="goPrevVideo"
       @select-video="selectVideo"
       @refresh-cat="loadCatImage"
-    >
-      <template #settings>
-        <SettingsMenu
-          :label="t.settingsLabel"
-          :theme-label="t.themeLabel"
-          :theme-select-label="t.themeSelectLabel"
-          :language-label="t.languageLabel"
-          :current-theme="theme"
-          :theme-options="[
-            { value: 'light', label: t.lightLabel, icon: 'sun' },
-            { value: 'dark', label: t.darkLabel, icon: 'moon' },
-            { value: 'christmas', label: t.christmasLabel, icon: 'tree' },
-            { value: 'lunar', label: t.lunarLabel, icon: 'sparkles' },
-            { value: 'halloween', label: t.halloweenLabel, icon: 'pumpkin' },
-          ]"
-          :current-locale="locale"
-          @change-theme="setTheme"
-          @change-locale="changeLocale"
-        />
-      </template>
-    </MainLayout>
+    />
   </main>
 </template>
