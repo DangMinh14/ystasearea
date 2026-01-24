@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import GameHub from './GameHub.vue'
 import './MainLayout.css'
 
 const emit = defineEmits<{
@@ -111,6 +112,9 @@ const selectVideo = (index: number) => {
             <p class="layout__quote-text">“{{ quote.content }}”</p>
             <p class="layout__quote-author">— {{ quote.author }}</p>
           </div>
+        </article>
+        <article class="layout__card">
+          <GameHub />
         </article>
         <article class="layout__card" id="projects">
           <h2 class="layout__card-title">{{ musicTitle }}</h2>

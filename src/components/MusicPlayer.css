@@ -328,13 +328,30 @@
   .player {
     grid-template-columns: 1fr;
     gap: 12px;
+    grid-template-rows: auto auto;
   }
 
   .player__visual {
-    justify-self: center;
+    display: none;
   }
+
+  .player__info {
+    grid-column: 1 / -1;
+  }
+
   .player__controls {
     justify-content: space-between;
+    grid-row: 2;
+  }
+
+  .player__volume {
+    grid-row: 2;
+    justify-self: end;
+    gap: 6px;
+  }
+
+  .player__volume .player__range {
+    width: 110px;
   }
 }
 
