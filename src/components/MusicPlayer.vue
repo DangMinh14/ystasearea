@@ -24,6 +24,7 @@ const volume = ref(0.7)
 const lastVolume = ref(0.7)
 const isListOpen = ref(false)
 const rootRef = ref<HTMLElement | null>(null)
+const hasPickedInitial = ref(false)
 
 const currentTrack = computed(() => props.tracks[currentIndex.value])
 const progress = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0))
@@ -52,6 +53,26 @@ const syncAudio = () => {
   if (isPlaying.value) {
     audio.play()
   }
+}
+
+const initializeRandomTrack = () => {
+  if (hasPickedInitial.value || !props.tracks.length) return false
+  currentIndex.value = Math.floor(Math.random() * props.tracks.length)
+  hasPickedInitial.value = true
+  return true
+}
+
+const attemptAutoPlay = () => {
+  const audio = audioRef.value
+  if (!audio) return
+  audio
+    .play()
+    .then(() => {
+      isPlaying.value = true
+    })
+    .catch(() => {
+      isPlaying.value = false
+    })
 }
 
 const togglePlay = () => {
@@ -187,10 +208,14 @@ watch(currentIndex, () => {
 watch(
   () => props.tracks,
   () => {
+    const didInit = initializeRandomTrack()
     if (currentIndex.value >= props.tracks.length) {
       currentIndex.value = 0
     }
     syncAudio()
+    if (didInit) {
+      attemptAutoPlay()
+    }
   }
 )
 
@@ -199,15 +224,10 @@ onMounted(() => {
   if (audio) {
     audio.volume = volume.value
   }
+  initializeRandomTrack()
   syncAudio()
   document.addEventListener('click', handleClickOutside)
-  if (audio) {
-    audio.play().then(() => {
-      isPlaying.value = true
-    }).catch(() => {
-      isPlaying.value = false
-    })
-  }
+  attemptAutoPlay()
 })
 
 onUnmounted(() => {
