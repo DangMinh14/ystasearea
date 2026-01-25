@@ -5,6 +5,8 @@ import MusicPlayer from './MusicPlayer.vue'
 import SettingsMenu from './SettingsMenu.vue'
 import { translations, type Locale } from '../content/translations'
 import bgVideo from '../assets/bg.mp4'
+import lunarBg from '../assets/lunar-bg.jpg'
+import halloweenBg from '../assets/halloween-bg.jpg'
 import chibi from '../assets/chibi.png'
 import peachBlossom from '../assets/peach-blossom.png'
 import './PageShell.css'
@@ -63,6 +65,8 @@ const mp3Tracks = Object.entries(mp3Modules)
   .sort((a, b) => a.title.localeCompare(b.title))
 
 const t = computed(() => translations[locale.value])
+const isLunarTheme = computed(() => theme.value === 'lunar')
+const isHalloweenTheme = computed(() => theme.value === 'halloween')
 
 const formattedTime = computed(() =>
   new Intl.DateTimeFormat(locale.value === 'vi' ? 'vi-VN' : 'en-US', {
@@ -273,18 +277,52 @@ watch(weatherLocation, () => {
 <template>
   <main class="app" id="home">
     <div class="app__background" aria-hidden="true">
-      <video class="app__video" :src="bgVideo" autoplay muted loop playsinline></video>
+      <img
+        v-if="isLunarTheme"
+        class="app__video"
+        :src="lunarBg"
+        alt=""
+        loading="lazy"
+      />
+      <img
+        v-else-if="isHalloweenTheme"
+        class="app__video"
+        :src="halloweenBg"
+        alt=""
+        loading="lazy"
+      />
+      <video
+        v-else
+        class="app__video"
+        :src="bgVideo"
+        autoplay
+        muted
+        loop
+        playsinline
+      ></video>
     </div>
     <div class="app__overlay" aria-hidden="true"></div>
     <div class="app__decorations app__decorations--lunar" aria-hidden="true">
       <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
       <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
       <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
       <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
       <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
       <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
       <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
       <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
+      <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
+      <span class="app__petal"></span>
+      <span class="app__petal app__petal--apricot"></span>
     </div>
     <div class="app__decorations app__decorations--halloween" aria-hidden="true">
       <span class="app__halloween-item">🎃</span>
