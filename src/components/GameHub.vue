@@ -61,7 +61,6 @@ onUnmounted(() => {
     <header class="game-hub__header">
       <div>
         <h2 class="game-hub__title">Game Hub</h2>
-        <p class="game-hub__subtitle">Chọn một game để chơi.</p>
       </div>
     </header>
 

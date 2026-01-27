@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import CategorySelect from './CategorySelect.vue'
 import './MusicPlayer.css'
 
 type Track = {
   title: string
   url: string
+  category?: string
 }
 
 type PlayerProps = {
@@ -23,8 +25,9 @@ const duration = ref(0)
 const volume = ref(0.7)
 const lastVolume = ref(0.7)
 const isListOpen = ref(false)
-const rootRef = ref<HTMLElement | null>(null)
 const hasPickedInitial = ref(false)
+const activeCategory = ref('all')
+const categoryOptions = [{ value: 'all', label: 'All' }]
 
 const currentTrack = computed(() => props.tracks[currentIndex.value])
 const progress = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0))
@@ -188,18 +191,29 @@ const toggleList = () => {
   isListOpen.value = !isListOpen.value
 }
 
+const closeList = () => {
+  isListOpen.value = false
+}
+
+const handleListKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    closeList()
+  }
+}
+
 const selectTrack = (index: number) => {
   currentIndex.value = index
   isPlaying.value = true
   isListOpen.value = false
 }
 
-const handleClickOutside = (event: MouseEvent) => {
-  if (!rootRef.value) return
-  if (!rootRef.value.contains(event.target as Node)) {
-    isListOpen.value = false
+watch(isListOpen, (value) => {
+  if (value) {
+    window.addEventListener('keydown', handleListKeydown)
+  } else {
+    window.removeEventListener('keydown', handleListKeydown)
   }
-}
+})
 
 watch(currentIndex, () => {
   syncAudio()
@@ -226,17 +240,16 @@ onMounted(() => {
   }
   initializeRandomTrack()
   syncAudio()
-  document.addEventListener('click', handleClickOutside)
   attemptAutoPlay()
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('keydown', handleListKeydown)
 })
 </script>
 
 <template>
-  <div ref="rootRef" class="player">
+  <div class="player">
     <audio ref="audioRef" @timeupdate="handleTimeUpdate" @loadedmetadata="handleTimeUpdate" @ended="handleEnded"></audio>
     <div class="player__decorations" :class="{ 'player__decorations--playing': isPlaying }" aria-hidden="true">
       <span class="player__note player__note--1">♪</span>
@@ -303,30 +316,42 @@ onUnmounted(() => {
       >
         <i class="fa-solid" :class="repeatMode === 'one' ? 'fa-1' : 'fa-repeat'" aria-hidden="true"></i>
       </button>
-      <div class="player__list-wrapper">
-        <button class="player__button" type="button" title="Danh sách bài hát" @click="toggleList">
-          <i class="fa-solid fa-list" aria-hidden="true"></i>
-        </button>
-        <div v-if="isListOpen" class="player__list">
-          <div class="player__list-header">
-            <span class="player__list-title">Playlist</span>
-            <select class="player__list-select" aria-label="Chọn danh mục">
-              <option value="all">All</option>
-            </select>
+      <button class="player__button" type="button" title="Danh sách bài hát" @click="toggleList">
+        <i class="fa-solid fa-list" aria-hidden="true"></i>
+      </button>
+    </div>
+    <teleport to="body">
+      <div v-if="isListOpen" class="player-modal" role="dialog" aria-modal="true" aria-label="Danh sách bài hát">
+        <div class="player-modal__backdrop" @click="closeList"></div>
+        <div class="player-modal__panel" role="document">
+          <div class="player-modal__header">
+            <div>
+              <p class="player-modal__eyebrow">Playlist</p>
+              <h3 class="player-modal__title">Danh sách bài hát</h3>
+            </div>
+            <button class="player-modal__close" type="button" @click="closeList">Đóng</button>
           </div>
-          <button
-            v-for="(track, index) in tracks"
-            :key="track.url"
-            class="player__list-item"
-            :class="{ 'player__list-item--active': index === currentIndex }"
-            type="button"
-            @click="selectTrack(index)"
-          >
-            {{ track.title }}
-          </button>
+          <div class="player-modal__content">
+            <div class="player__list-header">
+              <span class="player__list-title">Chọn danh mục</span>
+              <CategorySelect v-model="activeCategory" :options="categoryOptions" aria-label="Chọn danh mục" />
+            </div>
+            <div class="player__list">
+              <button
+                v-for="(track, index) in tracks"
+                :key="track.url"
+                class="player__list-item"
+                :class="{ 'player__list-item--active': index === currentIndex }"
+                type="button"
+                @click="selectTrack(index)"
+              >
+                {{ track.title }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </teleport>
     <div class="player__volume">
       <button
         class="player__button player__button--ghost"
