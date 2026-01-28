@@ -3,6 +3,34 @@
   flex-direction: column;
   gap: 24px;
   position: relative;
+  max-height: calc(100% - 32px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 32px clamp(16px, 4vw, 32px) 120px;
+  padding-right: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.layout::-webkit-scrollbar {
+  width: 10px;
+}
+
+.layout::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 999px;
+}
+
+.layout::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.layout::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: content-box;
 }
 
 /* Header/footer moved to PageShell */
@@ -308,6 +336,12 @@
 /* footer removed */
 
 @media (max-width: 900px) {
+  .layout {
+    max-height: calc(100% - 24px - 180px);
+    margin: 24px 16px 180px;
+    padding-right: 8px;
+  }
+
   .layout__body {
     grid-template-columns: 1fr;
   }

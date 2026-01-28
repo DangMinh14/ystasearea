@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import PageShell from '../components/PageShell.vue'
+import MainLayout from '../components/MainLayout.vue'
 </script>
 
 <template>
-  <PageShell />
+  <MainLayout />
 </template>
