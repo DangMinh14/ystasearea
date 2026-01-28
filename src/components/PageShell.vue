@@ -308,7 +308,88 @@ watch(weatherLocation, () => {
 </script>
 
 <template>
-  <main class="app" id="home">
+  <div class="app-shell">
+    <header class="app__header">
+      <RouterLink class="app__brand" to="/home">
+        <p class="app__eyebrow">{{ t.headerEyebrow }}</p>
+        <h1 v-if="t.headerTitle" class="app__title">{{ t.headerTitle }}</h1>
+        <img
+          v-if="theme === 'lunar'"
+          class="app__header-peach"
+          :src="peachBlossom"
+          alt="Peach blossom"
+          loading="lazy"
+        />
+      </RouterLink>
+      <button
+        class="app__nav-toggle"
+        type="button"
+        :aria-expanded="isNavOpen"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation"
+        @click="toggleNav"
+      >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        <span class="app__nav-toggle-text">Menu</span>
+      </button>
+      <nav
+        id="primary-navigation"
+        class="app__nav"
+        :class="{ 'app__nav--open': isNavOpen }"
+      >
+        <RouterLink class="app__nav-link" to="/home" @click="isNavOpen = false">
+          {{ t.navHome }}
+        </RouterLink>
+        <RouterLink class="app__nav-link" to="/posts" @click="isNavOpen = false">
+          {{ t.navPosts }}
+        </RouterLink>
+        <RouterLink class="app__nav-link" to="/home#projects" @click="isNavOpen = false">
+          {{ t.navProjects }}
+        </RouterLink>
+        <RouterLink class="app__nav-link" to="/home#contact" @click="isNavOpen = false">
+          {{ t.navContact }}
+        </RouterLink>
+      </nav>
+      <div class="app__header-actions">
+        <SettingsMenu
+          :label="t.settingsLabel"
+          :theme-label="t.themeLabel"
+          :theme-select-label="t.themeSelectLabel"
+          :language-label="t.languageLabel"
+          :current-theme="theme"
+          :theme-options="[
+            { value: 'light', label: t.lightLabel, icon: 'sun' },
+            { value: 'dark', label: t.darkLabel, icon: 'moon' },
+            { value: 'christmas', label: t.christmasLabel, icon: 'tree' },
+            { value: 'lunar', label: t.lunarLabel, icon: 'sparkles' },
+            { value: 'halloween', label: t.halloweenLabel, icon: 'pumpkin' },
+          ]"
+          :current-locale="locale"
+          @change-theme="setTheme"
+          @change-locale="changeLocale"
+        />
+      </div>
+    </header>
+    <div class="app__settings-mobile">
+      <SettingsMenu
+        label="⚙️"
+        :theme-label="t.themeLabel"
+        :theme-select-label="t.themeSelectLabel"
+        :language-label="t.languageLabel"
+        :current-theme="theme"
+        :theme-options="[
+          { value: 'light', label: t.lightLabel, icon: 'sun' },
+          { value: 'dark', label: t.darkLabel, icon: 'moon' },
+          { value: 'christmas', label: t.christmasLabel, icon: 'tree' },
+          { value: 'lunar', label: t.lunarLabel, icon: 'sparkles' },
+          { value: 'halloween', label: t.halloweenLabel, icon: 'pumpkin' },
+        ]"
+        :current-locale="locale"
+        @change-theme="setTheme"
+        @change-locale="changeLocale"
+      />
+    </div>
+    <main class="app" id="home">
     <div class="app__background" aria-hidden="true">
       <img
         v-if="isLunarTheme"
@@ -434,86 +515,7 @@ watch(weatherLocation, () => {
         </div>
       </div>
     </aside>
-    <header class="app__header">
-      <RouterLink class="app__brand" to="/home">
-        <p class="app__eyebrow">{{ t.headerEyebrow }}</p>
-        <h1 v-if="t.headerTitle" class="app__title">{{ t.headerTitle }}</h1>
-        <img
-          v-if="theme === 'lunar'"
-          class="app__header-peach"
-          :src="peachBlossom"
-          alt="Peach blossom"
-          loading="lazy"
-        />
-      </RouterLink>
-      <button
-        class="app__nav-toggle"
-        type="button"
-        :aria-expanded="isNavOpen"
-        aria-controls="primary-navigation"
-        aria-label="Toggle navigation"
-        @click="toggleNav"
-      >
-        <i class="fa-solid fa-bars" aria-hidden="true"></i>
-        <span class="app__nav-toggle-text">Menu</span>
-      </button>
-      <nav
-        id="primary-navigation"
-        class="app__nav"
-        :class="{ 'app__nav--open': isNavOpen }"
-      >
-        <RouterLink class="app__nav-link" to="/home" @click="isNavOpen = false">
-          {{ t.navHome }}
-        </RouterLink>
-        <RouterLink class="app__nav-link" to="/posts" @click="isNavOpen = false">
-          {{ t.navPosts }}
-        </RouterLink>
-        <RouterLink class="app__nav-link" to="/home#projects" @click="isNavOpen = false">
-          {{ t.navProjects }}
-        </RouterLink>
-        <RouterLink class="app__nav-link" to="/home#contact" @click="isNavOpen = false">
-          {{ t.navContact }}
-        </RouterLink>
-      </nav>
-      <div class="app__header-actions">
-        <SettingsMenu
-          :label="t.settingsLabel"
-          :theme-label="t.themeLabel"
-          :theme-select-label="t.themeSelectLabel"
-          :language-label="t.languageLabel"
-          :current-theme="theme"
-          :theme-options="[
-            { value: 'light', label: t.lightLabel, icon: 'sun' },
-            { value: 'dark', label: t.darkLabel, icon: 'moon' },
-            { value: 'christmas', label: t.christmasLabel, icon: 'tree' },
-            { value: 'lunar', label: t.lunarLabel, icon: 'sparkles' },
-            { value: 'halloween', label: t.halloweenLabel, icon: 'pumpkin' },
-          ]"
-          :current-locale="locale"
-          @change-theme="setTheme"
-          @change-locale="changeLocale"
-        />
-      </div>
-    </header>
-    <div class="app__settings-mobile">
-      <SettingsMenu
-        label="⚙️"
-        :theme-label="t.themeLabel"
-        :theme-select-label="t.themeSelectLabel"
-        :language-label="t.languageLabel"
-        :current-theme="theme"
-        :theme-options="[
-          { value: 'light', label: t.lightLabel, icon: 'sun' },
-          { value: 'dark', label: t.darkLabel, icon: 'moon' },
-          { value: 'christmas', label: t.christmasLabel, icon: 'tree' },
-          { value: 'lunar', label: t.lunarLabel, icon: 'sparkles' },
-          { value: 'halloween', label: t.halloweenLabel, icon: 'pumpkin' },
-        ]"
-        :current-locale="locale"
-        @change-theme="setTheme"
-        @change-locale="changeLocale"
-      />
-    </div>
     <slot />
-  </main>
+    </main>
+  </div>
 </template>
