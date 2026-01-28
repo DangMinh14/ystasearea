@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import MainLayout from './MainLayout.vue'
+import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import MusicPlayer from './MusicPlayer.vue'
 import SettingsMenu from './SettingsMenu.vue'
 import { translations, type Locale } from '../content/translations'
+import { pageShellContextKey, type PageShellContext } from '../composables/pageShellContext'
 import bgVideo from '../assets/bg.mp4'
 import lunarBg from '../assets/lunar-bg.jpg'
 import halloweenBg from '../assets/halloween-bg.jpg'
@@ -239,6 +239,39 @@ const loadWeather = async () => {
   }
 }
 
+const context: PageShellContext = {
+  catImageUrl,
+  catTitle: computed(() => t.value.catTitle),
+  catButton: computed(() => t.value.catButton),
+  catLoading,
+  catLoadingText: computed(() => t.value.catLoading),
+  dogImageUrl,
+  dogTitle: computed(() => t.value.dogTitle),
+  dogButton: computed(() => t.value.dogButton),
+  dogLoading,
+  dogLoadingText: computed(() => t.value.dogLoading),
+  dailyQuoteTitle: computed(() => t.value.dailyQuoteTitle),
+  dailyQuoteLoading: computed(() => t.value.dailyQuoteLoading),
+  dailyQuoteError: computed(() => t.value.dailyQuoteError),
+  quote,
+  quoteLoading,
+  quoteError,
+  musicTitle: computed(() => t.value.musicTitle),
+  musicText: computed(() => t.value.musicText),
+  playerPrev: computed(() => t.value.playerPrev),
+  playerNext: computed(() => t.value.playerNext),
+  playlistLabel: computed(() => t.value.playlistLabel),
+  playlist,
+  currentVideoIndex,
+  onNextVideo: goNextVideo,
+  onPrevVideo: goPrevVideo,
+  onSelectVideo: selectVideo,
+  onRefreshCat: loadCatImage,
+  onRefreshDog: loadDogImage,
+}
+
+provide(pageShellContextKey, context)
+
 onMounted(() => {
   const savedTheme = localStorage.getItem(THEME_KEY)
   if (
@@ -429,18 +462,18 @@ watch(weatherLocation, () => {
         class="app__nav"
         :class="{ 'app__nav--open': isNavOpen }"
       >
-        <a class="app__nav-link" href="#home" @click="isNavOpen = false">
+        <RouterLink class="app__nav-link" to="/home" @click="isNavOpen = false">
           {{ t.navHome }}
-        </a>
-        <a class="app__nav-link" href="#posts" @click="isNavOpen = false">
+        </RouterLink>
+        <RouterLink class="app__nav-link" to="/posts" @click="isNavOpen = false">
           {{ t.navPosts }}
-        </a>
-        <a class="app__nav-link" href="#projects" @click="isNavOpen = false">
+        </RouterLink>
+        <RouterLink class="app__nav-link" to="/home#projects" @click="isNavOpen = false">
           {{ t.navProjects }}
-        </a>
-        <a class="app__nav-link" href="#contact" @click="isNavOpen = false">
+        </RouterLink>
+        <RouterLink class="app__nav-link" to="/home#contact" @click="isNavOpen = false">
           {{ t.navContact }}
-        </a>
+        </RouterLink>
       </nav>
       <div class="app__header-actions">
         <SettingsMenu
@@ -481,35 +514,6 @@ watch(weatherLocation, () => {
         @change-locale="changeLocale"
       />
     </div>
-    <MainLayout
-      :cat-image-url="catImageUrl"
-      :cat-title="t.catTitle"
-      :cat-button="t.catButton"
-      :cat-loading="catLoading"
-      :cat-loading-text="t.catLoading"
-      :dog-image-url="dogImageUrl"
-      :dog-title="t.dogTitle"
-      :dog-button="t.dogButton"
-      :dog-loading="dogLoading"
-      :dog-loading-text="t.dogLoading"
-      :daily-quote-title="t.dailyQuoteTitle"
-      :daily-quote-loading="t.dailyQuoteLoading"
-      :daily-quote-error="t.dailyQuoteError"
-      :quote="quote"
-      :quote-loading="quoteLoading"
-      :quote-error="quoteError"
-      :music-title="t.musicTitle"
-      :music-text="t.musicText"
-      :player-prev="t.playerPrev"
-      :player-next="t.playerNext"
-      :playlist-label="t.playlistLabel"
-      :playlist="playlist"
-      :current-video-index="currentVideoIndex"
-      @next-video="goNextVideo"
-      @prev-video="goPrevVideo"
-      @select-video="selectVideo"
-      @refresh-cat="loadCatImage"
-      @refresh-dog="loadDogImage"
-    />
+    <slot />
   </main>
 </template>

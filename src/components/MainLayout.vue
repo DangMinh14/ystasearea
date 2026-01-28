@@ -1,56 +1,26 @@
 <script setup lang="ts">
+import { inject } from 'vue'
 import GameHub from './GameHub.vue'
 import './MainLayout.css'
+import { pageShellContextKey, type PageShellContext } from '../composables/pageShellContext'
 
-const emit = defineEmits<{
-  (e: 'hello'): void
-  (e: 'next-video'): void
-  (e: 'prev-video'): void
-  (e: 'select-video', index: number): void
-  (e: 'refresh-cat'): void
-  (e: 'refresh-dog'): void
-}>()
+const shell = inject<PageShellContext>(pageShellContextKey)
 
-type MainLayoutProps = {
-  catImageUrl: string
-  catTitle: string
-  catButton: string
-  catLoading: boolean
-  catLoadingText: string
-  dogImageUrl: string
-  dogTitle: string
-  dogButton: string
-  dogLoading: boolean
-  dogLoadingText: string
-  dailyQuoteTitle: string
-  dailyQuoteLoading: string
-  dailyQuoteError: string
-  quote: { content: string; author: string } | null
-  quoteLoading: boolean
-  quoteError: string
-  musicTitle: string
-  musicText: string
-  playerPrev: string
-  playerNext: string
-  playlistLabel: string
-  playlist: { id: string; title: string }[]
-  currentVideoIndex: number
+if (!shell) {
+  throw new Error('MainLayout requires PageShell context.')
 }
 
-defineProps<MainLayoutProps>()
-
 const nextVideo = () => {
-  emit('next-video')
+  shell.onNextVideo()
 }
 
 const prevVideo = () => {
-  emit('prev-video')
+  shell.onPrevVideo()
 }
 
 const selectVideo = (index: number) => {
-  emit('select-video', index)
+  shell.onSelectVideo(index)
 }
-
 </script>
 
 <template>
@@ -59,21 +29,21 @@ const selectVideo = (index: number) => {
       <aside class="layout__sidebar">
         <div class="layout__cat" id="contact">
           <div class="layout__cat-header">
-            <p class="layout__cat-title">{{ catTitle }}</p>
-            <button class="layout__cat-button" type="button" @click="emit('refresh-cat')">
-              {{ catButton }}
+            <p class="layout__cat-title">{{ shell.catTitle.value }}</p>
+            <button class="layout__cat-button" type="button" @click="shell.onRefreshCat">
+              {{ shell.catButton.value }}
             </button>
           </div>
-          <div v-if="catLoading" class="layout__cat-loading">
+          <div v-if="shell.catLoading.value" class="layout__cat-loading">
             <span class="layout__cat-spinner" aria-hidden="true"></span>
-            <span class="layout__cat-loading-text">{{ catLoadingText }}</span>
+            <span class="layout__cat-loading-text">{{ shell.catLoadingText.value }}</span>
           </div>
           <div v-else class="layout__cat-media">
-            <div v-if="!catImageUrl" class="layout__cat-skeleton"></div>
+            <div v-if="!shell.catImageUrl.value" class="layout__cat-skeleton"></div>
             <img
               v-else
               class="layout__cat-image"
-              :src="catImageUrl"
+              :src="shell.catImageUrl.value"
               alt="Random cat"
               loading="lazy"
             />
@@ -81,21 +51,21 @@ const selectVideo = (index: number) => {
         </div>
         <div class="layout__cat layout__cat--dog">
           <div class="layout__cat-header">
-            <p class="layout__cat-title">{{ dogTitle }}</p>
-            <button class="layout__cat-button" type="button" @click="emit('refresh-dog')">
-              {{ dogButton }}
+            <p class="layout__cat-title">{{ shell.dogTitle.value }}</p>
+            <button class="layout__cat-button" type="button" @click="shell.onRefreshDog">
+              {{ shell.dogButton.value }}
             </button>
           </div>
-          <div v-if="dogLoading" class="layout__cat-loading">
+          <div v-if="shell.dogLoading.value" class="layout__cat-loading">
             <span class="layout__cat-spinner" aria-hidden="true"></span>
-            <span class="layout__cat-loading-text">{{ dogLoadingText }}</span>
+            <span class="layout__cat-loading-text">{{ shell.dogLoadingText.value }}</span>
           </div>
           <div v-else class="layout__cat-media">
-            <div v-if="!dogImageUrl" class="layout__cat-skeleton"></div>
+            <div v-if="!shell.dogImageUrl.value" class="layout__cat-skeleton"></div>
             <img
               v-else
               class="layout__cat-image"
-              :src="dogImageUrl"
+              :src="shell.dogImageUrl.value"
               alt="Random dog"
               loading="lazy"
             />
@@ -105,31 +75,35 @@ const selectVideo = (index: number) => {
 
       <section class="layout__content">
         <article class="layout__card layout__quote" id="posts">
-          <h2 class="layout__card-title">{{ dailyQuoteTitle }}</h2>
-          <p v-if="quoteLoading" class="layout__card-text">{{ dailyQuoteLoading }}</p>
-          <p v-else-if="quoteError" class="layout__card-text">{{ dailyQuoteError }}</p>
-          <div v-else-if="quote" class="layout__quote-body">
-            <p class="layout__quote-text">“{{ quote.content }}”</p>
-            <p class="layout__quote-author">— {{ quote.author }}</p>
+          <h2 class="layout__card-title">{{ shell.dailyQuoteTitle.value }}</h2>
+          <p v-if="shell.quoteLoading.value" class="layout__card-text">
+            {{ shell.dailyQuoteLoading.value }}
+          </p>
+          <p v-else-if="shell.quoteError.value" class="layout__card-text">
+            {{ shell.dailyQuoteError.value }}
+          </p>
+          <div v-else-if="shell.quote.value" class="layout__quote-body">
+            <p class="layout__quote-text">“{{ shell.quote.value.content }}”</p>
+            <p class="layout__quote-author">— {{ shell.quote.value.author }}</p>
           </div>
         </article>
         <article class="layout__card">
           <GameHub />
         </article>
         <article class="layout__card" id="projects">
-          <h2 class="layout__card-title">{{ musicTitle }}</h2>
-          <p class="layout__card-text">{{ musicText }}</p>
+          <h2 class="layout__card-title">{{ shell.musicTitle.value }}</h2>
+          <p class="layout__card-text">{{ shell.musicText.value }}</p>
           <div class="layout__player-controls">
             <button class="layout__button layout__button--ghost" type="button" @click="prevVideo">
-              {{ playerPrev }}
+              {{ shell.playerPrev.value }}
             </button>
             <button class="layout__button layout__button--primary" type="button" @click="nextVideo">
-              {{ playerNext }}
+              {{ shell.playerNext.value }}
             </button>
           </div>
           <div class="layout__player">
             <iframe
-              :src="`https://www.youtube.com/embed/${playlist[currentVideoIndex]?.id}`"
+              :src="`https://www.youtube.com/embed/${shell.playlist[shell.currentVideoIndex.value]?.id}`"
               title="YouTube music player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen
@@ -137,14 +111,14 @@ const selectVideo = (index: number) => {
             ></iframe>
           </div>
           <div class="layout__playlist">
-            <p class="layout__playlist-title">{{ playlistLabel }}</p>
+            <p class="layout__playlist-title">{{ shell.playlistLabel.value }}</p>
             <div class="layout__playlist-grid">
               <button
-                v-for="(video, index) in playlist"
+                v-for="(video, index) in shell.playlist"
                 :key="video.id"
                 class="layout__playlist-item"
                 type="button"
-                :aria-pressed="index === currentVideoIndex"
+                :aria-pressed="index === shell.currentVideoIndex.value"
                 @click="selectVideo(index)"
               >
                 <img
