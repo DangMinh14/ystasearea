@@ -1,0 +1,27 @@
+.games {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.games__grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+.games__card {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.games__action {
+  justify-self: start;
+}
+
+.games__modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}

@@ -1,0 +1,111 @@
+.snake {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.snake__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.snake__title {
+  margin: 0 0 var(--space-1);
+}
+
+.snake__subtitle {
+  color: var(--text-secondary);
+}
+
+.snake__modes {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.snake__mode,
+.snake__button {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  background: var(--surface-3);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.snake__mode--active,
+.snake__button {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.snake__button--ghost {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.snake__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.snake__score {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--surface-3);
+}
+
+.snake__board {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-3);
+}
+
+.snake__canvas {
+  width: min(360px, 100%);
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+.snake__event {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-2);
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(15, 23, 42, 0.82);
+}
+
+.snake__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.65);
+  border-radius: var(--radius-md);
+}
+
+.snake__overlay-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-2);
+  text-align: center;
+  background: var(--surface-2);
+}
+
+.snake__over-text {
+  color: var(--text-secondary);
+}

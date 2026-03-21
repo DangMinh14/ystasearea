@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import PageShell from './components/PageShell.vue'
+import AppShell from './components/layout/AppShell.vue'
 </script>
 
 <template>
   <RouterView v-slot="{ Component, route }">
-    <PageShell v-if="route.meta.shell !== false">
+    <AppShell v-if="route.meta.shell !== false">
       <component :is="Component" />
-    </PageShell>
-    <component v-else :is="Component" />
+    </AppShell>
+    <component :is="Component" v-else />
   </RouterView>
 </template>
