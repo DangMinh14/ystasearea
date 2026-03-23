@@ -681,10 +681,19 @@ const writeSkills = (ctx: PdfContext, cursor: PdfCursor, resume: CvResume, varia
   items.forEach((item, index) => {
     const label = item.name.trim() || ctx.labels.untitled
     
-    // In classic, it is inline! Use different renderer if useBullets false? No, classic uses one line.
-    if (ctx.layout.template === 'classic') {
-       const detail = (nonEmpty(item.level) ? `(${item.level}): ` : ': ') + nonEmptyList(item.keywords).join(', ')
-       writeStackedEntry(ctx, cursor, label, [detail], compact)
+    // In classic and minimal, rendering is inline
+    if (ctx.layout.template === 'classic' || ctx.layout.template === 'minimal') {
+       const hasLevel = nonEmpty(item.level)
+       const keywords = nonEmptyList(item.keywords).join(', ')
+       const extra = hasLevel ? ` (${item.level.trim()})` : ''
+       const text = `${label}${extra}: ${keywords}`
+       
+       writeWrapped(ctx, cursor, text, {
+         fontSize: compact ? ctx.layout.fontSizes.meta : ctx.layout.fontSizes.body,
+         lineFactor: ctx.layout.lineHeight.normal,
+         color: ctx.theme.text,
+         gapAfter: 0,
+       })
     } else {
        const details = [item.level.trim(), nonEmptyList(item.keywords).join(' • ')].filter((entry) => entry.length > 0)
        writeStackedEntry(ctx, cursor, label, details, compact)
@@ -709,8 +718,16 @@ const writeLanguages = (ctx: PdfContext, cursor: PdfCursor, resume: CvResume, va
   items.forEach((item, index) => {
     const label = item.language.trim() || ctx.labels.untitled
     if (ctx.layout.template === 'classic' || ctx.layout.template === 'minimal') {
-       const details = [`— ${item.fluency.trim()}` + (nonEmpty(item.certificate ?? '') ? ` (${item.certificate})` : '')]
-       writeStackedEntry(ctx, cursor, label, details, compact)
+       const hasCert = nonEmpty(item.certificate ?? '')
+       const extra = hasCert ? ` (${item.certificate?.trim()})` : ''
+       const text = `${label} — ${item.fluency.trim()}${extra}`
+       
+       writeWrapped(ctx, cursor, text, {
+         fontSize: compact ? ctx.layout.fontSizes.meta : ctx.layout.fontSizes.body,
+         lineFactor: ctx.layout.lineHeight.normal,
+         color: ctx.theme.text,
+         gapAfter: 0,
+       })
     } else {
        const details = [item.fluency.trim(), item.certificate?.trim() ?? ''].filter((entry) => entry.length > 0)
        writeStackedEntry(ctx, cursor, label, details, compact)
@@ -742,7 +759,13 @@ const writeProfiles = (ctx: PdfContext, cursor: PdfCursor, resume: CvResume, var
     const url = item.url.trim()
     
     if (ctx.layout.template === 'classic' || ctx.layout.template === 'minimal') {
-       writeStackedEntry(ctx, cursor, label, [`: ${url}`], compact)
+       const text = `${label}: ${url}`
+       writeWrapped(ctx, cursor, text, {
+         fontSize: compact ? ctx.layout.fontSizes.meta : ctx.layout.fontSizes.body,
+         lineFactor: ctx.layout.lineHeight.normal,
+         color: ctx.theme.text,
+         gapAfter: 0,
+       })
     } else {
        writeLabeledValue(ctx, cursor, label, url, compact)
     }
