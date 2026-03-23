@@ -8,10 +8,14 @@ const props = withDefaults(
     closeOnBackdrop?: boolean
     closeOnEsc?: boolean
     ariaLabel: string
+    panelWidth?: string
+    panelClass?: string
   }>(),
   {
     closeOnBackdrop: true,
     closeOnEsc: true,
+    panelWidth: 'min(960px, 94vw)',
+    panelClass: '',
   }
 )
 
@@ -97,7 +101,7 @@ onUnmounted(() => {
   <teleport to="body">
     <div v-if="modelValue" class="ui-modal" role="dialog" aria-modal="true" :aria-label="ariaLabel">
       <div class="ui-modal__backdrop" @click="onBackdrop"></div>
-      <section ref="panelRef" class="ui-modal__panel scrollbar-thin" tabindex="-1">
+      <section ref="panelRef" class="ui-modal__panel scrollbar-thin" :class="panelClass || undefined" :style="{ width: panelWidth }" tabindex="-1">
         <slot />
       </section>
     </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import UiButton from '../ui/UiButton.vue'
 import type { AppTheme } from '../../composables/useThemeSettings'
 import type { Locale } from '../../content/translations'
@@ -27,9 +27,18 @@ const emit = defineEmits<{
 
 const navOpen = ref(false)
 const settingsOpen = ref(false)
+const settingsAnchorRef = ref<HTMLElement | null>(null)
+const settingsMenuRef = ref<HTMLElement | null>(null)
 
-const toggleSettings = () => {
+const MENU_GAP = 8
+const VIEWPORT_MARGIN = 12
+
+const toggleSettings = async () => {
   settingsOpen.value = !settingsOpen.value
+  if (settingsOpen.value) {
+    await nextTick()
+    updateMenuPosition()
+  }
 }
 
 const toggleNav = () => {
@@ -40,6 +49,10 @@ const closeNav = () => {
   navOpen.value = false
 }
 
+const closeSettings = () => {
+  settingsOpen.value = false
+}
+
 const onThemeChange = (event: Event) => {
   const target = event.target as HTMLSelectElement
   emit('change-theme', target.value as AppTheme)
@@ -48,6 +61,64 @@ const onThemeChange = (event: Event) => {
 const chooseLocale = (locale: Locale) => {
   emit('change-locale', locale)
 }
+
+const updateMenuPosition = () => {
+  if (!settingsOpen.value) return
+
+  const anchor = settingsAnchorRef.value
+  const menu = settingsMenuRef.value
+  if (!anchor || !menu) return
+
+  const anchorRect = anchor.getBoundingClientRect()
+  const menuWidth = menu.offsetWidth || 240
+  const maxLeft = window.innerWidth - menuWidth - VIEWPORT_MARGIN
+
+  const top = anchorRect.bottom + MENU_GAP
+  const left = Math.max(VIEWPORT_MARGIN, Math.min(anchorRect.right - menuWidth, maxLeft))
+
+  menu.style.top = `${top}px`
+  menu.style.left = `${left}px`
+}
+
+const handleDocumentClick = (event: MouseEvent) => {
+  if (!settingsOpen.value) return
+
+  const target = event.target as Node
+  const anchor = settingsAnchorRef.value
+  const menu = settingsMenuRef.value
+
+  if (!anchor || !menu) return
+
+  if (!anchor.contains(target) && !menu.contains(target)) {
+    closeSettings()
+  }
+}
+
+const handleEscape = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && settingsOpen.value) {
+    closeSettings()
+  }
+}
+
+watch(settingsOpen, async (isOpen) => {
+  if (!isOpen) return
+  await nextTick()
+  updateMenuPosition()
+})
+
+onMounted(() => {
+  document.addEventListener('mousedown', handleDocumentClick)
+  window.addEventListener('resize', updateMenuPosition)
+  window.addEventListener('scroll', updateMenuPosition, true)
+  window.addEventListener('keydown', handleEscape)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('mousedown', handleDocumentClick)
+  window.removeEventListener('resize', updateMenuPosition)
+  window.removeEventListener('scroll', updateMenuPosition, true)
+  window.removeEventListener('keydown', handleEscape)
+})
 </script>
 
 <template>
@@ -71,9 +142,12 @@ const chooseLocale = (locale: Locale) => {
       @close="closeNav"
     />
 
-    <div class="app-header__settings">
+    <div ref="settingsAnchorRef" class="app-header__settings">
       <UiButton variant="ghost" size="sm" @click="toggleSettings">{{ settingsLabel }}</UiButton>
-      <div v-if="settingsOpen" class="app-header__settings-menu surface">
+    </div>
+
+    <Teleport to="body">
+      <div v-if="settingsOpen" ref="settingsMenuRef" class="app-header__settings-menu surface" role="dialog" aria-modal="false">
         <label class="app-header__field">
           <span class="text-muted">{{ themeSelectLabel }}</span>
           <select class="ui-select" :value="currentTheme" @change="onThemeChange">
@@ -105,6 +179,6 @@ const chooseLocale = (locale: Locale) => {
           </div>
         </div>
       </div>
-    </div>
+    </Teleport>
   </header>
 </template>

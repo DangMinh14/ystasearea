@@ -26,9 +26,10 @@
   --bp-xl: 1280px;
 
   --z-base: 1;
-  --z-header: 40;
-  --z-drawer: 60;
-  --z-modal: 90;
+  --z-header: 100;
+  --z-dropdown: 1200;
+  --z-drawer: 400;
+  --z-modal: 2000;
 
   --background-primary: #f4f3ff;
   --background-card: rgba(255, 255, 255, 0.82);
@@ -177,3 +178,6 @@
   --surface-3: var(--background-soft);
   --accent: var(--accent-color);
 }
+
+
+

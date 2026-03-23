@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, provide } from 'vue'
+import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import AppHeader from './AppHeader.vue'
 import AppSidebarWidgets from './AppSidebarWidgets.vue'
 import AppFooter from './AppFooter.vue'
@@ -22,6 +23,18 @@ const { quote, quoteLoading, quoteError, loadQuote } = useQuote()
 const { weather, weatherLoading, weatherError, weatherLocation, weatherLocations, loadWeather } = useWeather()
 const { catImageUrl, catLoading, dogImageUrl, dogLoading, loadCatImage, loadDogImage } = useMediaWidgets()
 const { playlist, currentVideoIndex, currentVideo, onNextVideo, onPrevVideo, onSelectVideo, mp3Tracks } = usePlaylist()
+const route = useRoute()
+const showBackToTop = ref(false)
+
+const isSidebarVisible = computed(() => route.meta.showSidebar === true)
+
+const onWindowScroll = () => {
+  showBackToTop.value = window.scrollY > 300
+}
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 const context: AppShellContext = {
   locale,
@@ -61,6 +74,12 @@ onMounted(() => {
   loadWeather()
   loadCatImage()
   loadDogImage()
+  onWindowScroll()
+  window.addEventListener('scroll', onWindowScroll, { passive: true })
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onWindowScroll)
 })
 </script>
 
@@ -73,7 +92,7 @@ onMounted(() => {
     </div>
     <div class="app-shell__overlay" aria-hidden="true"></div>
 
-    <div class="container app-shell__content">
+    <div class="app-shell__content">
       <AppHeader
         :brand-name="t.brandName"
         :settings-label="t.settingsLabel"
@@ -97,11 +116,12 @@ onMounted(() => {
         @change-locale="changeLocale"
       />
 
-      <div class="app-shell__main-grid">
+      <div class="app-shell__main-grid" :class="isSidebarVisible ? 'app-shell__main-grid--with-sidebar' : 'app-shell__main-grid--no-sidebar'">
         <main class="app-shell__main page-enter">
           <slot />
         </main>
         <AppSidebarWidgets
+          v-if="isSidebarVisible"
           :quote-title="t.quoteTitle"
           :quote-loading-text="t.quoteLoading"
           :quote-error-text="t.quoteError"
@@ -139,5 +159,11 @@ onMounted(() => {
     </div>
 
     <img class="app-shell__chibi" :src="chibi" alt="Chibi decoration" loading="lazy" />
+
+    <Transition name="back-to-top">
+      <button v-if="showBackToTop" class="app-back-to-top" type="button" :aria-label="t.backToTopLabel" @click="scrollToTop">
+        <span aria-hidden="true">↑</span>
+      </button>
+    </Transition>
   </div>
 </template>
