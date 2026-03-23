@@ -34,7 +34,7 @@ defineProps<{
           <h3>{{ work.position || t.cvUntitled }}</h3>
           <span>{{ formatRange(work.startDate, work.endDate) }}</span>
         </div>
-        <p class="cv-subline">{{ work.name }} <span v-if="nonEmpty(work.url)">• {{ work.url }}</span></p>
+        <p class="cv-subline">{{ work.name }} <span v-if="nonEmpty(work.url)">· {{ work.url }}</span></p>
         <p v-if="nonEmpty(work.summary)">{{ work.summary }}</p>
         <ul v-if="nonEmptyList(work.highlights).length > 0" class="cv-bullets">
           <li v-for="(highlight, highlightIndex) in nonEmptyList(work.highlights)" :key="`work-${index}-highlight-${highlightIndex}`">
@@ -75,42 +75,42 @@ defineProps<{
         </div>
         <p class="cv-subline">
           {{ education.studyType }}
-          <span v-if="nonEmpty(education.area)">• {{ education.area }}</span>
-          <span v-if="nonEmpty(education.score)">• {{ t.cvFieldGpa }}: {{ education.score }}</span>
+          <span v-if="nonEmpty(education.area)">· {{ education.area }}</span>
+          <span v-if="nonEmpty(education.score)">· {{ t.cvFieldGpa }}: {{ education.score }}</span>
         </p>
         <p v-if="nonEmpty(education.url)">{{ education.url }}</p>
-        <p v-if="nonEmptyList(education.courses).length > 0">{{ nonEmptyList(education.courses).join(' • ') }}</p>
+        <p v-if="nonEmptyList(education.courses).length > 0">{{ nonEmptyList(education.courses).join(' · ') }}</p>
       </div>
     </section>
 
     <section class="cv-section" v-if="cv.skills.length > 0">
       <h2>{{ t.cvSectionSkills }}</h2>
-      <ul class="cv-pill-list">
+      <ul class="cv-clean-list">
         <li v-for="(skill, index) in cv.skills" :key="`skill-${index}`" v-show="nonEmpty(skill.name) || nonEmptyList(skill.keywords).length > 0">
           <strong>{{ skill.name || t.cvUntitled }}</strong>
-          <span v-if="nonEmpty(skill.level)">({{ skill.level }})</span>:
-          <span>{{ nonEmptyList(skill.keywords).join(', ') }}</span>
+          <span v-if="nonEmpty(skill.level)"> ({{ skill.level }})</span>:
+          {{ nonEmptyList(skill.keywords).join(', ') }}
         </li>
       </ul>
     </section>
 
     <section class="cv-section" v-if="cv.languages.length > 0">
       <h2>{{ t.cvSectionLanguages }}</h2>
-      <ul class="cv-pill-list">
+      <ul class="cv-clean-list">
         <li
           v-for="(language, index) in cv.languages"
           :key="`language-${index}`"
           v-show="nonEmpty(language.language) || nonEmpty(language.fluency) || nonEmpty(language.certificate || '')"
         >
-          {{ language.language || t.cvUntitled }} - {{ language.fluency }}
-          <span v-if="nonEmpty(language.certificate || '')">({{ language.certificate }})</span>
+          {{ language.language || t.cvUntitled }} — {{ language.fluency }}
+          <span v-if="nonEmpty(language.certificate || '')"> ({{ language.certificate }})</span>
         </li>
       </ul>
     </section>
 
     <section class="cv-section" v-if="cv.basics.profiles.length > 0">
       <h2>{{ t.cvSectionProfiles }}</h2>
-      <ul class="cv-pill-list">
+      <ul class="cv-clean-list">
         <li v-for="(profile, index) in cv.basics.profiles" :key="`profile-${index}`" v-show="nonEmpty(profile.network) || nonEmpty(profile.url)">
           {{ profile.network || t.cvUntitled }}: {{ profile.url }}
         </li>

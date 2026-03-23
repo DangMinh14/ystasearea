@@ -1,8 +1,9 @@
 import type { Locale } from '../../../../content/translations'
 import { cvThemePresets } from './cv-design'
+import { type CvFontId, cvFontRegistry, defaultFontForLocale, getCssFontFamily } from './cv-fonts'
 
 export type CvTemplate = 'modern' | 'classic' | 'minimal'
-export type CvFontFamily = 'inter' | 'roboto' | 'serif'
+export type CvFontFamily = CvFontId
 
 export type CvProfile = {
   network: string
@@ -91,11 +92,9 @@ export const cvThemeColorPresets = [
   cvThemePresets.gray,
 ]
 
-export const cvFontFamilyMap: Record<CvFontFamily, string> = {
-  inter: 'Inter, "Segoe UI", Arial, sans-serif',
-  roboto: 'Roboto, "Segoe UI", Arial, sans-serif',
-  serif: '"Merriweather", Georgia, "Times New Roman", serif',
-}
+export const cvFontFamilyMap: Record<string, string> = Object.fromEntries(
+  Object.keys(cvFontRegistry).map((id) => [id, getCssFontFamily(id as CvFontId)])
+)
 
 export const createProfileItem = (): CvProfile => ({
   network: '',
@@ -211,11 +210,14 @@ const normalizeTemplate = (value: unknown): CvTemplate => {
   return 'modern'
 }
 
+const validFontFamilies: CvFontFamily[] = ['inter', 'roboto', 'open-sans', 'noto-sans', 'be-vietnam-pro']
+
 const normalizeFontFamily = (value: unknown): CvFontFamily => {
-  if (value === 'roboto' || value === 'serif') {
-    return value
+  if (typeof value === 'string' && validFontFamilies.includes(value as CvFontFamily)) {
+    return value as CvFontFamily
   }
 
+  // Legacy migration: 'serif' → 'inter'
   return 'inter'
 }
 
@@ -540,7 +542,7 @@ export const sampleResumeVi: CvResume = {
   meta: {
     template: 'modern',
     themeColor: '#0f766e',
-    fontFamily: 'inter',
+    fontFamily: 'be-vietnam-pro',
     locale: 'vi',
     version: 'https://jsonresume.org/schema/',
     lastModified: new Date().toISOString(),

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import UiButton from '../../../components/ui/UiButton.vue'
-import UiModal from '../../../components/ui/UiModal.vue'
 import { translations, type Locale } from '../../../content/translations'
 import CvEditorPanel from './components/CvEditorPanel.vue'
 import CvPreviewPanel from './components/CvPreviewPanel.vue'
@@ -39,16 +37,7 @@ const {
 } = useCvGenerator(cvLanguage)
 
 const validationCount = computed(() => validationIssues.value.length)
-const previewModalOpen = ref(false)
 const exportingPdf = ref(false)
-
-const openFullPreview = () => {
-  previewModalOpen.value = true
-}
-
-const closeFullPreview = () => {
-  previewModalOpen.value = false
-}
 
 const exportPdf = async () => {
   if (exportingPdf.value) {
@@ -57,7 +46,7 @@ const exportPdf = async () => {
 
   try {
     exportingPdf.value = true
-    downloadCvPdf(cv, {
+    await downloadCvPdf(cv, {
       summary: cvT.value.cvSectionSummary,
       work: cvT.value.cvSectionWork,
       projects: cvT.value.cvSectionProjects,
@@ -105,24 +94,9 @@ onMounted(() => {
         @reset-all="resetAll"
         @load-sample="loadSample"
         @import-json="importFromJson"
-        @open-full-preview="openFullPreview"
       />
 
       <CvPreviewPanel :cv="cv" :t="cvT" content-id="cv-preview-embedded" />
     </div>
-
-    <UiModal
-      :model-value="previewModalOpen"
-      :aria-label="cvT.cvPreviewModalTitle"
-      panel-class="cv-preview-modal"
-      panel-width="min(1400px, 90vw)"
-      @update:model-value="closeFullPreview"
-    >
-      <div class="cv-preview-modal__head">
-        <h3>{{ cvT.cvPreviewModalTitle }}</h3>
-        <UiButton variant="ghost" size="sm" @click="closeFullPreview">{{ cvT.toolClose }}</UiButton>
-      </div>
-      <CvPreviewPanel :cv="cv" :t="cvT" :show-header="false" variant="modal" content-id="cv-preview-modal" />
-    </UiModal>
   </section>
 </template>

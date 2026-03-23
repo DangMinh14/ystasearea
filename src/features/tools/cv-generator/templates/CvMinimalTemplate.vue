@@ -68,7 +68,7 @@ defineProps<{
       <div>
         <div v-if="cv.skills.length > 0" class="cv-minimal-side-group">
           <h2>{{ t.cvSectionSkills }}</h2>
-          <ul class="cv-pill-list">
+          <ul class="cv-clean-list">
             <li v-for="(skill, index) in cv.skills" :key="`skill-${index}`" v-show="nonEmpty(skill.name) || nonEmptyList(skill.keywords).length > 0">
               {{ skill.name || t.cvUntitled }}: {{ nonEmptyList(skill.keywords).join(', ') }}
             </li>
@@ -77,20 +77,20 @@ defineProps<{
 
         <div v-if="cv.languages.length > 0" class="cv-minimal-side-group">
           <h2>{{ t.cvSectionLanguages }}</h2>
-          <ul class="cv-pill-list">
+          <ul class="cv-clean-list">
             <li
               v-for="(language, index) in cv.languages"
               :key="`language-${index}`"
               v-show="nonEmpty(language.language) || nonEmpty(language.fluency)"
             >
-              {{ language.language || t.cvUntitled }} - {{ language.fluency }}
+              {{ language.language || t.cvUntitled }} — {{ language.fluency }}
             </li>
           </ul>
         </div>
 
         <div v-if="cv.basics.profiles.length > 0" class="cv-minimal-side-group">
           <h2>{{ t.cvSectionProfiles }}</h2>
-          <ul class="cv-pill-list">
+          <ul class="cv-clean-list">
             <li v-for="(profile, index) in cv.basics.profiles" :key="`profile-${index}`" v-show="nonEmpty(profile.network) || nonEmpty(profile.url)">
               {{ profile.network || t.cvUntitled }}: {{ profile.url }}
             </li>

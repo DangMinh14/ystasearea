@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import type { TranslationKeys } from '../../../../content/translations'
 import CvClassicTemplate from '../templates/CvClassicTemplate.vue'
 import CvMinimalTemplate from '../templates/CvMinimalTemplate.vue'
 import CvModernTemplate from '../templates/CvModernTemplate.vue'
-import { cvFontFamilyMap, type CvResume } from '../utils/cv-model'
-import { cvTemplateDesign, resolveCvTheme } from '../utils/cv-design'
+import type { CvResume } from '../utils/cv-model'
+import { createLayoutConfig, layoutConfigToCssVars } from '../utils/cv-layout-config'
+import { getCssFontFamily, loadCvFont } from '../utils/cv-fonts'
 
 const props = withDefaults(
   defineProps<{
     cv: CvResume
     t: TranslationKeys
     showHeader?: boolean
-    variant?: 'embedded' | 'modal'
     contentId?: string
   }>(),
   {
     showHeader: true,
-    variant: 'embedded',
     contentId: 'cv-print-area',
   }
 )
@@ -33,30 +32,13 @@ const templateComponent = computed(() => {
   }
 })
 
-const previewStyle = computed(() => {
-  const template = cvTemplateDesign[props.cv.meta.template]
-  const theme = resolveCvTheme(props.cv.meta.themeColor)
+const layoutConfig = computed(() =>
+  createLayoutConfig(props.cv.meta.template, props.cv.meta.themeColor)
+)
 
-  return {
-    '--cv-primary': theme.primary,
-    '--cv-text': theme.text,
-    '--cv-muted': theme.muted,
-    '--cv-divider': theme.divider,
-    '--cv-font-family': cvFontFamilyMap[props.cv.meta.fontFamily],
-    '--cv-space-xs': `${template.spacing.xs}px`,
-    '--cv-space-sm': `${template.spacing.sm}px`,
-    '--cv-space-md': `${template.spacing.md}px`,
-    '--cv-space-lg': `${template.spacing.lg}px`,
-    '--cv-size-h1': `${template.fontSizes.h1}px`,
-    '--cv-size-h2': `${template.fontSizes.h2}px`,
-    '--cv-size-h3': `${template.fontSizes.h3}px`,
-    '--cv-size-body': `${template.fontSizes.body}px`,
-    '--cv-size-meta': `${template.fontSizes.meta}px`,
-    '--cv-line-tight': template.lineHeight.tight,
-    '--cv-line-normal': template.lineHeight.normal,
-    '--cv-line-loose': template.lineHeight.loose,
-  }
-})
+const fontFamilyCss = computed(() => getCssFontFamily(props.cv.meta.fontFamily))
+
+const previewStyle = computed(() => layoutConfigToCssVars(layoutConfig.value, fontFamilyCss.value))
 
 const hasContent = computed(() => {
   const basics = props.cv.basics
@@ -69,24 +51,85 @@ const hasContent = computed(() => {
       props.cv.projects.some((item) => item.name || item.description)
   )
 })
+
+// ── Scaling logic ──
+// The A4 page (210mm ≈ 794px at 96dpi) is scaled to fit the available container width.
+const scalerRef = ref<HTMLDivElement | null>(null)
+const pageRef = ref<HTMLDivElement | null>(null)
+const scale = ref(1)
+
+const A4_WIDTH_PX = 794 // 210mm at 96dpi
+
+const updateScale = () => {
+  if (!scalerRef.value) {
+    return
+  }
+
+  const containerWidth = scalerRef.value.clientWidth
+  const newScale = Math.min(1, containerWidth / A4_WIDTH_PX)
+  scale.value = newScale
+}
+
+const pageTransformStyle = computed(() => ({
+  transform: `scale(${scale.value})`,
+  transformOrigin: 'top left',
+  width: '210mm',
+  minHeight: '297mm',
+}))
+
+const scalerContainerStyle = computed(() => {
+  if (!pageRef.value) {
+    return {}
+  }
+  // Set the scaler height to the scaled page height to prevent overflow
+  return {
+    height: `${pageRef.value.scrollHeight * scale.value}px`,
+  }
+})
+
+let resizeObserver: ResizeObserver | null = null
+
+onMounted(() => {
+  loadCvFont(props.cv.meta.fontFamily)
+  updateScale()
+
+  if (scalerRef.value) {
+    resizeObserver = new ResizeObserver(() => {
+      updateScale()
+    })
+    resizeObserver.observe(scalerRef.value)
+  }
+})
+
+onUnmounted(() => {
+  resizeObserver?.disconnect()
+})
+
+watch(
+  () => props.cv.meta.fontFamily,
+  (fontId) => loadCvFont(fontId)
+)
 </script>
 
 <template>
-  <section class="cv-preview-panel" :class="`cv-preview-panel--${variant}`">
+  <section class="cv-preview-panel">
     <div v-if="showHeader" class="cv-preview-panel__head">
-      <div>
-        <p class="text-eyebrow">{{ t.cvPreviewEyebrow }}</p>
-        <h3>{{ t.cvPreviewTitle }}</h3>
-      </div>
-      <p class="text-muted">{{ t.cvPreviewHint }}</p>
+      <h3>{{ t.cvPreviewTitle }}</h3>
     </div>
 
-    <div :id="contentId" class="cv-preview-page" :style="previewStyle">
-      <div v-if="!hasContent" class="cv-empty-state">
-        <h4>{{ t.cvPreviewEmptyTitle }}</h4>
-        <p>{{ t.cvPreviewEmptyDesc }}</p>
+    <div ref="scalerRef" class="cv-preview-scaler" :style="scalerContainerStyle">
+      <div
+        :id="contentId"
+        ref="pageRef"
+        class="cv-preview-page"
+        :style="{ ...previewStyle, ...pageTransformStyle }"
+      >
+        <div v-if="!hasContent" class="cv-empty-state">
+          <h4>{{ t.cvPreviewEmptyTitle }}</h4>
+          <p>{{ t.cvPreviewEmptyDesc }}</p>
+        </div>
+        <component :is="templateComponent" v-else :cv="cv" :t="t" />
       </div>
-      <component :is="templateComponent" v-else :cv="cv" :t="t" />
     </div>
   </section>
 </template>

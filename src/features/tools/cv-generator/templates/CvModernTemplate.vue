@@ -40,7 +40,7 @@ defineProps<{
             <li v-for="(skill, index) in cv.skills" :key="`skill-${index}`" v-show="nonEmpty(skill.name) || nonEmptyList(skill.keywords).length > 0">
               <strong>{{ skill.name || t.cvUntitled }}</strong>
               <p v-if="nonEmpty(skill.level)">{{ skill.level }}</p>
-              <p>{{ nonEmptyList(skill.keywords).join(' • ') }}</p>
+              <p>{{ nonEmptyList(skill.keywords).join(' · ') }}</p>
             </li>
           </ul>
         </section>
@@ -74,7 +74,7 @@ defineProps<{
               <h3>{{ work.position || t.cvUntitled }}</h3>
               <span>{{ formatRange(work.startDate, work.endDate) }}</span>
             </div>
-            <p class="cv-subline">{{ work.name }} <span v-if="nonEmpty(work.url)">• {{ work.url }}</span></p>
+            <p class="cv-subline">{{ work.name }} <span v-if="nonEmpty(work.url)">· {{ work.url }}</span></p>
             <p v-if="nonEmpty(work.summary)">{{ work.summary }}</p>
             <ul v-if="nonEmptyList(work.highlights).length > 0" class="cv-bullets">
               <li v-for="(highlight, highlightIndex) in nonEmptyList(work.highlights)" :key="`work-${index}-highlight-${highlightIndex}`">
@@ -115,11 +115,11 @@ defineProps<{
             </div>
             <p class="cv-subline">
               {{ education.studyType }}
-              <span v-if="nonEmpty(education.area)">• {{ education.area }}</span>
-              <span v-if="nonEmpty(education.score)">• {{ t.cvFieldGpa }}: {{ education.score }}</span>
+              <span v-if="nonEmpty(education.area)">· {{ education.area }}</span>
+              <span v-if="nonEmpty(education.score)">· {{ t.cvFieldGpa }}: {{ education.score }}</span>
             </p>
             <p v-if="nonEmpty(education.url)">{{ education.url }}</p>
-            <p v-if="nonEmptyList(education.courses).length > 0">{{ nonEmptyList(education.courses).join(' • ') }}</p>
+            <p v-if="nonEmptyList(education.courses).length > 0">{{ nonEmptyList(education.courses).join(' · ') }}</p>
           </div>
         </section>
       </main>
