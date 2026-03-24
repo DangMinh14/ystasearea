@@ -14,6 +14,7 @@ const props = withDefaults(
     t: TranslationKeys
     showHeader?: boolean
     contentId?: string
+    activeStep?: string
   }>(),
   {
     showHeader: true,
@@ -128,7 +129,7 @@ watch(
           <h4>{{ t.cvPreviewEmptyTitle }}</h4>
           <p>{{ t.cvPreviewEmptyDesc }}</p>
         </div>
-        <component :is="templateComponent" v-else :cv="cv" :t="t" />
+        <component :is="templateComponent" v-else :cv="cv" :t="t" :active-step="activeStep" />
       </div>
     </div>
   </section>

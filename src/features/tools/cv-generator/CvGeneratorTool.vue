@@ -12,7 +12,9 @@ const CV_LANGUAGE_STORAGE_KEY = 'ystasearea-cv-language'
 const resolveInitialCvLanguage = (): Locale => {
   try {
     const saved = localStorage.getItem(CV_LANGUAGE_STORAGE_KEY)
-    return saved === 'vi' || saved === 'en' ? saved : 'en'
+    // Temporarily disabled vi support
+    // return saved === 'vi' || saved === 'en' ? saved : 'en'
+    return 'en'
   } catch (_error) {
     return 'en'
   }
@@ -38,6 +40,7 @@ const {
 
 const validationCount = computed(() => validationIssues.value.length)
 const exportingPdf = ref(false)
+const activeStep = ref('style')
 
 const exportPdf = async () => {
   if (exportingPdf.value) {
@@ -57,6 +60,7 @@ const exportPdf = async () => {
       gpa: cvT.value.cvFieldGpa,
       courses: cvT.value.cvFieldCourses,
       untitled: cvT.value.cvUntitled,
+      present: cvT.value.cvFieldPresent,
     })
   } catch (error) {
     console.error('PDF export failed', error)
@@ -94,9 +98,10 @@ onMounted(() => {
         @reset-all="resetAll"
         @load-sample="loadSample"
         @import-json="importFromJson"
+        @update:activeStep="activeStep = $event"
       />
 
-      <CvPreviewPanel :cv="cv" :t="cvT" content-id="cv-preview-embedded" />
+      <CvPreviewPanel :cv="cv" :t="cvT" :active-step="activeStep" content-id="cv-preview-embedded" />
     </div>
   </section>
 </template>

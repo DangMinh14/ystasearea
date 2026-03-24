@@ -2,14 +2,18 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import type { Locale, TranslationKeys } from '../../../../content/translations'
 import {
-  cvThemeColorPresets,
   createEducationItem,
+  createEmptyResume,
   createLanguageItem,
   createProfileItem,
   createProjectItem,
   createSkillItem,
   createWorkItem,
+  cvFontFamilyMap,
+  cvThemeColorPresets,
+  type CvFontFamily,
   type CvResume,
+  type CvProfile,
 } from '../utils/cv-model'
 import { fontsByLocale, type CvFontId, cvFontRegistry, defaultFontForLocale, loadCvFont } from '../utils/cv-fonts'
 
@@ -39,6 +43,7 @@ const emit = defineEmits<{
   (event: 'export-json'): void
   (event: 'copy-json'): void
   (event: 'download-sample'): void
+  (e: 'update:activeStep', value: string): void
   (event: 'reset-all'): void
   (event: 'load-sample'): void
   (event: 'import-json', value: string): void
@@ -159,6 +164,33 @@ const updateCvLanguage = (event: Event) => {
   }
 }
 
+const SOCIAL_PRESETS = [
+  { name: 'LinkedIn', prefix: 'https://linkedin.com/in/' },
+  { name: 'GitHub', prefix: 'https://github.com/' },
+  { name: 'GitLab', prefix: 'https://gitlab.com/' },
+  { name: 'Portfolio Website', prefix: 'https://' },
+  { name: 'Twitter / X', prefix: 'https://x.com/' },
+  { name: 'Stack Overflow', prefix: 'https://stackoverflow.com/users/' }
+]
+
+const addPresetProfile = (presetName: string) => {
+  const match = SOCIAL_PRESETS.find((p) => p.name === presetName)
+  props.cv.basics.profiles.push({
+    network: presetName,
+    url: match ? match.prefix : '',
+  })
+}
+
+const handleNetworkChange = (profile: CvProfile) => {
+  const match = SOCIAL_PRESETS.find((p) => p.name === profile.network)
+  if (match) {
+    // If URL is empty or exactly matches another prefix (meaning they changed presets blindly)
+    if (!profile.url || SOCIAL_PRESETS.some((p) => p.prefix === profile.url)) {
+      profile.url = match.prefix
+    }
+  }
+}
+
 const updateFont = (event: Event) => {
   const value = (event.target as HTMLSelectElement).value as CvFontId
   props.cv.meta.fontFamily = value
@@ -178,7 +210,8 @@ onMounted(() => {
 
 watch(activeStep, (next) => {
   localStorage.setItem(STEP_STORAGE_KEY, next)
-})
+  emit('update:activeStep', next)
+}, { immediate: true })
 
 watch(
   () => props.cv.meta.fontFamily,
@@ -264,7 +297,8 @@ watch(
                 <span>{{ t.languageLabel }}</span>
                 <select class="ui-select" :value="cvLanguage" @change="updateCvLanguage">
                   <option value="en">{{ t.cvLanguageEnglish }}</option>
-                  <option value="vi">{{ t.cvLanguageVietnamese }}</option>
+                  <!-- Temporarily disabled Vietnamese language option -->
+                  <option value="vi" v-if="false">{{ t.cvLanguageVietnamese }}</option>
                 </select>
               </label>
 
@@ -331,8 +365,28 @@ watch(
             </label>
 
             <div class="cv-subsection-head">
-              <h4>{{ t.cvSectionProfiles }}</h4>
-              <button class="cv-action-btn" title="Add" @click="addProfile">➕</button>
+              <h4>🌐 {{ t.cvSectionProfiles }}</h4>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; margin-top: 0.5rem;">
+              <button 
+                v-for="preset in SOCIAL_PRESETS" 
+                :key="preset.name" 
+                class="cv-action-btn" 
+                style="width: auto; height: auto; padding: 0.25rem 0.6rem; font-size: 0.85em; border-radius: 4px; border: 1px solid var(--cv-color-border);"
+                @click="addPresetProfile(preset.name)"
+                :title="`Add ${preset.name}`"
+              >
+                + {{ preset.name }}
+              </button>
+              <button 
+                class="cv-action-btn" 
+                style="width: auto; height: auto; padding: 0.25rem 0.6rem; font-size: 0.85em; border-radius: 4px; border: 1px dashed var(--cv-color-primary); color: var(--cv-color-primary);"
+                @click="addProfile"
+                title="Add Custom Profile"
+              >
+                + Custom
+              </button>
             </div>
 
             <div v-if="cv.basics.profiles.length === 0" class="cv-inline-empty">{{ t.cvEmptyProfiles }}</div>
@@ -341,7 +395,7 @@ watch(
               <div class="cv-form-grid">
                 <label class="tool-field">
                   <span>{{ t.cvFieldProfilePlatform }}</span>
-                  <input v-model="profile.network" class="ui-input" :placeholder="t.cvPlaceholderProfilePlatform" />
+                  <input v-model="profile.network" list="cv-social-networks" class="ui-input" :placeholder="t.cvPlaceholderProfilePlatform" @change="handleNetworkChange(profile)" />
                 </label>
                 <label class="tool-field">
                   <span>{{ t.cvFieldProfileUrl }}</span>
@@ -354,7 +408,7 @@ watch(
 
           <template v-else-if="activeStep === 'work'">
             <div class="cv-subsection-head">
-              <h4>{{ t.cvSectionWork }}</h4>
+              <h4>💼 {{ t.cvSectionWork }}</h4>
               <button class="cv-action-btn" title="Add" @click="addWork">➕</button>
             </div>
 
@@ -380,8 +434,21 @@ watch(
                   <input v-model="work.startDate" class="ui-input" type="month" />
                 </label>
                 <label class="tool-field">
-                  <span>{{ t.cvFieldEndDate }}</span>
-                  <input v-model="work.endDate" class="ui-input" :placeholder="t.cvPlaceholderEndDate" />
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>{{ t.cvFieldEndDate }}</span>
+                    <label style="display: flex; align-items: center; gap: 0.25rem; font-weight: normal; cursor: pointer; font-size: 0.8em; opacity: 0.8;">
+                      <input v-model="work.isCurrent" type="checkbox" />
+                      {{ t.cvFieldPresent }}
+                    </label>
+                  </div>
+                  <input v-model="work.endDate" class="ui-input" type="month" :disabled="work.isCurrent" :min="work.startDate" />
+                </label>
+                <label class="tool-field">
+                  <span>{{ t.cvFieldDateFormat }}</span>
+                  <select v-model="work.dateFormat" class="ui-select">
+                    <option value="month">{{ t.cvFormatMonth }}</option>
+                    <option value="year">{{ t.cvFormatYear }}</option>
+                  </select>
                 </label>
                 <label class="tool-field">
                   <span>{{ t.cvFieldCompanyWebsite }}</span>
@@ -410,7 +477,7 @@ watch(
 
           <template v-else-if="activeStep === 'education'">
             <div class="cv-subsection-head">
-              <h4>{{ t.cvSectionEducation }}</h4>
+              <h4>🎓 {{ t.cvSectionEducation }}</h4>
               <button class="cv-action-btn" title="Add" @click="addEducation">➕</button>
             </div>
 
@@ -444,8 +511,21 @@ watch(
                   <input v-model="education.startDate" class="ui-input" type="month" />
                 </label>
                 <label class="tool-field">
-                  <span>{{ t.cvFieldEndDate }}</span>
-                  <input v-model="education.endDate" class="ui-input" :placeholder="t.cvPlaceholderEndDate" />
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>{{ t.cvFieldEndDate }}</span>
+                    <label style="display: flex; align-items: center; gap: 0.25rem; font-weight: normal; cursor: pointer; font-size: 0.8em; opacity: 0.8;">
+                      <input v-model="education.isCurrent" type="checkbox" />
+                      {{ t.cvFieldPresent }}
+                    </label>
+                  </div>
+                  <input v-model="education.endDate" class="ui-input" type="month" :disabled="education.isCurrent" :min="education.startDate" />
+                </label>
+                <label class="tool-field">
+                  <span>{{ t.cvFieldDateFormat }}</span>
+                  <select v-model="education.dateFormat" class="ui-select">
+                    <option value="month">{{ t.cvFormatMonth }}</option>
+                    <option value="year">{{ t.cvFormatYear }}</option>
+                  </select>
                 </label>
                 <label class="tool-field">
                   <span>{{ t.cvFieldSchoolWebsite }}</span>
@@ -469,7 +549,7 @@ watch(
 
           <template v-else-if="activeStep === 'skills'">
             <div class="cv-subsection-head">
-              <h4>{{ t.cvSectionSkills }}</h4>
+              <h4>🛠️ {{ t.cvSectionSkills }}</h4>
               <button class="cv-action-btn" title="Add" @click="addSkill">➕</button>
             </div>
 
@@ -508,7 +588,7 @@ watch(
 
           <template v-else-if="activeStep === 'languages'">
             <div class="cv-subsection-head">
-              <h4>{{ t.cvSectionLanguages }}</h4>
+              <h4>🗣️ {{ t.cvSectionLanguages }}</h4>
               <button class="cv-action-btn" title="Add" @click="addLanguage">➕</button>
             </div>
 
@@ -565,8 +645,21 @@ watch(
                   <input v-model="project.startDate" class="ui-input" type="month" />
                 </label>
                 <label class="tool-field">
-                  <span>{{ t.cvFieldEndDate }}</span>
-                  <input v-model="project.endDate" class="ui-input" :placeholder="t.cvPlaceholderEndDate" />
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>{{ t.cvFieldEndDate }}</span>
+                    <label style="display: flex; align-items: center; gap: 0.25rem; font-weight: normal; cursor: pointer; font-size: 0.8em; opacity: 0.8;">
+                      <input v-model="project.isCurrent" type="checkbox" />
+                      {{ t.cvFieldPresent }}
+                    </label>
+                  </div>
+                  <input v-model="project.endDate" class="ui-input" type="month" :disabled="project.isCurrent" :min="project.startDate" />
+                </label>
+                <label class="tool-field">
+                  <span>{{ t.cvFieldDateFormat }}</span>
+                  <select v-model="project.dateFormat" class="ui-select">
+                    <option value="month">{{ t.cvFormatMonth }}</option>
+                    <option value="year">{{ t.cvFormatYear }}</option>
+                  </select>
                 </label>
               </div>
 
@@ -590,6 +683,11 @@ watch(
           </template>
         </section>
       </Transition>
+      
+      <!-- Native Dropdown Datalists -->
+      <datalist id="cv-social-networks">
+        <option v-for="preset in SOCIAL_PRESETS" :key="preset.name" :value="preset.name"></option>
+      </datalist>
     </div>
   </section>
 </template>

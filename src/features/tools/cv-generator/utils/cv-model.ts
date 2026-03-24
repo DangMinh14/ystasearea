@@ -28,6 +28,8 @@ export type CvWorkItem = {
   position: string
   startDate: string
   endDate: string
+  isCurrent: boolean
+  dateFormat: 'month' | 'year'
   url: string
   summary: string
   highlights: string[]
@@ -40,6 +42,8 @@ export type CvEducationItem = {
   score: string
   startDate: string
   endDate: string
+  isCurrent: boolean
+  dateFormat: 'month' | 'year'
   url: string
   courses: string[]
 }
@@ -61,6 +65,8 @@ export type CvProjectItem = {
   description: string
   startDate: string
   endDate: string
+  isCurrent: boolean
+  dateFormat: 'month' | 'year'
   url: string
   highlights: string[]
 }
@@ -106,6 +112,8 @@ export const createWorkItem = (): CvWorkItem => ({
   position: '',
   startDate: '',
   endDate: '',
+  isCurrent: false,
+  dateFormat: 'month',
   url: '',
   summary: '',
   highlights: [''],
@@ -118,6 +126,8 @@ export const createEducationItem = (): CvEducationItem => ({
   score: '',
   startDate: '',
   endDate: '',
+  isCurrent: false,
+  dateFormat: 'month',
   url: '',
   courses: [''],
 })
@@ -139,6 +149,8 @@ export const createProjectItem = (): CvProjectItem => ({
   description: '',
   startDate: '',
   endDate: '',
+  isCurrent: false,
+  dateFormat: 'month',
   url: '',
   highlights: [''],
 })
@@ -223,6 +235,15 @@ const normalizeFontFamily = (value: unknown): CvFontFamily => {
 
 const normalizeDate = (value: unknown): string => stringOrEmpty(value)
 
+const normalizeDateFormat = (value: unknown): 'month' | 'year' => value === 'year' ? 'year' : 'month'
+const normalizeIsCurrent = (endDateRaw: string, isCurrentRaw: unknown): boolean => {
+  if (typeof isCurrentRaw === 'boolean') {
+    return isCurrentRaw
+  }
+  const end = stringOrEmpty(endDateRaw).toLowerCase()
+  return end === 'present' || end === 'hien tai' || end === 'hiện tại'
+}
+
 const normalizeWork = (value: unknown): CvWorkItem[] => {
   if (!Array.isArray(value) || value.length === 0) {
     return createEmptyResume('en').work
@@ -235,6 +256,8 @@ const normalizeWork = (value: unknown): CvWorkItem[] => {
       position: stringOrEmpty(item.position),
       startDate: normalizeDate(item.startDate),
       endDate: normalizeDate(item.endDate),
+      isCurrent: normalizeIsCurrent(stringOrEmpty(item.endDate), item.isCurrent),
+      dateFormat: normalizeDateFormat(item.dateFormat),
       url: stringOrEmpty(item.url),
       summary: stringOrEmpty(item.summary),
       highlights: normalizeStringArray(item.highlights),
@@ -256,6 +279,8 @@ const normalizeEducation = (value: unknown): CvEducationItem[] => {
       score: stringOrEmpty(item.score),
       startDate: normalizeDate(item.startDate),
       endDate: normalizeDate(item.endDate),
+      isCurrent: normalizeIsCurrent(stringOrEmpty(item.endDate), item.isCurrent),
+      dateFormat: normalizeDateFormat(item.dateFormat),
       url: stringOrEmpty(item.url),
       courses: normalizeStringArray(item.courses),
     }
@@ -304,6 +329,8 @@ const normalizeProjects = (value: unknown): CvProjectItem[] => {
       description: stringOrEmpty(item.description),
       startDate: normalizeDate(item.startDate),
       endDate: normalizeDate(item.endDate),
+      isCurrent: normalizeIsCurrent(stringOrEmpty(item.endDate), item.isCurrent),
+      dateFormat: normalizeDateFormat(item.dateFormat),
       url: stringOrEmpty(item.url),
       highlights: normalizeStringArray(item.highlights),
     }
@@ -382,7 +409,9 @@ export const sampleResumeEn: CvResume = {
       name: 'NovaTech',
       position: 'Lead Frontend Engineer',
       startDate: '2022-01',
-      endDate: 'Present',
+      endDate: '',
+      isCurrent: true,
+      dateFormat: 'month',
       url: 'https://novatech.example',
       summary: 'Led a cross-functional team to deliver a multi-tenant B2B dashboard platform.',
       highlights: [
@@ -395,6 +424,8 @@ export const sampleResumeEn: CvResume = {
       position: 'Frontend Engineer',
       startDate: '2019-03',
       endDate: '2021-12',
+      isCurrent: false,
+      dateFormat: 'month',
       url: 'https://cloudcrew.example',
       summary: 'Built subscription and analytics modules for enterprise clients.',
       highlights: ['Migrated legacy UI to Vue 3 and TypeScript.', 'Owned CI checks for UI quality and accessibility.'],
@@ -408,6 +439,8 @@ export const sampleResumeEn: CvResume = {
       score: '3.6/4.0',
       startDate: '2013-09',
       endDate: '2017-06',
+      isCurrent: false,
+      dateFormat: 'month',
       url: 'https://hcmut.edu.vn',
       courses: ['Software Architecture', 'Human Computer Interaction'],
     },
@@ -442,6 +475,8 @@ export const sampleResumeEn: CvResume = {
       description: 'A multilingual resume builder with template rendering and PDF export.',
       startDate: '2024-08',
       endDate: '2025-02',
+      isCurrent: false,
+      dateFormat: 'month',
       url: 'https://cvgenie.example',
       highlights: ['Exported 20k+ ATS-friendly resumes.', 'Integrated auto-save with version snapshots.'],
     },
@@ -484,7 +519,9 @@ export const sampleResumeVi: CvResume = {
       name: 'Skyline Labs',
       position: 'Senior Frontend Engineer',
       startDate: '2021-05',
-      endDate: 'Hien tai',
+      endDate: '',
+      isCurrent: true,
+      dateFormat: 'month',
       url: 'https://skylinelabs.example',
       summary: 'Phat trien he thong dashboard da tenant cho nhom san pham B2B.',
       highlights: [
@@ -501,6 +538,8 @@ export const sampleResumeVi: CvResume = {
       score: '8.4/10',
       startDate: '2014-09',
       endDate: '2018-06',
+      isCurrent: false,
+      dateFormat: 'month',
       url: 'https://hcmus.edu.vn',
       courses: ['Kien truc phan mem', 'Phan tich va thiet ke he thong'],
     },
@@ -535,6 +574,8 @@ export const sampleResumeVi: CvResume = {
       description: 'Cong cu tao CV da mau voi kha nang preview truc tiep va xuat PDF.',
       startDate: '2025-01',
       endDate: '2025-11',
+      isCurrent: false,
+      dateFormat: 'month',
       url: 'https://resumestudio.example',
       highlights: ['Ho tro 3 template ATS-friendly.', 'Luu tu dong vao trinh duyet de tranh mat du lieu.'],
     },

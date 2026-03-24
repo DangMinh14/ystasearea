@@ -16,6 +16,7 @@ export type CvPdfLabels = {
   gpa: string
   courses: string
   untitled: string
+  present: string
 }
 
 type Rgb = [number, number, number]
@@ -76,6 +77,7 @@ type PdfContext = {
   fontName: FontName
   theme: PdfTheme
   layout: PdfLayout
+  locale: string
   onPageAdded?: (page: number) => void
 }
 
@@ -469,7 +471,7 @@ const writeWork = (ctx: PdfContext, cursor: PdfCursor, resume: CvResume, variant
 
   items.forEach((item, index) => {
     const title = [item.position.trim() || ctx.labels.untitled, item.name.trim()].filter((entry) => entry.length > 0).join(' - ')
-    const dateRange = formatRange(item.startDate, item.endDate)
+    const dateRange = formatRange(item.startDate, item.endDate, item.isCurrent, item.dateFormat, ctx.locale, ctx.labels.present)
 
     writeItemHeading(ctx, cursor, title, dateRange, compact)
 
@@ -533,7 +535,7 @@ const writeProjects = (ctx: PdfContext, cursor: PdfCursor, resume: CvResume, var
   const compact = Boolean(variant.compact)
 
   items.forEach((item, index) => {
-    const dateRange = formatRange(item.startDate, item.endDate)
+    const dateRange = formatRange(item.startDate, item.endDate, item.isCurrent, item.dateFormat, ctx.locale, ctx.labels.present)
     writeItemHeading(ctx, cursor, item.name.trim() || ctx.labels.untitled, dateRange, compact)
 
     if (nonEmpty(item.url)) {
@@ -596,7 +598,7 @@ const writeEducation = (ctx: PdfContext, cursor: PdfCursor, resume: CvResume, va
   const compact = Boolean(variant.compact)
 
   items.forEach((item, index) => {
-    const dateRange = formatRange(item.startDate, item.endDate)
+    const dateRange = formatRange(item.startDate, item.endDate, item.isCurrent, item.dateFormat, ctx.locale, ctx.labels.present)
     writeItemHeading(ctx, cursor, item.institution.trim() || ctx.labels.untitled, dateRange, compact)
 
     const degreeParts = [item.studyType.trim(), item.area.trim()].filter((entry) => entry.length > 0)
@@ -913,6 +915,7 @@ export const downloadCvPdf = async (resume: CvResume, labels: CvPdfLabels) => {
     fontName,
     theme: toPdfTheme(themePalette),
     layout: toLayout(layoutCfg),
+    locale: resume.meta.locale,
   }
 
   const render = templateRenderers[template] ?? renderClassicPdf

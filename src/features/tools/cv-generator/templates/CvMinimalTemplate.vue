@@ -3,15 +3,17 @@ import type { TranslationKeys } from '../../../../content/translations'
 import type { CvResume } from '../utils/cv-model'
 import { formatRange, nonEmpty, nonEmptyList } from '../utils/cv-format'
 
-defineProps<{
+const props = defineProps<{
   cv: CvResume
   t: TranslationKeys
+  activeStep?: string
+  pageIndex?: number
 }>()
 </script>
 
 <template>
   <article class="cv-template cv-template--minimal">
-    <header class="cv-head cv-head--minimal">
+    <header v-if="pageIndex === undefined || pageIndex === 0" data-page-block="head" class="cv-head cv-head--minimal" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
       <div>
         <h1>{{ cv.basics.name || t.cvPreviewNameFallback }}</h1>
         <p class="cv-role">{{ cv.basics.label || t.cvPreviewTitleFallback }}</p>
