@@ -14,7 +14,6 @@ import { appShellContextKey, type AppShellContext } from '../../composables/appS
 import bgVideo from '../../assets/bg.mp4'
 import lunarBg from '../../assets/lunar-bg.jpg'
 import halloweenBg from '../../assets/halloween-bg.jpg'
-import chibi from '../../assets/chibi.png'
 import './app-layout.css'
 
 const { theme, isLunarTheme, isHalloweenTheme, setTheme, hydrateTheme } = useThemeSettings()
@@ -157,8 +156,6 @@ onBeforeUnmount(() => {
 
       <AppFooter :copy="t.footerCopy" />
     </div>
-
-    <img class="app-shell__chibi" :src="chibi" alt="Chibi decoration" loading="lazy" />
 
     <Transition name="back-to-top">
       <button v-if="showBackToTop" class="app-back-to-top" type="button" :aria-label="t.backToTopLabel" @click="scrollToTop">

@@ -214,16 +214,6 @@
   margin-top: auto;
 }
 
-.app-shell__chibi {
-  position: fixed;
-  right: var(--space-3);
-  bottom: var(--space-3);
-  width: min(140px, 26vw);
-  pointer-events: none;
-  opacity: 0.9;
-  z-index: 0;
-}
-
 .app-back-to-top {
   position: fixed;
   right: var(--space-4);
