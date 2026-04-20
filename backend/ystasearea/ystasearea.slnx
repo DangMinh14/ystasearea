@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ystasearea.Application/ystasearea.Application.csproj" />
+  <Project Path="ystasearea.Domain/ystasearea.Domain.csproj" />
+  <Project Path="ystasearea.Infrastructure/ystasearea.Infrastructure.csproj" />
+  <Project Path="ystasearea/ystasearea.csproj" />
+</Solution>

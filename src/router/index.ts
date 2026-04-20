@@ -1,10 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import WelcomeView from '../views/WelcomeView.vue'
-import HomeView from '../views/HomeView.vue'
-import BlogListView from '../views/BlogListView.vue'
-import BlogDetailView from '../views/BlogDetailView.vue'
-import GamesView from '../views/GamesView.vue'
-import MusicView from '../views/MusicView.vue'
 import { toolRegistry } from '../features/tools/config/toolRegistry'
 
 const toolRoutes = toolRegistry.map((tool) => ({
@@ -20,37 +14,37 @@ const router = createRouter({
     {
       path: '/',
       name: 'welcome',
-      component: WelcomeView,
+      component: () => import('../views/WelcomeView.vue'),
       meta: { shell: false },
     },
     {
       path: '/home',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
       meta: { showSidebar: true, fullWidth: false },
     },
     {
       path: '/blog',
       name: 'blog',
-      component: BlogListView,
+      component: () => import('../views/BlogListView.vue'),
       meta: { showSidebar: false, fullWidth: false },
     },
     {
       path: '/blog/:slug',
       name: 'blog-detail',
-      component: BlogDetailView,
+      component: () => import('../views/BlogDetailView.vue'),
       meta: { showSidebar: false, fullWidth: false },
     },
     {
       path: '/games',
       name: 'games',
-      component: GamesView,
+      component: () => import('../views/GamesView.vue'),
       meta: { showSidebar: false, fullWidth: false },
     },
     {
       path: '/music',
       name: 'music',
-      component: MusicView,
+      component: () => import('../views/MusicView.vue'),
       meta: { showSidebar: false, fullWidth: false },
     },
     {
@@ -66,6 +60,16 @@ const router = createRouter({
         },
         ...toolRoutes,
       ],
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+    },
+    {
+      path: '/auth/callback',
+      name: 'auth-callback',
+      component: () => import('../views/AuthCallbackView.vue'),
     },
     {
       path: '/posts',

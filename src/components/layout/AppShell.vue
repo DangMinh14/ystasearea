@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import AppHeader from './AppHeader.vue'
 import AppSidebarWidgets from './AppSidebarWidgets.vue'
 import AppFooter from './AppFooter.vue'
@@ -10,6 +10,7 @@ import { useQuote } from '../../composables/useQuote'
 import { useWeather } from '../../composables/useWeather'
 import { useMediaWidgets } from '../../composables/useMediaWidgets'
 import { usePlaylist } from '../../composables/usePlaylist'
+import { useAuthStore } from '../../stores/auth'
 import { appShellContextKey, type AppShellContext } from '../../composables/appShellContext'
 import bgVideo from '../../assets/bg.mp4'
 import lunarBg from '../../assets/lunar-bg.jpg'
@@ -23,6 +24,8 @@ const { weather, weatherLoading, weatherError, weatherLocation, weatherLocations
 const { catImageUrl, catLoading, dogImageUrl, dogLoading, loadCatImage, loadDogImage } = useMediaWidgets()
 const { playlist, currentVideoIndex, currentVideo, onNextVideo, onPrevVideo, onSelectVideo, mp3Tracks } = usePlaylist()
 const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
 const showBackToTop = ref(false)
 
 const isSidebarVisible = computed(() => route.meta.showSidebar === true)
@@ -66,6 +69,14 @@ const context: AppShellContext = {
 
 provide(appShellContextKey, context)
 
+const handleLogin = () => {
+  router.push('/login')
+}
+
+const handleLogout = () => {
+  authStore.logout()
+}
+
 onMounted(() => {
   hydrateTheme()
   hydrateLocale()
@@ -73,6 +84,7 @@ onMounted(() => {
   loadWeather()
   loadCatImage()
   loadDogImage()
+  authStore.fetchMe()
   onWindowScroll()
   window.addEventListener('scroll', onWindowScroll, { passive: true })
 })
@@ -111,8 +123,13 @@ onBeforeUnmount(() => {
           { value: 'lunar', label: t.lunarLabel },
           { value: 'halloween', label: t.halloweenLabel },
         ]"
+        :is-logged-in="authStore.isLoggedIn"
+        :user-display-name="authStore.user?.displayName"
+        :user-avatar-url="authStore.user?.avatarUrl"
         @change-theme="setTheme"
         @change-locale="changeLocale"
+        @login="handleLogin"
+        @logout="handleLogout"
       />
 
       <div class="app-shell__main-grid" :class="isSidebarVisible ? 'app-shell__main-grid--with-sidebar' : 'app-shell__main-grid--no-sidebar'">

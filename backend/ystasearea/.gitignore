@@ -1,0 +1,96 @@
+# Visual Studio & VS Code
+.vs/
+.vscode/*
+!.vscode/extensions.json
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.idea/
+*.sln.iml
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+publish/
+out/
+build/
+**/PublishOutput/
+*.db
+*.db-shm
+*.db-wal
+
+# ASP.NET / .NET specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
+ScaffoldingReadMe.txt
+StyleCopReport.xml
+*.csproj.user
+*.dbmdl
+*.jfm
+*.mdf
+*.ldf
+*.ndf
+BundleArtifacts/
+MigrationBackup/
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+.nuget/
+nuget.config
+
+# User secrets & app settings
+secrets.json
+appsettings.*.json
+# NOTE: appsettings.Development.json contains local secrets — never commit it.
+# Use dotnet user-secrets or environment variables for production.
+
+# Environment & secrets
+.env
+.env.*
+*connection*string*
+*.pfx
+*.key
+*.pem
+*.p12
+
+# OS files
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+*~
+
+# Logs & test results
+*.log
+logs/
+TestResults/
+coverage/
+*.trx
+*.coveragexml
+*.coverage
+*.coveragereport
+
+# Docker
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# Misc
+*.swp
+*.swo
+*.bak
+*.tmp
+*.cache
+launchSettings.json
+!Properties/launchSettings.json

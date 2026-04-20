@@ -18,11 +18,16 @@ defineProps<{
   currentTheme: AppTheme
   currentLocale: Locale
   themeOptions: Array<{ value: AppTheme; label: string }>
+  isLoggedIn: boolean
+  userDisplayName?: string
+  userAvatarUrl?: string
 }>()
 
 const emit = defineEmits<{
   (e: 'change-theme', value: AppTheme): void
   (e: 'change-locale', value: Locale): void
+  (e: 'login'): void
+  (e: 'logout'): void
 }>()
 
 const navOpen = ref(false)
@@ -144,6 +149,24 @@ onUnmounted(() => {
 
     <div ref="settingsAnchorRef" class="app-header__settings">
       <UiButton variant="ghost" size="sm" @click="toggleSettings">{{ settingsLabel }}</UiButton>
+    </div>
+
+    <div class="app-header__auth">
+      <template v-if="isLoggedIn">
+        <div class="app-header__user">
+          <img
+            v-if="userAvatarUrl"
+            :src="userAvatarUrl"
+            :alt="userDisplayName"
+            class="app-header__avatar"
+          />
+          <span class="app-header__user-name">{{ userDisplayName }}</span>
+        </div>
+        <UiButton variant="ghost" size="sm" @click="emit('logout')">Logout</UiButton>
+      </template>
+      <template v-else>
+        <UiButton variant="ghost" size="sm" @click="emit('login')">Login</UiButton>
+      </template>
     </div>
 
     <Teleport to="body">

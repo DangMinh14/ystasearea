@@ -50,7 +50,7 @@
   top: var(--space-3);
   z-index: var(--z-header);
   display: grid;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto auto;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
@@ -101,6 +101,36 @@
 
 .app-header__settings {
   justify-self: end;
+}
+
+.app-header__auth {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app-header__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app-header__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-subtle);
+}
+
+.app-header__user-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-header__settings-menu {
@@ -277,7 +307,7 @@
 
 @media (max-width: 920px) {
   .app-header {
-    grid-template-columns: auto auto 1fr;
+    grid-template-columns: auto auto 1fr auto;
   }
 
   .app-header__nav-toggle {
@@ -297,7 +327,11 @@
   }
 
   .app-header__settings {
-    grid-column: 3;
+    grid-column: auto;
+  }
+
+  .app-header__user-name {
+    display: none;
   }
 }
 
