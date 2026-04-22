@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import profileImage from '../../assets/Dang.JPG'
+import profileImage from '../../assets/Dang.jpg'
 
 defineProps<{
   alt: string
