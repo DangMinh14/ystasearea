@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/components/home/types.ts",
+    "src/components/home/__tests__/types-contract.spec.ts"
+  ]
+}
