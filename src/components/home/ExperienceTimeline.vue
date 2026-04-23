@@ -18,11 +18,18 @@ const toggleResponsibilities = (id: string) => {
 </script>
 
 <template>
-  <section class="experience-timeline">
+  <section class="experience-timeline experience-timeline--focus-fade">
     <div data-testid="timeline-spine" class="experience-timeline__spine" aria-hidden="true"></div>
-    <article v-for="item in items" :key="item.id" class="experience-timeline__node">
+    <article
+      v-for="item in items"
+      :key="item.id"
+      class="experience-timeline__node experience-timeline__node--interactive"
+    >
       <div class="experience-timeline__identity" aria-hidden="true">
-        <span :data-testid="`timeline-node-marker-${item.id}`" class="experience-timeline__marker">
+        <span
+          :data-testid="`timeline-node-marker-${item.id}`"
+          class="experience-timeline__marker experience-timeline__marker--interactive"
+        >
           <i :class="getNodeIcon(item.iconClass)" aria-hidden="true"></i>
         </span>
       </div>
@@ -118,12 +125,29 @@ const toggleResponsibilities = (id: string) => {
     linear-gradient(132deg, color-mix(in srgb, var(--surface-2) 92%, transparent), color-mix(in srgb, var(--surface-1) 88%, transparent)),
     linear-gradient(12deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 52%);
   box-shadow: var(--shadow-card);
-  transition: transform 220ms var(--ease-standard), box-shadow 220ms var(--ease-standard);
+  transition:
+    transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.experience-timeline__node:hover {
-  transform: scale(1.02);
-  box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 20%, transparent);
+.experience-timeline__node--interactive:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  background:
+    linear-gradient(132deg, color-mix(in srgb, var(--surface-2) 94%, transparent), color-mix(in srgb, var(--surface-1) 90%, transparent)),
+    linear-gradient(12deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 52%);
+}
+
+.experience-timeline--focus-fade:hover .experience-timeline__node--interactive {
+  opacity: 0.6;
+}
+
+.experience-timeline--focus-fade .experience-timeline__node--interactive:hover {
+  opacity: 1;
 }
 
 .experience-timeline__identity {
@@ -142,6 +166,14 @@ const toggleResponsibilities = (id: string) => {
   background: color-mix(in srgb, var(--surface-1) 84%, var(--accent) 16%);
   color: var(--accent);
   box-shadow: 0 0 0 6px color-mix(in srgb, var(--surface-1) 94%, transparent);
+  transition:
+    transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.experience-timeline__node--interactive:hover .experience-timeline__marker--interactive {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.05);
 }
 
 .experience-timeline__content {
@@ -199,6 +231,15 @@ const toggleResponsibilities = (id: string) => {
   font-weight: 560;
 }
 
+.experience-timeline__list--achievements li {
+  border-radius: 4px;
+  transition: background 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.experience-timeline__list--achievements li:hover {
+  background: linear-gradient(transparent 70%, rgba(255, 255, 255, 0.1) 70%);
+}
+
 .experience-timeline__list--responsibilities {
   color: var(--text-secondary);
 }
@@ -237,6 +278,19 @@ const toggleResponsibilities = (id: string) => {
   background: color-mix(in srgb, var(--accent) 14%, transparent);
   color: color-mix(in srgb, var(--text-primary) 80%, var(--accent) 20%);
   border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+}
+
+.experience-timeline__chip {
+  transition:
+    transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.experience-timeline__chip:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border-subtle));
 }
 
 .experience-timeline__responsibilities {
@@ -279,12 +333,24 @@ const toggleResponsibilities = (id: string) => {
 @media (prefers-reduced-motion: reduce), print {
   .experience-timeline__node {
     transition: none;
-    transform: none;
   }
 
   .experience-timeline__node:hover {
-    transform: none;
     box-shadow: var(--shadow-card);
+  }
+
+  .experience-timeline--focus-fade:hover .experience-timeline__node {
+    opacity: 1;
+  }
+
+  .experience-timeline__marker {
+    transition: none;
+    transform: none;
+  }
+
+  .experience-timeline__list--achievements li,
+  .experience-timeline__chip {
+    transition: none;
   }
 }
 </style>

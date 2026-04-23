@@ -10,7 +10,12 @@ defineProps<{
   projectsLabel: string
   cvLabel: string
   imageAlt: string
+  sectionLinks: Array<{ id: string; label: string }>
 }>()
+
+const scrollToSection = (id: string) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 </script>
 
 <template>
@@ -20,12 +25,24 @@ defineProps<{
       <h1 class="profile-hero__name">{{ name }}</h1>
       <p class="profile-hero__intro">{{ intro }}</p>
       <div class="profile-hero__actions">
-        <RouterLink to="/tools">
-          <UiButton size="lg">{{ projectsLabel }}</UiButton>
-        </RouterLink>
+        <UiButton data-testid="profile-techstack-button" size="lg" @click="scrollToSection('portfolio')">
+          {{ projectsLabel }}
+        </UiButton>
         <a :href="cvFile" download="CV Nguyen Minh Dang - Software Engineer.pdf">
           <UiButton variant="ghost" size="lg">{{ cvLabel }}</UiButton>
         </a>
+      </div>
+      <div class="profile-hero__section-links" aria-label="Section quick links">
+        <button
+          v-for="section in sectionLinks"
+          :key="section.id"
+          data-testid="profile-section-chip"
+          class="profile-hero__section-chip"
+          type="button"
+          @click="scrollToSection(section.id)"
+        >
+          {{ section.label }}
+        </button>
       </div>
     </div>
 
@@ -74,6 +91,29 @@ defineProps<{
   flex-wrap: wrap;
   gap: var(--space-3);
   padding-top: var(--space-2);
+}
+
+.profile-hero__section-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.profile-hero__section-chip {
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--surface-3) 86%, transparent);
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  padding: 0.32rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-hero__section-chip:hover,
+.profile-hero__section-chip:focus-visible {
+  color: var(--text-primary);
+  border-color: color-mix(in srgb, var(--accent) 52%, transparent);
 }
 
 @media (min-width: 1024px) {

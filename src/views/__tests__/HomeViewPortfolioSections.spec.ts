@@ -26,7 +26,7 @@ const createShellContext = (): AppShellContext => ({
 })
 
 describe('HomeView portfolio sections integration', () => {
-  it('renders ExperienceTimeline and SkillCardEnhanced with normalized data props', () => {
+  it('renders ExperienceTimeline and SkillCardEnhanced with full skill list coverage', () => {
     const wrapper = mount(HomeView, {
       global: {
         provide: {
@@ -70,11 +70,36 @@ describe('HomeView portfolio sections integration', () => {
         label: expect.any(String),
       }),
     )
-    expect(category.items[0].level).toBeGreaterThanOrEqual(1)
-    expect(category.items[0].level).toBeLessThanOrEqual(5)
+
+    const renderedSkills = skillCards
+      .map((card) => (card.props('category') as SkillCategory).items.map((item) => item.label))
+      .flat()
+
+    const expectedSkills = [
+      'C#',
+      'JavaScript',
+      'TypeScript',
+      'Python',
+      'Java',
+      'ASP.NET Core',
+      'Vue 3',
+      'Vite',
+      'Java Spring Boot',
+      'MS SQL Server',
+      'MySQL',
+      'PostgreSQL',
+      'Git',
+      'Azure DevOps',
+      'Scrum',
+      'Agile',
+    ]
+
+    expectedSkills.forEach((skill) => {
+      expect(renderedSkills).toContain(skill)
+    })
   })
 
-  it('keeps section wrappers for reveal behavior around portfolio sections', () => {
+  it('keeps section wrappers for reveal behavior around all home sections', () => {
     const wrapper = mount(HomeView, {
       global: {
         provide: {
@@ -91,8 +116,16 @@ describe('HomeView portfolio sections integration', () => {
     expect(wrapper.get('[data-testid="home-section-hero"]').classes()).toContain('home-view__section')
     expect(wrapper.get('[data-testid="home-section-work"]').classes()).toContain('home-view__section')
     expect(wrapper.get('[data-testid="home-section-work"]').classes()).toContain('home-view__portfolio')
+    expect(wrapper.get('[data-testid="home-section-work"]').classes()).toContain('home-view__card-hover')
+    expect(wrapper.get('[data-testid="home-section-portfolio"]').classes()).toContain('home-view__section')
+    expect(wrapper.get('[data-testid="home-section-portfolio"]').classes()).toContain('home-view__card-hover')
     expect(wrapper.get('[data-testid="home-section-skills"]').classes()).toContain('home-view__section')
     expect(wrapper.get('[data-testid="home-section-skills"]').classes()).toContain('home-view__portfolio')
+    expect(wrapper.get('[data-testid="home-section-skills"]').classes()).toContain('home-view__card-hover')
+    expect(wrapper.get('[data-testid="home-section-education"]').classes()).toContain('home-view__section')
+    expect(wrapper.get('[data-testid="home-section-education"]').classes()).toContain('home-view__card-hover')
+    expect(wrapper.get('[data-testid="home-section-social"]').classes()).toContain('home-view__section')
+    expect(wrapper.get('[data-testid="home-section-social"]').classes()).toContain('home-view__card-hover')
     expect(wrapper.find('.home-view__skills-grid').exists()).toBe(true)
   })
 })

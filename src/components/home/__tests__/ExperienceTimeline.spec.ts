@@ -26,6 +26,14 @@ const items = [
 ]
 
 describe('ExperienceTimeline', () => {
+  it('exposes hover interaction hooks for timeline focus and marker emphasis', () => {
+    const wrapper = mount(ExperienceTimeline, { props: { items } })
+
+    expect(wrapper.get('.experience-timeline').classes()).toContain('experience-timeline--focus-fade')
+    expect(wrapper.get('.experience-timeline__node').classes()).toContain('experience-timeline__node--interactive')
+    expect(wrapper.get('[data-testid="timeline-node-marker-mantu"]').classes()).toContain('experience-timeline__marker--interactive')
+  })
+
   it('renders left spine, node identity markers, and clear role hierarchy', () => {
     const wrapper = mount(ExperienceTimeline, { props: { items } })
 

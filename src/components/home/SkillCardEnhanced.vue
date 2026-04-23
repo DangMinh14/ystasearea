@@ -5,38 +5,27 @@ const props = defineProps<{
   category: SkillCategory
 }>()
 
-const fallbackIcon = 'fa-solid fa-circle-question'
+const fallbackIcon = 'devicon-devicon-plain'
 </script>
 
 <template>
-  <article class="skill-card-enhanced">
+  <article class="skill-card-enhanced skill-card-enhanced--interactive">
     <header class="skill-card-enhanced__header">
       <p class="text-eyebrow">Category</p>
       <h3>{{ props.category.title }}</h3>
     </header>
 
     <ul class="skill-card-enhanced__grid">
-      <li v-for="skill in props.category.items" :key="skill.id" class="skill-card-enhanced__item">
+      <li
+        v-for="skill in props.category.items"
+        :key="skill.id"
+        class="skill-card-enhanced__item skill-card-enhanced__item--interactive"
+      >
         <div class="skill-card-enhanced__label-wrap">
           <span class="skill-card-enhanced__icon-wrap">
             <i :data-testid="`skill-icon-${skill.id}`" :class="skill.iconClass || fallbackIcon" aria-hidden="true"></i>
           </span>
           <span class="skill-card-enhanced__label">{{ skill.label }}</span>
-        </div>
-
-        <div
-          :data-testid="`skill-level-${skill.id}`"
-          class="skill-card-enhanced__dots"
-          role="img"
-          :aria-label="`Proficiency level: ${skill.level} out of 5`"
-        >
-          <span
-            v-for="index in 5"
-            :key="index"
-            :data-testid="`skill-dot-${skill.id}`"
-            class="skill-card-enhanced__dot"
-            :class="{ 'skill-card-enhanced__dot--active': index <= skill.level }"
-          />
         </div>
       </li>
     </ul>
@@ -55,12 +44,16 @@ const fallbackIcon = 'fa-solid fa-circle-question'
     linear-gradient(148deg, color-mix(in srgb, var(--surface-2) 90%, transparent), color-mix(in srgb, var(--surface-1) 88%, transparent)),
     linear-gradient(22deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 64%);
   box-shadow: var(--shadow-card);
-  transition: transform 220ms var(--ease-standard), box-shadow 220ms var(--ease-standard);
+  transition:
+    transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.skill-card-enhanced:hover {
-  transform: scale(1.02);
-  box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 20%, transparent);
+.skill-card-enhanced--interactive:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .skill-card-enhanced__header {
@@ -90,6 +83,16 @@ const fallbackIcon = 'fa-solid fa-circle-question'
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--border-subtle) 84%, transparent);
   background: color-mix(in srgb, var(--surface-1) 90%, transparent);
+  transition:
+    transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-card-enhanced__item--interactive:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--border-subtle));
 }
 
 .skill-card-enhanced__label-wrap {
@@ -108,27 +111,16 @@ const fallbackIcon = 'fa-solid fa-circle-question'
   background: color-mix(in srgb, var(--accent) 14%, transparent);
 }
 
+.skill-card-enhanced__icon-wrap i {
+  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-card-enhanced__item--interactive:hover .skill-card-enhanced__icon-wrap i {
+  transform: translateY(-1px) scale(1.05);
+}
+
 .skill-card-enhanced__label {
   font-weight: 600;
-}
-
-.skill-card-enhanced__dots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.skill-card-enhanced__dot {
-  width: 9px;
-  height: 9px;
-  border-radius: var(--radius-pill);
-  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
-  background: color-mix(in srgb, var(--surface-3) 90%, transparent);
-}
-
-.skill-card-enhanced__dot--active {
-  background: color-mix(in srgb, var(--accent) 88%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 78%, transparent);
 }
 
 @media (max-width: 640px) {
@@ -146,6 +138,19 @@ const fallbackIcon = 'fa-solid fa-circle-question'
   .skill-card-enhanced:hover {
     transform: none;
     box-shadow: var(--shadow-card);
+  }
+
+  .skill-card-enhanced__item {
+    transition: none;
+  }
+
+  .skill-card-enhanced__item:hover {
+    transform: none;
+  }
+
+  .skill-card-enhanced__icon-wrap i {
+    transition: none;
+    transform: none;
   }
 }
 </style>

@@ -3,16 +3,31 @@ import { describe, expect, it } from 'vitest'
 import SkillCardEnhanced from '../SkillCardEnhanced.vue'
 
 describe('SkillCardEnhanced', () => {
-  it('renders category title, wrapped skill items, and clear 5-dot indicators', () => {
+  it('exposes hover interaction hooks for card and skill items', () => {
+    const wrapper = mount(SkillCardEnhanced, {
+      props: {
+        category: {
+          id: 'frontend',
+          title: 'Frontend Development',
+          items: [{ id: 'ts', label: 'TypeScript', iconClass: 'devicon-typescript-plain', level: 4 }],
+        },
+      },
+    })
+
+    expect(wrapper.get('.skill-card-enhanced').classes()).toContain('skill-card-enhanced--interactive')
+    expect(wrapper.get('.skill-card-enhanced__item').classes()).toContain('skill-card-enhanced__item--interactive')
+  })
+
+  it('renders category title and skill items without dot indicators', () => {
     const wrapper = mount(SkillCardEnhanced, {
       props: {
         category: {
           id: 'frontend',
           title: 'Frontend Development',
           items: [
-            { id: 'ts', label: 'TypeScript', iconClass: 'fa-brands fa-js', level: 4 },
-            { id: 'vue', label: 'Vue', iconClass: 'fa-brands fa-vuejs', level: 5 },
-            { id: 'css', label: 'CSS', iconClass: 'fa-brands fa-css3-alt', level: 3 },
+            { id: 'ts', label: 'TypeScript', iconClass: 'devicon-typescript-plain', level: 4 },
+            { id: 'vue', label: 'Vue', iconClass: 'devicon-vuejs-plain', level: 5 },
+            { id: 'css', label: 'CSS', iconClass: 'devicon-css3-plain', level: 3 },
           ],
         },
       },
@@ -20,9 +35,8 @@ describe('SkillCardEnhanced', () => {
 
     expect(wrapper.text()).toContain('Frontend Development')
     expect(wrapper.findAll('.skill-card-enhanced__item')).toHaveLength(3)
-    expect(wrapper.findAll('[data-testid="skill-dot-ts"]')).toHaveLength(5)
-    expect(wrapper.findAll('[data-testid="skill-dot-ts"].skill-card-enhanced__dot--active')).toHaveLength(4)
-    expect(wrapper.get('[data-testid="skill-level-ts"]').attributes('aria-label')).toBe('Proficiency level: 4 out of 5')
+    expect(wrapper.findAll('[data-testid="skill-dot-ts"]')).toHaveLength(0)
+    expect(wrapper.get('[data-testid="skill-icon-ts"]').classes()).toContain('devicon-typescript-plain')
   })
 
   it('uses fallback icon when iconClass is missing', () => {
@@ -36,6 +50,6 @@ describe('SkillCardEnhanced', () => {
       },
     })
 
-    expect(wrapper.get('[data-testid="skill-icon-unknown"]').classes()).toContain('fa-circle-question')
+    expect(wrapper.get('[data-testid="skill-icon-unknown"]').classes()).toContain('devicon-devicon-plain')
   })
 })
