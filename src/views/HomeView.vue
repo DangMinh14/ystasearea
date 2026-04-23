@@ -195,13 +195,13 @@ onBeforeUnmount(() => {
 <style scoped>
 .home-view {
   display: grid;
-  gap: clamp(var(--space-7), 4vw, var(--space-10));
+  gap: clamp(var(--space-8), 4.4vw, var(--space-11));
 }
 
 .home-view__section {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 320ms ease, transform 320ms ease;
+  transform: translateY(14px);
+  transition: opacity 300ms var(--ease-standard), transform 300ms var(--ease-standard);
 }
 
 .home-view__section--visible {
@@ -211,7 +211,14 @@ onBeforeUnmount(() => {
 
 .home-view__portfolio {
   display: grid;
-  gap: var(--space-4);
+  gap: clamp(var(--space-4), 2vw, var(--space-6));
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background:
+    linear-gradient(136deg, color-mix(in srgb, var(--surface-2) 92%, transparent), color-mix(in srgb, var(--surface-1) 90%, transparent)),
+    linear-gradient(16deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 58%);
+  box-shadow: var(--shadow-card);
 }
 
 .home-view__section-header {
@@ -225,15 +232,34 @@ onBeforeUnmount(() => {
 
 .home-view__skills-grid {
   display: grid;
-  gap: var(--space-4);
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(var(--space-3), 2.2vw, var(--space-5));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (max-width: 767px) {
+  .home-view {
+    gap: var(--space-8);
+  }
+
+  .home-view__portfolio {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .home-view__skills-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce), print {
   .home-view__section {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  .home-view__portfolio {
+    box-shadow: none;
   }
 }
 </style>

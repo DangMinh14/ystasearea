@@ -88,7 +88,11 @@ describe('HomeView portfolio sections integration', () => {
 
     const sections = wrapper.findAll('[data-testid^="home-section-"]')
     expect(sections.length).toBeGreaterThanOrEqual(2)
+    expect(wrapper.get('[data-testid="home-section-hero"]').classes()).toContain('home-view__section')
     expect(wrapper.get('[data-testid="home-section-work"]').classes()).toContain('home-view__section')
+    expect(wrapper.get('[data-testid="home-section-work"]').classes()).toContain('home-view__portfolio')
     expect(wrapper.get('[data-testid="home-section-skills"]').classes()).toContain('home-view__section')
+    expect(wrapper.get('[data-testid="home-section-skills"]').classes()).toContain('home-view__portfolio')
+    expect(wrapper.find('.home-view__skills-grid').exists()).toBe(true)
   })
 })

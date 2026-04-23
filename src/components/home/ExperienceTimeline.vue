@@ -7,8 +7,10 @@ defineProps<{
 }>()
 
 const expanded = ref<Record<string, boolean>>({})
+const fallbackNodeIcon = 'fa-solid fa-briefcase'
 
 const getResponsibilitiesId = (id: string) => `responsibilities-${id}`
+const getNodeIcon = (iconClass?: string) => iconClass || fallbackNodeIcon
 
 const toggleResponsibilities = (id: string) => {
   expanded.value = { ...expanded.value, [id]: !expanded.value[id] }
@@ -19,32 +21,270 @@ const toggleResponsibilities = (id: string) => {
   <section class="experience-timeline">
     <div data-testid="timeline-spine" class="experience-timeline__spine" aria-hidden="true"></div>
     <article v-for="item in items" :key="item.id" class="experience-timeline__node">
-      <header class="experience-timeline__header">
-        <h3>{{ item.company }}</h3>
-        <p>{{ item.role }}</p>
-        <span>{{ item.period }}</span>
-      </header>
+      <div class="experience-timeline__identity" aria-hidden="true">
+        <span :data-testid="`timeline-node-marker-${item.id}`" class="experience-timeline__marker">
+          <i :class="getNodeIcon(item.iconClass)" aria-hidden="true"></i>
+        </span>
+      </div>
 
-      <ul>
-        <li v-for="highlight in item.highlights" :key="highlight">{{ highlight }}</li>
-      </ul>
+      <div class="experience-timeline__content">
+        <header class="experience-timeline__header">
+          <h3 :data-testid="`timeline-role-${item.id}`" class="experience-timeline__role">{{ item.role }}</h3>
+          <p :data-testid="`timeline-company-${item.id}`" class="experience-timeline__company">
+            {{ item.company }}
+          </p>
+          <p :data-testid="`timeline-period-${item.id}`" class="experience-timeline__period">{{ item.period }}</p>
+        </header>
 
-      <button
-        v-if="item.responsibilities.length"
-        :data-testid="`toggle-responsibilities-${item.id}`"
-        :aria-expanded="expanded[item.id] ? 'true' : 'false'"
-        :aria-controls="getResponsibilitiesId(item.id)"
-        type="button"
-        @click="toggleResponsibilities(item.id)"
-      >
-        {{ expanded[item.id] ? 'Show less' : 'Show more' }}
-      </button>
+        <section class="experience-timeline__achievements">
+          <p class="experience-timeline__subheading">Key achievements</p>
+          <ul class="experience-timeline__list experience-timeline__list--achievements">
+            <li v-for="highlight in item.highlights" :key="highlight">{{ highlight }}</li>
+          </ul>
+        </section>
 
-      <ul v-if="expanded[item.id]" :id="getResponsibilitiesId(item.id)">
-        <li v-for="responsibility in item.responsibilities" :key="responsibility">
-          {{ responsibility }}
-        </li>
-      </ul>
+        <div v-if="item.tags.length || item.metrics.length" class="experience-timeline__chips">
+          <ul v-if="item.tags.length" class="experience-timeline__chip-list" aria-label="Technology stack">
+            <li v-for="tag in item.tags" :key="`tag-${item.id}-${tag}`">
+              <span :data-testid="`tech-tag-${item.id}`" class="experience-timeline__chip experience-timeline__chip--tag">
+                {{ tag }}
+              </span>
+            </li>
+          </ul>
+
+          <ul v-if="item.metrics.length" class="experience-timeline__chip-list" aria-label="Impact metrics">
+            <li v-for="metric in item.metrics" :key="`metric-${item.id}-${metric}`">
+              <span :data-testid="`metric-chip-${item.id}`" class="experience-timeline__chip experience-timeline__chip--metric">
+                {{ metric }}
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <section v-if="item.responsibilities.length" class="experience-timeline__responsibilities">
+          <button
+            :data-testid="`toggle-responsibilities-${item.id}`"
+            :aria-expanded="expanded[item.id] ? 'true' : 'false'"
+            :aria-controls="getResponsibilitiesId(item.id)"
+            class="experience-timeline__toggle"
+            type="button"
+            @click="toggleResponsibilities(item.id)"
+          >
+            {{ expanded[item.id] ? 'Show less' : 'Show more' }}
+          </button>
+
+          <ul v-if="expanded[item.id]" :id="getResponsibilitiesId(item.id)" class="experience-timeline__list experience-timeline__list--responsibilities">
+            <li v-for="responsibility in item.responsibilities" :key="responsibility">
+              {{ responsibility }}
+            </li>
+          </ul>
+        </section>
+      </div>
     </article>
   </section>
 </template>
+
+<style scoped>
+.experience-timeline {
+  position: relative;
+  display: grid;
+  gap: var(--space-5);
+  padding-left: clamp(var(--space-5), 3vw, var(--space-7));
+}
+
+.experience-timeline__spine {
+  position: absolute;
+  top: var(--space-3);
+  bottom: var(--space-3);
+  left: clamp(var(--space-2), 1.8vw, var(--space-4));
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--accent) 72%, transparent),
+    color-mix(in srgb, var(--accent) 30%, transparent)
+  );
+}
+
+.experience-timeline__node {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--space-4);
+  padding: clamp(var(--space-4), 2.4vw, var(--space-6));
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background:
+    linear-gradient(132deg, color-mix(in srgb, var(--surface-2) 92%, transparent), color-mix(in srgb, var(--surface-1) 88%, transparent)),
+    linear-gradient(12deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 52%);
+  box-shadow: var(--shadow-card);
+  transition: transform 220ms var(--ease-standard), box-shadow 220ms var(--ease-standard);
+}
+
+.experience-timeline__node:hover {
+  transform: scale(1.02);
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.experience-timeline__identity {
+  padding-top: 3px;
+}
+
+.experience-timeline__marker {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--surface-1) 84%, var(--accent) 16%);
+  color: var(--accent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--surface-1) 94%, transparent);
+}
+
+.experience-timeline__content {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.experience-timeline__header {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.experience-timeline__role {
+  margin: 0;
+  font-size: clamp(1.06rem, 2vw, 1.3rem);
+}
+
+.experience-timeline__company,
+.experience-timeline__period {
+  margin: 0;
+}
+
+.experience-timeline__company {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.experience-timeline__period {
+  font-size: 0.92rem;
+  color: color-mix(in srgb, var(--text-secondary) 82%, transparent);
+}
+
+.experience-timeline__achievements {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.experience-timeline__subheading {
+  margin: 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.experience-timeline__list {
+  margin: 0;
+  padding-left: var(--space-5);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.experience-timeline__list--achievements {
+  font-weight: 560;
+}
+
+.experience-timeline__list--responsibilities {
+  color: var(--text-secondary);
+}
+
+.experience-timeline__chips {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.experience-timeline__chip-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.experience-timeline__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.36rem 0.62rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.experience-timeline__chip--tag {
+  background: color-mix(in srgb, var(--surface-3) 86%, transparent);
+  color: var(--text-secondary);
+  border: 1px solid color-mix(in srgb, var(--border-subtle) 86%, transparent);
+}
+
+.experience-timeline__chip--metric {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: color-mix(in srgb, var(--text-primary) 80%, var(--accent) 20%);
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+}
+
+.experience-timeline__responsibilities {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.experience-timeline__toggle {
+  justify-self: start;
+  padding: 0.42rem 0.82rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  background: color-mix(in srgb, var(--surface-1) 88%, transparent);
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .experience-timeline {
+    padding-left: var(--space-4);
+  }
+
+  .experience-timeline__spine {
+    left: 13px;
+  }
+
+  .experience-timeline__node {
+    grid-template-columns: 28px 1fr;
+    gap: var(--space-3);
+  }
+
+  .experience-timeline__marker {
+    width: 28px;
+    height: 28px;
+    font-size: 0.84rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce), print {
+  .experience-timeline__node {
+    transition: none;
+    transform: none;
+  }
+
+  .experience-timeline__node:hover {
+    transform: none;
+    box-shadow: var(--shadow-card);
+  }
+}
+</style>
