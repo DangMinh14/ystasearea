@@ -13,7 +13,6 @@ defineProps<{
   homeLabel: string
   blogLabel: string
   gamesLabel: string
-  musicLabel: string
   toolsLabel: string
   currentTheme: AppTheme
   currentLocale: Locale
@@ -142,7 +141,6 @@ onUnmounted(() => {
       :home-label="homeLabel"
       :blog-label="blogLabel"
       :games-label="gamesLabel"
-      :music-label="musicLabel"
       :tools-label="toolsLabel"
       @close="closeNav"
     />

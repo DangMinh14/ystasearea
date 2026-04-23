@@ -7,22 +7,18 @@ import AppFooter from './AppFooter.vue'
 import { useThemeSettings } from '../../composables/useThemeSettings'
 import { useLocaleSettings } from '../../composables/useLocaleSettings'
 import { useQuote } from '../../composables/useQuote'
-import { useWeather } from '../../composables/useWeather'
 import { useMediaWidgets } from '../../composables/useMediaWidgets'
-import { usePlaylist } from '../../composables/usePlaylist'
 import { useAuthStore } from '../../stores/auth'
 import { appShellContextKey, type AppShellContext } from '../../composables/appShellContext'
-import bgVideo from '../../assets/bg.mp4'
-import lunarBg from '../../assets/lunar-bg.jpg'
-import halloweenBg from '../../assets/halloween-bg.jpg'
+import bgVideo from '../../assets/videos/bg.mp4'
+import lunarBg from '../../assets/images/lunar-bg.jpg'
+import halloweenBg from '../../assets/images/halloween-bg.jpg'
 import './app-layout.css'
 
 const { theme, isLunarTheme, isHalloweenTheme, setTheme, hydrateTheme } = useThemeSettings()
 const { locale, t, hydrateLocale, changeLocale } = useLocaleSettings()
 const { quote, quoteLoading, quoteError, loadQuote } = useQuote()
-const { weather, weatherLoading, weatherError, weatherLocation, weatherLocations, loadWeather } = useWeather()
 const { catImageUrl, catLoading, dogImageUrl, dogLoading, loadCatImage, loadDogImage } = useMediaWidgets()
-const { playlist, currentVideoIndex, currentVideo, onNextVideo, onPrevVideo, onSelectVideo, mp3Tracks } = usePlaylist()
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
@@ -47,24 +43,12 @@ const context: AppShellContext = {
   quote,
   quoteLoading,
   quoteError,
-  weather,
-  weatherLoading,
-  weatherError,
-  weatherLocation,
-  weatherLocations,
   catImageUrl,
   catLoading,
   dogImageUrl,
   dogLoading,
   refreshCat: loadCatImage,
   refreshDog: loadDogImage,
-  playlist,
-  currentVideoIndex,
-  currentVideo,
-  onNextVideo,
-  onPrevVideo,
-  onSelectVideo,
-  mp3Tracks,
 }
 
 provide(appShellContextKey, context)
@@ -81,7 +65,6 @@ onMounted(() => {
   hydrateTheme()
   hydrateLocale()
   loadQuote()
-  loadWeather()
   loadCatImage()
   loadDogImage()
   authStore.fetchMe()
@@ -112,7 +95,6 @@ onBeforeUnmount(() => {
         :home-label="t.navHome"
         :blog-label="t.navBlog"
         :games-label="t.navGames"
-        :music-label="t.navMusic"
         :tools-label="t.navTools"
         :current-theme="theme"
         :current-locale="locale"
@@ -144,17 +126,6 @@ onBeforeUnmount(() => {
           :quote="quote"
           :quote-loading="quoteLoading"
           :quote-error="quoteError"
-          :weather-title="t.weatherTitle"
-          :weather-loading-text="t.weatherLoading"
-          :weather-error-text="t.weatherError"
-          :weather-temp-label="t.weatherTempLabel"
-          :weather-wind-label="t.weatherWindLabel"
-          :weather-location-label="t.weatherLocationLabel"
-          :weather-locations="weatherLocations"
-          :weather-location="weatherLocation"
-          :weather="weather"
-          :weather-loading="weatherLoading"
-          :weather-error="weatherError"
           :cat-title="t.catTitle"
           :cat-button="t.catButton"
           :cat-loading-text="t.catLoading"
@@ -165,7 +136,6 @@ onBeforeUnmount(() => {
           :dog-loading-text="t.dogLoading"
           :dog-image-url="dogImageUrl"
           :dog-loading="dogLoading"
-          @change-weather-location="weatherLocation = $event"
           @refresh-cat="loadCatImage"
           @refresh-dog="loadDogImage"
         />

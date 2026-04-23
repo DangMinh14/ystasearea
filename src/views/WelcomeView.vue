@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { translations, type Locale } from '../content/translations'
-import bgVideo from '../assets/bg.mp4'
+import bgVideo from '../assets/videos/bg.mp4'
 import '../components/layout/app-layout.css'
 
 const router = useRouter()

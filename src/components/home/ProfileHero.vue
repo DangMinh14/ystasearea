@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import UiButton from '../ui/UiButton.vue'
 import ProfileImage from './ProfileImage.vue'
+import cvFile from '../../assets/documents/CV Nguyen Minh Dang - Software Engineer.pdf'
 
 defineProps<{
   role: string
@@ -22,9 +23,9 @@ defineProps<{
         <RouterLink to="/tools">
           <UiButton size="lg">{{ projectsLabel }}</UiButton>
         </RouterLink>
-        <RouterLink to="/tools/cv-generator">
+        <a :href="cvFile" download="CV Nguyen Minh Dang - Software Engineer.pdf">
           <UiButton variant="ghost" size="lg">{{ cvLabel }}</UiButton>
-        </RouterLink>
+        </a>
       </div>
     </div>
 

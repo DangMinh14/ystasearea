@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import UiCard from '../ui/UiCard.vue'
 import UiButton from '../ui/UiButton.vue'
-import UiSelect from '../ui/UiSelect.vue'
 import UiSkeleton from '../ui/UiSkeleton.vue'
 
 defineProps<{
@@ -11,17 +10,6 @@ defineProps<{
   quote: { content: string; author: string } | null
   quoteLoading: boolean
   quoteError: string
-  weatherTitle: string
-  weatherLoadingText: string
-  weatherErrorText: string
-  weatherTempLabel: string
-  weatherWindLabel: string
-  weatherLocationLabel: string
-  weatherLocations: Array<{ value: string; label: string }>
-  weatherLocation: string
-  weather: { temperature: number; wind: number } | null
-  weatherLoading: boolean
-  weatherError: string
   catTitle: string
   catButton: string
   catLoadingText: string
@@ -35,7 +23,6 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'change-weather-location', value: string): void
   (e: 'refresh-cat'): void
   (e: 'refresh-dog'): void
 }>()
@@ -52,24 +39,6 @@ const emit = defineEmits<{
           <p>“{{ quote.content }}”</p>
           <footer>— {{ quote.author }}</footer>
         </blockquote>
-      </div>
-    </UiCard>
-
-    <UiCard>
-      <div class="app-sidebar__section">
-        <h3>{{ weatherTitle }}</h3>
-        <UiSelect
-          :model-value="weatherLocation"
-          :label="weatherLocationLabel"
-          :options="weatherLocations"
-          @update:model-value="emit('change-weather-location', $event)"
-        />
-        <p v-if="weatherLoading" class="text-muted">{{ weatherLoadingText }}</p>
-        <p v-else-if="weatherError" class="text-muted">{{ weatherErrorText }}</p>
-        <div v-else-if="weather" class="app-sidebar__stats">
-          <p><strong>{{ weatherTempLabel }}:</strong> {{ weather.temperature }}°C</p>
-          <p><strong>{{ weatherWindLabel }}:</strong> {{ weather.wind }} km/h</p>
-        </div>
       </div>
     </UiCard>
 

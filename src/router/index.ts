@@ -42,12 +42,6 @@ const router = createRouter({
       meta: { showSidebar: false, fullWidth: false },
     },
     {
-      path: '/music',
-      name: 'music',
-      component: () => import('../views/MusicView.vue'),
-      meta: { showSidebar: false, fullWidth: false },
-    },
-    {
       path: '/tools',
       component: () => import('../features/tools/layouts/ToolsLayout.vue'),
       meta: { showSidebar: false, fullWidth: true },
