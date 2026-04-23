@@ -8,6 +8,8 @@ defineProps<{
 
 const expanded = ref<Record<string, boolean>>({})
 
+const getResponsibilitiesId = (id: string) => `responsibilities-${id}`
+
 const toggleResponsibilities = (id: string) => {
   expanded.value = { ...expanded.value, [id]: !expanded.value[id] }
 }
@@ -30,13 +32,15 @@ const toggleResponsibilities = (id: string) => {
       <button
         v-if="item.responsibilities.length"
         :data-testid="`toggle-responsibilities-${item.id}`"
+        :aria-expanded="expanded[item.id] ? 'true' : 'false'"
+        :aria-controls="getResponsibilitiesId(item.id)"
         type="button"
         @click="toggleResponsibilities(item.id)"
       >
         {{ expanded[item.id] ? 'Show less' : 'Show more' }}
       </button>
 
-      <ul v-if="expanded[item.id]">
+      <ul v-if="expanded[item.id]" :id="getResponsibilitiesId(item.id)">
         <li v-for="responsibility in item.responsibilities" :key="responsibility">
           {{ responsibility }}
         </li>

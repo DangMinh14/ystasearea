@@ -26,9 +26,16 @@ describe('ExperienceTimeline', () => {
 
   it('keeps responsibilities collapsed by default and expands on click', async () => {
     const wrapper = mount(ExperienceTimeline, { props: { items } })
+    const toggle = wrapper.get('button[data-testid="toggle-responsibilities-mantu"]')
+    const regionId = 'responsibilities-mantu'
 
+    expect(toggle.attributes('aria-expanded')).toBe('false')
+    expect(toggle.attributes('aria-controls')).toBe(regionId)
+    expect(wrapper.find(`#${regionId}`).exists()).toBe(false)
     expect(wrapper.text()).not.toContain('Maintained ASP.NET Core MVC apps')
-    await wrapper.get('button[data-testid="toggle-responsibilities-mantu"]').trigger('click')
+    await toggle.trigger('click')
+    expect(toggle.attributes('aria-expanded')).toBe('true')
+    expect(wrapper.get(`#${regionId}`).attributes('id')).toBe(regionId)
     expect(wrapper.text()).toContain('Maintained ASP.NET Core MVC apps')
   })
 })
