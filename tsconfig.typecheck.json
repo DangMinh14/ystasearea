@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "include": [
-    "src/components/home/types.ts",
-    "src/components/home/__tests__/types-contract.spec.ts"
+    "src/env.d.ts",
+    "src/views/HomeView.vue",
+    "src/components/home/**/*.vue",
+    "src/components/home/**/*.ts"
   ]
 }
