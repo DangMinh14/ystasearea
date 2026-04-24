@@ -13,6 +13,7 @@ if (!shell) {
 }
 
 type HomeSectionId = 'work' | 'portfolio' | 'skills' | 'education' | 'social'
+type RevealPhase = 'hidden' | 'entering' | 'visible'
 
 const sectionLinks = [
   { id: 'work-experience', label: 'Work Experience' },
@@ -112,14 +113,15 @@ const skillCategories: SkillCategory[] = [
 ]
 
 const revealSectionIds: HomeSectionId[] = ['work', 'portfolio', 'skills', 'education', 'social']
-const revealedSections = ref<Record<HomeSectionId, boolean>>({
-  work: false,
-  portfolio: false,
-  skills: false,
-  education: false,
-  social: false,
+const sectionPhase = ref<Record<HomeSectionId, RevealPhase>>({
+  work: 'hidden',
+  portfolio: 'hidden',
+  skills: 'hidden',
+  education: 'hidden',
+  social: 'hidden',
 })
 const sectionRefs: Partial<Record<HomeSectionId, HTMLElement>> = {}
+const revealTimers = new Map<HomeSectionId, ReturnType<typeof setTimeout>>()
 let observer: IntersectionObserver | null = null
 
 const setSectionRef = (id: HomeSectionId, element: Element | ComponentPublicInstance | null) => {
@@ -132,11 +134,37 @@ const setSectionRef = (id: HomeSectionId, element: Element | ComponentPublicInst
 }
 
 const revealSection = (id: HomeSectionId) => {
-  revealedSections.value[id] = true
+  if (sectionPhase.value[id] !== 'hidden') {
+    return
+  }
+
+  sectionPhase.value = {
+    ...sectionPhase.value,
+    [id]: 'entering',
+  }
+
+  if (typeof window === 'undefined') {
+    sectionPhase.value = {
+      ...sectionPhase.value,
+      [id]: 'visible',
+    }
+    return
+  }
+
+  const timer = window.setTimeout(() => {
+    sectionPhase.value = {
+      ...sectionPhase.value,
+      [id]: 'visible',
+    }
+    revealTimers.delete(id)
+  }, 70)
+
+  revealTimers.set(id, timer)
 }
 
 const sectionRevealClass = (id: HomeSectionId) => ({
-  'home-view__section--visible': revealedSections.value[id],
+  'home-view__section--entering': sectionPhase.value[id] === 'entering' || sectionPhase.value[id] === 'visible',
+  'home-view__section--visible': sectionPhase.value[id] === 'visible',
 })
 
 onMounted(() => {
@@ -179,6 +207,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   observer?.disconnect()
   observer = null
+  revealTimers.forEach((timer) => clearTimeout(timer))
+  revealTimers.clear()
 })
 </script>
 
