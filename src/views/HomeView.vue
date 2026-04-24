@@ -341,14 +341,21 @@ onBeforeUnmount(() => {
 }
 
 .home-view__section {
+  --reveal-section-duration: 650ms;
+  --reveal-item-duration: 480ms;
+  --reveal-stagger-step: 70ms;
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 300ms var(--ease-standard), transform 300ms var(--ease-standard);
+  filter: blur(8px);
+  pointer-events: none;
+  transition:
+    opacity var(--reveal-section-duration) cubic-bezier(0.22, 1, 0.36, 1),
+    filter var(--reveal-section-duration) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .home-view__section--visible {
   opacity: 1;
-  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
 }
 
 .home-view__portfolio,
@@ -387,6 +394,39 @@ onBeforeUnmount(() => {
 .home-view__section-header {
   display: grid;
   gap: var(--space-2);
+}
+
+.home-view__reveal-header,
+.home-view__reveal-content,
+.home-view__reveal-item {
+  opacity: 0;
+  transform: translateY(16px) scale(0.99);
+  filter: blur(5px);
+  transition:
+    opacity var(--reveal-item-duration) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--reveal-item-duration) cubic-bezier(0.22, 1, 0.36, 1),
+    filter var(--reveal-item-duration) cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-view__section--visible .home-view__reveal-header {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 60ms;
+}
+
+.home-view__section--visible .home-view__reveal-content {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 130ms;
+}
+
+.home-view__section--visible .home-view__reveal-stagger .home-view__reveal-item {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: calc(180ms + (var(--reveal-index, 0) * var(--reveal-stagger-step)));
 }
 
 .home-view__section-header > h2,
@@ -448,13 +488,24 @@ onBeforeUnmount(() => {
   .home-view__skills-grid {
     grid-template-columns: 1fr;
   }
+
+  .home-view__reveal-header,
+  .home-view__reveal-content,
+  .home-view__reveal-item {
+    transform: translateY(10px) scale(0.995);
+  }
 }
 
 @media (prefers-reduced-motion: reduce), print {
-  .home-view__section {
+  .home-view__section,
+  .home-view__reveal-header,
+  .home-view__reveal-content,
+  .home-view__reveal-item {
     opacity: 1;
+    filter: none;
     transform: none;
     transition: none;
+    pointer-events: auto;
   }
 
   .home-view__portfolio,
