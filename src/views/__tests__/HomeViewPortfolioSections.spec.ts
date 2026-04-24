@@ -129,25 +129,57 @@ describe('HomeView portfolio sections integration', () => {
     expect(wrapper.find('.home-view__skills-grid').exists()).toBe(true)
   })
 
-  it('applies staged reveal classes and child hooks for progressive transitions', () => {
-    const wrapper = mount(HomeView, {
-      global: {
-        provide: {
-          [appShellContextKey]: createShellContext(),
-        },
-        stubs: {
-          RouterLink: true,
-        },
-      },
-    })
+  it('applies staged reveal classes and child hooks for progressive transitions', async () => {
+    vi.useFakeTimers()
+    const originalObserver = window.IntersectionObserver
 
-    const workSection = wrapper.get('[data-testid="home-section-work"]')
-    expect(workSection.classes()).toContain('home-view__section')
-    expect(workSection.classes()).toContain('home-view__section--entering')
-    expect(workSection.classes()).toContain('home-view__section--visible')
+    try {
+      window.IntersectionObserver = class {
+        private callback: IntersectionObserverCallback
 
-    expect(wrapper.get('[data-testid="home-section-work-header"]').classes()).toContain('home-view__reveal-header')
-    expect(wrapper.get('[data-testid="home-section-work-content"]').classes()).toContain('home-view__reveal-content')
-    expect(wrapper.get('[data-testid="home-section-skills-grid"]').classes()).toContain('home-view__reveal-stagger')
+        constructor(callback: IntersectionObserverCallback) {
+          this.callback = callback
+        }
+
+        observe(target: Element) {
+          this.callback([{ isIntersecting: true, target } as IntersectionObserverEntry], this as unknown as IntersectionObserver)
+        }
+
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return []
+        }
+        root = null
+        rootMargin = '0px'
+        thresholds = []
+      } as unknown as typeof IntersectionObserver
+
+      const wrapper = mount(HomeView, {
+        global: {
+          provide: {
+            [appShellContextKey]: createShellContext(),
+          },
+          stubs: {
+            RouterLink: true,
+          },
+        },
+      })
+
+      vi.runAllTimers()
+      await wrapper.vm.$nextTick()
+
+      const workSection = wrapper.get('[data-testid="home-section-work"]')
+      expect(workSection.classes()).toContain('home-view__section')
+      expect(workSection.classes()).toContain('home-view__section--entering')
+      expect(workSection.classes()).toContain('home-view__section--visible')
+
+      expect(wrapper.get('[data-testid="home-section-work-header"]').classes()).toContain('home-view__reveal-header')
+      expect(wrapper.get('[data-testid="home-section-work-content"]').classes()).toContain('home-view__reveal-content')
+      expect(wrapper.get('[data-testid="home-section-skills-grid"]').classes()).toContain('home-view__reveal-stagger')
+    } finally {
+      window.IntersectionObserver = originalObserver
+      vi.useRealTimers()
+    }
   })
 })
