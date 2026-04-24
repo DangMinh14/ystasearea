@@ -125,8 +125,8 @@ const revealTimers = new Map<HomeSectionId, ReturnType<typeof setTimeout>>()
 let observer: IntersectionObserver | null = null
 
 const setSectionRef = (id: HomeSectionId, element: Element | ComponentPublicInstance | null) => {
-  if (element instanceof HTMLElement) {
-    sectionRefs[id] = element
+  if (element && typeof (element as HTMLElement).tagName === 'string') {
+    sectionRefs[id] = element as HTMLElement
     return
   }
 

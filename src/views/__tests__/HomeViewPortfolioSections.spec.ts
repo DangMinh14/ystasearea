@@ -97,6 +97,8 @@ describe('HomeView portfolio sections integration', () => {
     expectedSkills.forEach((skill) => {
       expect(renderedSkills).toContain(skill)
     })
+
+    wrapper.unmount()
   })
 
   it('keeps section wrappers for reveal behavior around all home sections', () => {
@@ -127,6 +129,8 @@ describe('HomeView portfolio sections integration', () => {
     expect(wrapper.get('[data-testid="home-section-social"]').classes()).toContain('home-view__section')
     expect(wrapper.get('[data-testid="home-section-social"]').classes()).toContain('home-view__card-hover')
     expect(wrapper.find('.home-view__skills-grid').exists()).toBe(true)
+
+    wrapper.unmount()
   })
 
   it('applies staged reveal classes and child hooks for progressive transitions', async () => {
@@ -177,6 +181,7 @@ describe('HomeView portfolio sections integration', () => {
       expect(wrapper.get('[data-testid="home-section-work-header"]').classes()).toContain('home-view__reveal-header')
       expect(wrapper.get('[data-testid="home-section-work-content"]').classes()).toContain('home-view__reveal-content')
       expect(wrapper.get('[data-testid="home-section-skills-grid"]').classes()).toContain('home-view__reveal-stagger')
+      wrapper.unmount()
     } finally {
       window.IntersectionObserver = originalObserver
       vi.useRealTimers()
