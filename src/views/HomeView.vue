@@ -234,11 +234,13 @@ onBeforeUnmount(() => {
       :class="sectionRevealClass('work')"
       :ref="(element) => setSectionRef('work', element)"
     >
-      <header class="home-view__section-header">
+      <header data-testid="home-section-work-header" class="home-view__section-header home-view__reveal-header">
         <p class="text-eyebrow">Portfolio</p>
         <h2>Work Experience</h2>
       </header>
-      <ExperienceTimeline :items="experienceItems" />
+      <div data-testid="home-section-work-content" class="home-view__reveal-content">
+        <ExperienceTimeline :items="experienceItems" />
+      </div>
     </section>
 
     <section
@@ -249,11 +251,11 @@ onBeforeUnmount(() => {
       :class="sectionRevealClass('portfolio')"
       :ref="(element) => setSectionRef('portfolio', element)"
     >
-      <header class="home-view__section-header">
+      <header class="home-view__section-header home-view__reveal-header">
         <p class="text-eyebrow">Highlighted Build</p>
         <h2>Featured Project</h2>
       </header>
-      <article class="home-view__feature">
+      <article class="home-view__feature home-view__reveal-content">
         <h3>Ystase Area - Personal Productivity &amp; Tooling Platform</h3>
         <p>
           Built a personal platform using Vue 3 + TypeScript with a suite of productivity tools including a multilingual
@@ -274,12 +276,22 @@ onBeforeUnmount(() => {
       :class="sectionRevealClass('skills')"
       :ref="(element) => setSectionRef('skills', element)"
     >
-      <header class="home-view__section-header">
+      <header class="home-view__section-header home-view__reveal-header">
         <p class="text-eyebrow">Portfolio</p>
         <h2>Technical Skills</h2>
       </header>
-      <div class="home-view__skills-grid">
-        <SkillCardEnhanced v-for="category in skillCategories" :key="category.id" :category="category" />
+      <div
+        data-testid="home-section-skills-grid"
+        class="home-view__skills-grid home-view__reveal-content home-view__reveal-stagger"
+      >
+        <div
+          v-for="(category, index) in skillCategories"
+          :key="category.id"
+          class="home-view__reveal-item"
+          :style="{ '--reveal-index': index }"
+        >
+          <SkillCardEnhanced :category="category" />
+        </div>
       </div>
     </section>
 
@@ -291,11 +303,11 @@ onBeforeUnmount(() => {
       :class="sectionRevealClass('education')"
       :ref="(element) => setSectionRef('education', element)"
     >
-      <header class="home-view__section-header">
+      <header class="home-view__section-header home-view__reveal-header">
         <p class="text-eyebrow">Academic Foundation</p>
         <h2>Education</h2>
       </header>
-      <article class="home-view__basic-info">
+      <article class="home-view__basic-info home-view__reveal-content">
         <h3>Ton Duc Thang University</h3>
         <p>2020 - 2024</p>
         <p>Bachelor | Computer Network and Data Communication</p>
@@ -310,11 +322,11 @@ onBeforeUnmount(() => {
       :class="sectionRevealClass('social')"
       :ref="(element) => setSectionRef('social', element)"
     >
-      <header class="home-view__section-header">
+      <header class="home-view__section-header home-view__reveal-header">
         <p class="text-eyebrow">Connect</p>
         <h2>Social Profiles</h2>
       </header>
-      <div class="home-view__social-grid">
+      <div class="home-view__social-grid home-view__reveal-content">
         <a href="https://www.linkedin.com/in/dangnguyenminh1409" target="_blank" rel="noreferrer">LinkedIn</a>
         <a href="https://github.com/DangMinh1" target="_blank" rel="noreferrer">GitHub</a>
       </div>
