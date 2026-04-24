@@ -128,4 +128,26 @@ describe('HomeView portfolio sections integration', () => {
     expect(wrapper.get('[data-testid="home-section-social"]').classes()).toContain('home-view__card-hover')
     expect(wrapper.find('.home-view__skills-grid').exists()).toBe(true)
   })
+
+  it('applies staged reveal classes and child hooks for progressive transitions', () => {
+    const wrapper = mount(HomeView, {
+      global: {
+        provide: {
+          [appShellContextKey]: createShellContext(),
+        },
+        stubs: {
+          RouterLink: true,
+        },
+      },
+    })
+
+    const workSection = wrapper.get('[data-testid="home-section-work"]')
+    expect(workSection.classes()).toContain('home-view__section')
+    expect(workSection.classes()).toContain('home-view__section--entering')
+    expect(workSection.classes()).toContain('home-view__section--visible')
+
+    expect(wrapper.get('[data-testid="home-section-work-header"]').classes()).toContain('home-view__reveal-header')
+    expect(wrapper.get('[data-testid="home-section-work-content"]').classes()).toContain('home-view__reveal-content')
+    expect(wrapper.get('[data-testid="home-section-skills-grid"]').classes()).toContain('home-view__reveal-stagger')
+  })
 })
