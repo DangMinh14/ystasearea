@@ -1,11 +1,17 @@
 import { computed, ref } from 'vue'
 
-export type AppTheme = 'light' | 'dark' | 'christmas' | 'lunar' | 'halloween'
+export type AppTheme = 'light' | 'dark'
 
 const THEME_KEY = 'ystasearea-theme'
 
-const isTheme = (value: string): value is AppTheme =>
-  value === 'light' || value === 'dark' || value === 'christmas' || value === 'lunar' || value === 'halloween'
+const isTheme = (value: string): value is AppTheme => value === 'light' || value === 'dark'
+
+const getSystemTheme = (): AppTheme =>
+  typeof window !== 'undefined' &&
+  window.matchMedia &&
+  window.matchMedia('(prefers-color-scheme: light)').matches
+    ? 'light'
+    : 'dark'
 
 export const useThemeSettings = () => {
   const theme = ref<AppTheme>('dark')
@@ -20,22 +26,23 @@ export const useThemeSettings = () => {
     localStorage.setItem(THEME_KEY, nextTheme)
   }
 
+  const toggleTheme = () => {
+    setTheme(theme.value === 'dark' ? 'light' : 'dark')
+  }
+
   const hydrateTheme = () => {
     const savedTheme = localStorage.getItem(THEME_KEY)
-    if (savedTheme && isTheme(savedTheme)) {
-      theme.value = savedTheme
-    }
+    theme.value = savedTheme && isTheme(savedTheme) ? savedTheme : getSystemTheme()
     applyTheme()
   }
 
-  const isLunarTheme = computed(() => theme.value === 'lunar')
-  const isHalloweenTheme = computed(() => theme.value === 'halloween')
+  const isDarkTheme = computed(() => theme.value === 'dark')
 
   return {
     theme,
-    isLunarTheme,
-    isHalloweenTheme,
+    isDarkTheme,
     setTheme,
+    toggleTheme,
     hydrateTheme,
   }
 }

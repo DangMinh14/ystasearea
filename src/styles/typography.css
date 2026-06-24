@@ -7,7 +7,7 @@ html {
 
 body {
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text-primary);
 }
 
@@ -16,22 +16,64 @@ h2,
 h3,
 h4 {
   margin: 0;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+}
+
+h3 {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
 }
 
 p {
   margin: 0;
 }
 
-.text-eyebrow {
-  font-size: 0.76rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.text-display {
   font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+
+.text-body {
   color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 65ch;
+}
+
+.text-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--accent-color);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .text-muted {
   color: var(--text-secondary);
+}
+
+.text-faint {
+  color: var(--text-faint);
+}
+
+::selection {
+  background: var(--accent-color);
+  color: var(--accent-contrast);
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import AppHeader from './AppHeader.vue'
 import AppSidebarWidgets from './AppSidebarWidgets.vue'
 import AppFooter from './AppFooter.vue'
@@ -8,20 +8,14 @@ import { useThemeSettings } from '../../composables/useThemeSettings'
 import { useLocaleSettings } from '../../composables/useLocaleSettings'
 import { useQuote } from '../../composables/useQuote'
 import { useMediaWidgets } from '../../composables/useMediaWidgets'
-import { useAuthStore } from '../../stores/auth'
 import { appShellContextKey, type AppShellContext } from '../../composables/appShellContext'
-import bgVideo from '../../assets/videos/bg.mp4'
-import lunarBg from '../../assets/images/lunar-bg.jpg'
-import halloweenBg from '../../assets/images/halloween-bg.jpg'
 import './app-layout.css'
 
-const { theme, isLunarTheme, isHalloweenTheme, setTheme, hydrateTheme } = useThemeSettings()
+const { theme, isDarkTheme, setTheme, toggleTheme, hydrateTheme } = useThemeSettings()
 const { locale, t, hydrateLocale, changeLocale } = useLocaleSettings()
 const { quote, quoteLoading, quoteError, loadQuote } = useQuote()
 const { catImageUrl, catLoading, dogImageUrl, dogLoading, loadCatImage, loadDogImage } = useMediaWidgets()
 const route = useRoute()
-const router = useRouter()
-const authStore = useAuthStore()
 const showBackToTop = ref(false)
 
 const isSidebarVisible = computed(() => route.meta.showSidebar === true)
@@ -53,21 +47,12 @@ const context: AppShellContext = {
 
 provide(appShellContextKey, context)
 
-const handleLogin = () => {
-  router.push('/login')
-}
-
-const handleLogout = () => {
-  authStore.logout()
-}
-
 onMounted(() => {
   hydrateTheme()
   hydrateLocale()
   loadQuote()
   loadCatImage()
   loadDogImage()
-  authStore.fetchMe()
   onWindowScroll()
   window.addEventListener('scroll', onWindowScroll, { passive: true })
 })
@@ -80,38 +65,24 @@ onBeforeUnmount(() => {
 <template>
   <div class="app-shell">
     <div class="app-shell__background" aria-hidden="true">
-      <img v-if="isLunarTheme" :src="lunarBg" alt="" />
-      <img v-else-if="isHalloweenTheme" :src="halloweenBg" alt="" />
-      <video v-else :src="bgVideo" autoplay muted loop playsinline></video>
+      <span class="app-shell__aurora app-shell__aurora--a"></span>
+      <span class="app-shell__aurora app-shell__aurora--b"></span>
+      <span class="app-shell__aurora app-shell__aurora--c"></span>
+      <span class="app-shell__grid"></span>
     </div>
-    <div class="app-shell__overlay" aria-hidden="true"></div>
 
     <div class="app-shell__content">
       <AppHeader
         :brand-name="t.brandName"
-        :settings-label="t.settingsLabel"
-        :theme-select-label="t.themeSelectLabel"
         :language-label="t.languageLabel"
         :home-label="t.navHome"
         :blog-label="t.navBlog"
         :games-label="t.navGames"
         :tools-label="t.navTools"
-        :current-theme="theme"
+        :is-dark="isDarkTheme"
         :current-locale="locale"
-        :theme-options="[
-          { value: 'light', label: t.lightLabel },
-          { value: 'dark', label: t.darkLabel },
-          { value: 'christmas', label: t.christmasLabel },
-          { value: 'lunar', label: t.lunarLabel },
-          { value: 'halloween', label: t.halloweenLabel },
-        ]"
-        :is-logged-in="authStore.isLoggedIn"
-        :user-display-name="authStore.user?.displayName"
-        :user-avatar-url="authStore.user?.avatarUrl"
-        @change-theme="setTheme"
+        @toggle-theme="toggleTheme"
         @change-locale="changeLocale"
-        @login="handleLogin"
-        @logout="handleLogout"
       />
 
       <div class="app-shell__main-grid" :class="isSidebarVisible ? 'app-shell__main-grid--with-sidebar' : 'app-shell__main-grid--no-sidebar'">

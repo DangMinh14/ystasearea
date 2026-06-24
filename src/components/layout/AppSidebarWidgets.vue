@@ -37,7 +37,7 @@ const emit = defineEmits<{
         <p v-else-if="quoteError" class="text-muted">{{ quoteErrorText }}</p>
         <blockquote v-else-if="quote" class="app-sidebar__quote">
           <p>“{{ quote.content }}”</p>
-          <footer>— {{ quote.author }}</footer>
+          <footer class="app-sidebar__quote-author">{{ quote.author }}</footer>
         </blockquote>
       </div>
     </UiCard>

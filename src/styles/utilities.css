@@ -6,8 +6,11 @@ html,
 body,
 #app {
   width: 100%;
-  height: 100%;
   min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -28,7 +31,6 @@ html::-webkit-scrollbar-track,
 body::-webkit-scrollbar-track,
 *::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
-  border-radius: 999px;
 }
 
 html::-webkit-scrollbar-thumb,
@@ -53,10 +55,13 @@ body {
   color: var(--text-primary);
   background: var(--background-primary);
   overflow-x: hidden;
+  transition: background var(--motion-slow) var(--ease-standard),
+    color var(--motion-slow) var(--ease-standard);
 }
 
 a {
   color: inherit;
+  text-decoration: none;
 }
 
 img,
@@ -74,27 +79,41 @@ textarea {
   color: inherit;
 }
 
+button {
+  cursor: pointer;
+}
+
 :focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
 
 .container {
-  width: min(1200px, calc(100% - var(--space-6)));
+  width: min(1180px, calc(100% - var(--space-6)));
   margin-inline: auto;
 }
 
 @media (min-width: 768px) {
   .container {
-    width: min(1240px, calc(100% - var(--space-8)));
+    width: min(1180px, calc(100% - var(--space-9)));
   }
 }
 
 .surface {
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .surface {
+    background: var(--background-elevated);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 .scrollbar-thin {
@@ -103,5 +122,5 @@ textarea {
 }
 
 .page-enter {
-  animation: fade-slide-up var(--motion-slow) var(--ease-standard);
+  animation: fade-slide-up var(--motion-slow) var(--ease-out);
 }

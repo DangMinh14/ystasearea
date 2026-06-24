@@ -23,7 +23,7 @@ defineProps<{
     <UiEmptyState v-if="!posts.length" :title="emptyTitle" :description="emptyText" />
 
     <div v-else class="blog-list__grid">
-      <UiCard v-for="post in posts" :key="post.slug" class="blog-list__card">
+      <UiCard v-for="post in posts" :key="post.slug" class="blog-list__card ui-card--interactive">
         <h3>{{ post.title }}</h3>
         <p class="text-muted">{{ post.excerpt }}</p>
         <div class="blog-list__meta">

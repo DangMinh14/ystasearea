@@ -235,7 +235,6 @@ onBeforeUnmount(() => {
       :ref="(element) => setSectionRef('work', element)"
     >
       <header data-testid="home-section-work-header" class="home-view__section-header home-view__reveal-header">
-        <p class="text-eyebrow">Portfolio</p>
         <h2>Work Experience</h2>
       </header>
       <div data-testid="home-section-work-content" class="home-view__reveal-content">
@@ -252,7 +251,7 @@ onBeforeUnmount(() => {
       :ref="(element) => setSectionRef('portfolio', element)"
     >
       <header class="home-view__section-header home-view__reveal-header">
-        <p class="text-eyebrow">Highlighted Build</p>
+        <p class="text-eyebrow">Selected work</p>
         <h2>Featured Project</h2>
       </header>
       <article class="home-view__feature home-view__reveal-content">
@@ -277,7 +276,6 @@ onBeforeUnmount(() => {
       :ref="(element) => setSectionRef('skills', element)"
     >
       <header class="home-view__section-header home-view__reveal-header">
-        <p class="text-eyebrow">Portfolio</p>
         <h2>Technical Skills</h2>
       </header>
       <div
@@ -304,7 +302,6 @@ onBeforeUnmount(() => {
       :ref="(element) => setSectionRef('education', element)"
     >
       <header class="home-view__section-header home-view__reveal-header">
-        <p class="text-eyebrow">Academic Foundation</p>
         <h2>Education</h2>
       </header>
       <article class="home-view__basic-info home-view__reveal-content">
@@ -323,12 +320,17 @@ onBeforeUnmount(() => {
       :ref="(element) => setSectionRef('social', element)"
     >
       <header class="home-view__section-header home-view__reveal-header">
-        <p class="text-eyebrow">Connect</p>
         <h2>Social Profiles</h2>
       </header>
       <div class="home-view__social-grid home-view__reveal-content">
-        <a href="https://www.linkedin.com/in/dangnguyenminh1409" target="_blank" rel="noreferrer">LinkedIn</a>
-        <a href="https://github.com/DangMinh1" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://www.linkedin.com/in/dangnguyenminh1409" target="_blank" rel="noreferrer">
+          <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+          LinkedIn
+        </a>
+        <a href="https://github.com/DangMinh1" target="_blank" rel="noreferrer">
+          <i class="fa-brands fa-github" aria-hidden="true"></i>
+          GitHub
+        </a>
       </div>
     </section>
   </section>
@@ -376,9 +378,9 @@ onBeforeUnmount(() => {
 }
 
 .home-view__card-hover:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--accent-soft);
 }
 
 .home-view__portfolio {
@@ -466,12 +468,26 @@ onBeforeUnmount(() => {
 .home-view__social-grid > a {
   display: inline-flex;
   align-items: center;
+  gap: 0.5rem;
   text-decoration: none;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-pill);
   background: var(--surface-3);
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 1rem;
   font-weight: 600;
+  color: var(--text-primary);
+  transition: transform var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    color var(--motion-base) var(--ease-standard),
+    background-color var(--motion-base) var(--ease-standard);
+}
+
+.home-view__feature-links > a:hover,
+.home-view__social-grid > a:hover {
+  transform: translateY(-2px);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  background: var(--accent-soft);
 }
 
 @media (max-width: 767px) {

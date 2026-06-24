@@ -278,6 +278,59 @@
   font-size: 0.85rem;
 }
 
+/* ── Social preset chips ─────────────────────────────────────────── */
+
+.cv-preset-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin: var(--space-1) 0 var(--space-2);
+}
+
+.cv-preset-chip {
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cv-preset-chip:hover {
+  background: var(--surface-3);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+
+.cv-preset-chip--custom {
+  border-style: dashed;
+  border-color: var(--accent);
+  color: var(--accent);
+  background: transparent;
+}
+
+/* ── End-date "Present" toggle ───────────────────────────────────── */
+
+.cv-enddate-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cv-present-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 400;
+  font-size: 0.8em;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
 /* ── Transition ──────────────────────────────────────────────────── */
 
 .cv-step-enter-active,
@@ -533,7 +586,9 @@
 .cv-modern-grid {
   display: grid;
   gap: var(--cv-space-md);
-  grid-template-columns: 1fr;
+  /* The page is always A4-wide, so the two columns are unconditional —
+     they must not depend on the viewport (the preview is scaled, not reflowed). */
+  grid-template-columns: minmax(150px, 0.33fr) minmax(0, 0.67fr);
 }
 
 .cv-modern-side {
@@ -563,7 +618,7 @@
 
 .cv-head--minimal {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--cv-space-sm);
   border-bottom-width: 0.5px;
 }
@@ -595,7 +650,7 @@
 .cv-grid-2 {
   display: grid;
   gap: var(--cv-space-md);
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 /* ======================================================================
@@ -623,20 +678,6 @@
 
   .cv-form-section {
     overflow-y: auto;
-  }
-}
-
-@media (min-width: 720px) {
-  .cv-modern-grid {
-    grid-template-columns: minmax(160px, 0.33fr) minmax(0, 0.67fr);
-  }
-
-  .cv-head--minimal {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .cv-grid-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

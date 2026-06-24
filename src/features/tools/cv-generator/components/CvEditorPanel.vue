@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import type { Locale, TranslationKeys } from '../../../../content/translations'
+import { onMounted, ref, watch } from 'vue'
+import type { TranslationKeys } from '../../../../content/translations'
 import {
   createEducationItem,
-  createEmptyResume,
   createLanguageItem,
   createProfileItem,
   createProjectItem,
   createSkillItem,
   createWorkItem,
-  cvFontFamilyMap,
   cvThemeColorPresets,
-  type CvFontFamily,
   type CvResume,
   type CvProfile,
 } from '../utils/cv-model'
-import { fontsByLocale, type CvFontId, cvFontRegistry, defaultFontForLocale, loadCvFont } from '../utils/cv-fonts'
+import { cvFontList, type CvFontId, loadCvFont } from '../utils/cv-fonts'
 
 type EditorStepId = 'style' | 'basics' | 'work' | 'education' | 'skills' | 'languages' | 'projects'
 
@@ -30,7 +27,6 @@ const STEP_STORAGE_KEY = 'ystasearea-cv-editor-active-step'
 const props = defineProps<{
   cv: CvResume
   t: TranslationKeys
-  cvLanguage: Locale
   validationCount: number
   importError: string
   importSuccess: boolean
@@ -47,7 +43,6 @@ const emit = defineEmits<{
   (event: 'reset-all'): void
   (event: 'load-sample'): void
   (event: 'import-json', value: string): void
-  (event: 'update:cv-language', value: Locale): void
 }>()
 
 const steps: EditorStep[] = [
@@ -63,13 +58,7 @@ const steps: EditorStep[] = [
 const activeStep = ref<EditorStepId>('style')
 const importInput = ref<HTMLInputElement | null>(null)
 
-const availableFonts = computed(() =>
-  fontsByLocale[props.cvLanguage].map((id) => ({
-    id,
-    label: cvFontRegistry[id].label,
-    vi: cvFontRegistry[id].vietnameseSupport,
-  }))
-)
+const availableFonts = cvFontList.map((font) => ({ id: font.id, label: font.label }))
 
 const openImportDialog = () => {
   importInput.value?.click()
@@ -152,18 +141,6 @@ const applyThemeColor = (color: string) => {
   props.cv.meta.themeColor = color
 }
 
-const updateCvLanguage = (event: Event) => {
-  const value = (event.target as HTMLSelectElement).value
-  if (value === 'vi' || value === 'en') {
-    emit('update:cv-language', value)
-    // Auto-switch font if current font isn't available for new locale
-    const available = fontsByLocale[value]
-    if (!available.includes(props.cv.meta.fontFamily)) {
-      props.cv.meta.fontFamily = defaultFontForLocale[value]
-    }
-  }
-}
-
 const SOCIAL_PRESETS = [
   { name: 'LinkedIn', prefix: 'https://linkedin.com/in/' },
   { name: 'GitHub', prefix: 'https://github.com/' },
@@ -229,23 +206,25 @@ watch(
     <!-- Icon Action Bar -->
     <div class="cv-action-bar">
       <button
+        type="button"
         class="cv-action-btn cv-action-btn--primary"
         :title="exportingPdf ? t.cvActionExportingPdf : t.cvActionExportPdf"
+        :aria-label="exportingPdf ? t.cvActionExportingPdf : t.cvActionExportPdf"
         :disabled="exportingPdf"
         @click="emit('export-pdf')"
       >📄</button>
 
       <span class="cv-action-divider"></span>
 
-      <button class="cv-action-btn" :title="t.cvActionImportJson" @click="openImportDialog">⬆️</button>
-      <button class="cv-action-btn" :title="t.cvActionExportJson" @click="emit('export-json')">⬇️</button>
-      <button class="cv-action-btn" :title="copied ? t.cvActionCopied : t.cvActionCopyJson" @click="emit('copy-json')">📋</button>
+      <button type="button" class="cv-action-btn" :title="t.cvActionImportJson" :aria-label="t.cvActionImportJson" @click="openImportDialog">⬆️</button>
+      <button type="button" class="cv-action-btn" :title="t.cvActionExportJson" :aria-label="t.cvActionExportJson" @click="emit('export-json')">⬇️</button>
+      <button type="button" class="cv-action-btn" :title="copied ? t.cvActionCopied : t.cvActionCopyJson" :aria-label="copied ? t.cvActionCopied : t.cvActionCopyJson" @click="emit('copy-json')">📋</button>
 
       <span class="cv-action-divider"></span>
 
-      <button class="cv-action-btn" :title="t.cvActionLoadSample" @click="emit('load-sample')">📝</button>
-      <button class="cv-action-btn" :title="t.cvActionSampleJson" @click="emit('download-sample')">💾</button>
-      <button class="cv-action-btn" :title="t.cvActionReset" @click="emit('reset-all')">🔄</button>
+      <button type="button" class="cv-action-btn" :title="t.cvActionLoadSample" :aria-label="t.cvActionLoadSample" @click="emit('load-sample')">📝</button>
+      <button type="button" class="cv-action-btn" :title="t.cvActionSampleJson" :aria-label="t.cvActionSampleJson" @click="emit('download-sample')">💾</button>
+      <button type="button" class="cv-action-btn" :title="t.cvActionReset" :aria-label="t.cvActionReset" @click="emit('reset-all')">🔄</button>
 
       <input ref="importInput" class="cv-hidden-input" type="file" accept="application/json" @change="onImportFileChange" />
     </div>
@@ -294,19 +273,10 @@ watch(
               </label>
 
               <label class="tool-field">
-                <span>{{ t.languageLabel }}</span>
-                <select class="ui-select" :value="cvLanguage" @change="updateCvLanguage">
-                  <option value="en">{{ t.cvLanguageEnglish }}</option>
-                  <!-- Temporarily disabled Vietnamese language option -->
-                  <option value="vi" v-if="false">{{ t.cvLanguageVietnamese }}</option>
-                </select>
-              </label>
-
-              <label class="tool-field">
                 <span>{{ t.cvFontLabel }}</span>
                 <select class="ui-select" :value="cv.meta.fontFamily" @change="updateFont">
                   <option v-for="font in availableFonts" :key="font.id" :value="font.id">
-                    {{ font.label }}{{ font.vi ? ' 🇻🇳' : '' }}
+                    {{ font.label }}
                   </option>
                 </select>
               </label>
@@ -368,22 +338,22 @@ watch(
               <h4>🌐 {{ t.cvSectionProfiles }}</h4>
             </div>
             
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; margin-top: 0.5rem;">
-              <button 
-                v-for="preset in SOCIAL_PRESETS" 
-                :key="preset.name" 
-                class="cv-action-btn" 
-                style="width: auto; height: auto; padding: 0.25rem 0.6rem; font-size: 0.85em; border-radius: 4px; border: 1px solid var(--cv-color-border);"
+            <div class="cv-preset-row">
+              <button
+                v-for="preset in SOCIAL_PRESETS"
+                :key="preset.name"
+                type="button"
+                class="cv-preset-chip"
                 @click="addPresetProfile(preset.name)"
                 :title="`Add ${preset.name}`"
               >
                 + {{ preset.name }}
               </button>
-              <button 
-                class="cv-action-btn" 
-                style="width: auto; height: auto; padding: 0.25rem 0.6rem; font-size: 0.85em; border-radius: 4px; border: 1px dashed var(--cv-color-primary); color: var(--cv-color-primary);"
+              <button
+                type="button"
+                class="cv-preset-chip cv-preset-chip--custom"
                 @click="addProfile"
-                title="Add Custom Profile"
+                title="Add custom profile"
               >
                 + Custom
               </button>
@@ -434,9 +404,9 @@ watch(
                   <input v-model="work.startDate" class="ui-input" type="month" />
                 </label>
                 <label class="tool-field">
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="cv-enddate-head">
                     <span>{{ t.cvFieldEndDate }}</span>
-                    <label style="display: flex; align-items: center; gap: 0.25rem; font-weight: normal; cursor: pointer; font-size: 0.8em; opacity: 0.8;">
+                    <label class="cv-present-toggle">
                       <input v-model="work.isCurrent" type="checkbox" />
                       {{ t.cvFieldPresent }}
                     </label>
@@ -511,9 +481,9 @@ watch(
                   <input v-model="education.startDate" class="ui-input" type="month" />
                 </label>
                 <label class="tool-field">
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="cv-enddate-head">
                     <span>{{ t.cvFieldEndDate }}</span>
-                    <label style="display: flex; align-items: center; gap: 0.25rem; font-weight: normal; cursor: pointer; font-size: 0.8em; opacity: 0.8;">
+                    <label class="cv-present-toggle">
                       <input v-model="education.isCurrent" type="checkbox" />
                       {{ t.cvFieldPresent }}
                     </label>
@@ -645,9 +615,9 @@ watch(
                   <input v-model="project.startDate" class="ui-input" type="month" />
                 </label>
                 <label class="tool-field">
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="cv-enddate-head">
                     <span>{{ t.cvFieldEndDate }}</span>
-                    <label style="display: flex; align-items: center; gap: 0.25rem; font-weight: normal; cursor: pointer; font-size: 0.8em; opacity: 0.8;">
+                    <label class="cv-present-toggle">
                       <input v-model="project.isCurrent" type="checkbox" />
                       {{ t.cvFieldPresent }}
                     </label>

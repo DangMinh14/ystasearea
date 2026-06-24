@@ -3,17 +3,16 @@ import type { TranslationKeys } from '../../../../content/translations'
 import type { CvResume } from '../utils/cv-model'
 import { formatRange, nonEmpty, nonEmptyList } from '../utils/cv-format'
 
-const props = defineProps<{
+defineProps<{
   cv: CvResume
   t: TranslationKeys
   activeStep?: string
-  pageIndex?: number
 }>()
 </script>
 
 <template>
   <article class="cv-template cv-template--minimal">
-    <header v-if="pageIndex === undefined || pageIndex === 0" data-page-block="head" class="cv-head cv-head--minimal" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
+    <header class="cv-head cv-head--minimal" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
       <div>
         <h1>{{ cv.basics.name || t.cvPreviewNameFallback }}</h1>
         <p class="cv-role">{{ cv.basics.label || t.cvPreviewTitleFallback }}</p>
@@ -35,7 +34,7 @@ const props = defineProps<{
       <h2>{{ t.cvSectionWork }}</h2>
       <div class="cv-minimal-item" v-for="(work, index) in cv.work" :key="`work-${index}`" v-show="nonEmpty(work.position) || nonEmpty(work.name)">
         <h3>{{ work.position || t.cvUntitled }}</h3>
-        <p>{{ work.name }} · {{ formatRange(work.startDate, work.endDate) }}</p>
+        <p>{{ work.name }} · {{ formatRange(work.startDate, work.endDate, work.isCurrent, work.dateFormat, cv.meta.locale, t.cvFieldPresent) }}</p>
         <p v-if="nonEmpty(work.summary)">{{ work.summary }}</p>
         <p v-if="nonEmptyList(work.highlights).length > 0">{{ nonEmptyList(work.highlights).join(' | ') }}</p>
       </div>
@@ -45,7 +44,7 @@ const props = defineProps<{
       <h2>{{ t.cvSectionProjects }}</h2>
       <div class="cv-minimal-item" v-for="(project, index) in cv.projects" :key="`project-${index}`" v-show="nonEmpty(project.name)">
         <h3>{{ project.name }}</h3>
-        <p>{{ formatRange(project.startDate, project.endDate) }}</p>
+        <p>{{ formatRange(project.startDate, project.endDate, project.isCurrent, project.dateFormat, cv.meta.locale, t.cvFieldPresent) }}</p>
         <p v-if="nonEmpty(project.description)">{{ project.description }}</p>
         <p v-if="nonEmpty(project.url)">{{ project.url }}</p>
       </div>
@@ -62,7 +61,7 @@ const props = defineProps<{
         >
           <h3>{{ education.institution || t.cvUntitled }}</h3>
           <p>{{ education.studyType }} {{ education.area ? `· ${education.area}` : '' }}</p>
-          <p>{{ formatRange(education.startDate, education.endDate) }}</p>
+          <p>{{ formatRange(education.startDate, education.endDate, education.isCurrent, education.dateFormat, cv.meta.locale, t.cvFieldPresent) }}</p>
           <p v-if="nonEmpty(education.score)">{{ t.cvFieldGpa }}: {{ education.score }}</p>
         </div>
       </div>
@@ -85,7 +84,7 @@ const props = defineProps<{
               :key="`language-${index}`"
               v-show="nonEmpty(language.language) || nonEmpty(language.fluency)"
             >
-              {{ language.language || t.cvUntitled }} — {{ language.fluency }}
+              {{ language.language || t.cvUntitled }} - {{ language.fluency }}
             </li>
           </ul>
         </div>

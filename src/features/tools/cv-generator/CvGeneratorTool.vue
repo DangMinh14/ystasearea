@@ -1,27 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import { translations, type Locale } from '../../../content/translations'
+import { computed, onMounted, ref } from 'vue'
+import { translations } from '../../../content/translations'
 import CvEditorPanel from './components/CvEditorPanel.vue'
 import CvPreviewPanel from './components/CvPreviewPanel.vue'
 import { useCvGenerator } from './composables/useCvGenerator'
-import { downloadCvPdf } from './utils/cv-pdf'
+import { printCv } from './utils/cv-print'
 import './cv-generator.css'
 
-const CV_LANGUAGE_STORAGE_KEY = 'ystasearea-cv-language'
+const PREVIEW_CONTENT_ID = 'cv-preview-embedded'
 
-const resolveInitialCvLanguage = (): Locale => {
-  try {
-    const saved = localStorage.getItem(CV_LANGUAGE_STORAGE_KEY)
-    // Temporarily disabled vi support
-    // return saved === 'vi' || saved === 'en' ? saved : 'en'
-    return 'en'
-  } catch (_error) {
-    return 'en'
-  }
-}
-
-const cvLanguage = ref<Locale>(resolveInitialCvLanguage())
-const cvT = computed(() => translations[cvLanguage.value])
+const cvT = translations.en
 
 const {
   cv,
@@ -36,7 +24,7 @@ const {
   exportJsonFile,
   downloadSampleJson,
   copyJson,
-} = useCvGenerator(cvLanguage)
+} = useCvGenerator()
 
 const validationCount = computed(() => validationIssues.value.length)
 const exportingPdf = ref(false)
@@ -49,29 +37,13 @@ const exportPdf = async () => {
 
   try {
     exportingPdf.value = true
-    await downloadCvPdf(cv, {
-      summary: cvT.value.cvSectionSummary,
-      work: cvT.value.cvSectionWork,
-      projects: cvT.value.cvSectionProjects,
-      education: cvT.value.cvSectionEducation,
-      skills: cvT.value.cvSectionSkills,
-      languages: cvT.value.cvSectionLanguages,
-      profiles: cvT.value.cvSectionProfiles,
-      gpa: cvT.value.cvFieldGpa,
-      courses: cvT.value.cvFieldCourses,
-      untitled: cvT.value.cvUntitled,
-      present: cvT.value.cvFieldPresent,
-    })
+    await printCv(PREVIEW_CONTENT_ID, cv.basics.name.trim() || 'resume')
   } catch (error) {
     console.error('PDF export failed', error)
   } finally {
     exportingPdf.value = false
   }
 }
-
-watch(cvLanguage, (next) => {
-  localStorage.setItem(CV_LANGUAGE_STORAGE_KEY, next)
-})
 
 onMounted(() => {
   hydrate()
@@ -84,13 +56,11 @@ onMounted(() => {
       <CvEditorPanel
         :cv="cv"
         :t="cvT"
-        :cv-language="cvLanguage"
         :validation-count="validationCount"
         :import-error="importError"
         :import-success="importSuccess"
         :copied="copied"
         :exporting-pdf="exportingPdf"
-        @update:cv-language="cvLanguage = $event"
         @export-pdf="exportPdf"
         @export-json="exportJsonFile"
         @copy-json="copyJson"
@@ -98,10 +68,10 @@ onMounted(() => {
         @reset-all="resetAll"
         @load-sample="loadSample"
         @import-json="importFromJson"
-        @update:activeStep="activeStep = $event"
+        @update:active-step="activeStep = $event"
       />
 
-      <CvPreviewPanel :cv="cv" :t="cvT" :active-step="activeStep" content-id="cv-preview-embedded" />
+      <CvPreviewPanel :cv="cv" :t="cvT" :active-step="activeStep" :content-id="PREVIEW_CONTENT_ID" />
     </div>
   </section>
 </template>

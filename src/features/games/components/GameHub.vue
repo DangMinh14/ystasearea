@@ -39,7 +39,7 @@ const openGame = (id: GameId) => {
     <UiSectionHeader eyebrow="Games" title="Game Hub" subtitle="Mini game để thư giãn trong vài phút." />
 
     <div class="games__grid">
-      <UiCard v-for="game in games" :key="game.id" class="games__card">
+      <UiCard v-for="game in games" :key="game.id" class="games__card ui-card--interactive">
         <h3>{{ game.title }}</h3>
         <p class="text-muted">{{ game.description }}</p>
         <UiButton class="games__action" @click="openGame(game.id)">{{ game.action }}</UiButton>

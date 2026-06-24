@@ -1,5 +1,3 @@
-export type Rgb = [number, number, number]
-
 export type CvThemePalette = {
   primary: string
   text: string
@@ -74,17 +72,3 @@ export const cvTemplateDesign: Record<'classic' | 'modern' | 'minimal', CvTempla
     lineHeight: { tight: 1.16, normal: 1.33, loose: 1.42 },
   },
 }
-
-const toHexParts = (value: string): Rgb => {
-  const cleaned = value.replace('#', '').trim()
-  const normalized = cleaned.length === 3 ? cleaned.split('').map((part) => `${part}${part}`).join('') : cleaned
-
-  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
-    return [37, 99, 235]
-  }
-
-  const parsed = Number.parseInt(normalized, 16)
-  return [(parsed >> 16) & 255, (parsed >> 8) & 255, parsed & 255]
-}
-
-export const themeHexToRgb = (hex: string): Rgb => toHexParts(hex)

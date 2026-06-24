@@ -11,8 +11,8 @@ const fallbackIcon = 'devicon-devicon-plain'
 <template>
   <article class="skill-card-enhanced skill-card-enhanced--interactive">
     <header class="skill-card-enhanced__header">
-      <p class="text-eyebrow">Category</p>
       <h3>{{ props.category.title }}</h3>
+      <span class="skill-card-enhanced__count text-mono">{{ props.category.items.length }}</span>
     </header>
 
     <ul class="skill-card-enhanced__grid">
@@ -51,19 +51,28 @@ const fallbackIcon = 'devicon-devicon-plain'
 }
 
 .skill-card-enhanced--interactive:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--accent-soft);
 }
 
 .skill-card-enhanced__header {
-  display: grid;
-  gap: var(--space-1);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
 }
 
 .skill-card-enhanced__header > h3 {
   margin: 0;
   font-size: 1.1rem;
+}
+
+.skill-card-enhanced__count {
+  color: var(--accent-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.8;
 }
 
 .skill-card-enhanced__grid {
@@ -91,7 +100,7 @@ const fallbackIcon = 'devicon-devicon-plain'
 
 .skill-card-enhanced__item--interactive:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 36%, var(--border-subtle));
 }
 

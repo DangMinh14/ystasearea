@@ -3,17 +3,16 @@ import type { TranslationKeys } from '../../../../content/translations'
 import type { CvResume } from '../utils/cv-model'
 import { formatRange, nonEmpty, nonEmptyList } from '../utils/cv-format'
 
-const props = defineProps<{
+defineProps<{
   cv: CvResume
   t: TranslationKeys
   activeStep?: string
-  pageIndex?: number
 }>()
 </script>
 
 <template>
   <article class="cv-template cv-template--modern">
-    <header v-if="pageIndex === undefined || pageIndex === 0" data-page-block="head" class="cv-head cv-head--modern" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
+    <header class="cv-head cv-head--modern" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
       <h1>{{ cv.basics.name || t.cvPreviewNameFallback }}</h1>
       <p class="cv-role">{{ cv.basics.label || t.cvPreviewTitleFallback }}</p>
       <div class="cv-contact-row">
@@ -26,7 +25,7 @@ const props = defineProps<{
 
     <div class="cv-modern-grid">
       <aside class="cv-modern-side">
-        <section data-page-block="sect-profiles" class="cv-section" v-if="nonEmptyList(cv.basics.profiles.map((item) => item.network + item.url)).length > 0" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
+        <section class="cv-section" v-if="nonEmptyList(cv.basics.profiles.map((item) => item.network + item.url)).length > 0" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
           <h2>{{ t.cvSectionProfiles }}</h2>
           <ul class="cv-clean-list">
             <li v-for="(profile, index) in cv.basics.profiles" :key="`profile-${index}`" v-show="nonEmpty(profile.network) || nonEmpty(profile.url)">
@@ -36,7 +35,7 @@ const props = defineProps<{
           </ul>
         </section>
 
-        <section data-page-block="sect-skills" class="cv-section" v-if="cv.skills.length > 0" :class="{ 'cv-preview-section--active': activeStep === 'skills' }">
+        <section class="cv-section" v-if="cv.skills.length > 0" :class="{ 'cv-preview-section--active': activeStep === 'skills' }">
           <h2>{{ t.cvSectionSkills }}</h2>
           <ul class="cv-clean-list">
             <li v-for="(skill, index) in cv.skills" :key="`skill-${index}`" v-show="nonEmpty(skill.name) || nonEmptyList(skill.keywords).length > 0">
@@ -47,7 +46,7 @@ const props = defineProps<{
           </ul>
         </section>
 
-        <section data-page-block="sect-languages" class="cv-section" v-if="cv.languages.length > 0" :class="{ 'cv-preview-section--active': activeStep === 'languages' }">
+        <section class="cv-section" v-if="cv.languages.length > 0" :class="{ 'cv-preview-section--active': activeStep === 'languages' }">
           <h2>{{ t.cvSectionLanguages }}</h2>
           <ul class="cv-clean-list">
             <li
@@ -64,14 +63,14 @@ const props = defineProps<{
       </aside>
 
       <main class="cv-modern-main">
-        <section data-page-block="sect-summary" class="cv-section" v-if="nonEmpty(cv.basics.summary)" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
+        <section class="cv-section" v-if="nonEmpty(cv.basics.summary)" :class="{ 'cv-preview-section--active': activeStep === 'basics' }">
           <h2>{{ t.cvSectionSummary }}</h2>
           <p>{{ cv.basics.summary }}</p>
         </section>
 
         <section class="cv-section" v-if="cv.work.length > 0" :class="{ 'cv-preview-section--active': activeStep === 'work' }">
-          <h2 data-page-block="title-work">{{ t.cvSectionWork }}</h2>
-          <div :data-page-block="`work-${index}`" class="cv-item" v-for="(work, index) in cv.work" :key="`work-${index}`" v-show="nonEmpty(work.position) || nonEmpty(work.name)">
+          <h2>{{ t.cvSectionWork }}</h2>
+          <div class="cv-item" v-for="(work, index) in cv.work" :key="`work-${index}`" v-show="nonEmpty(work.position) || nonEmpty(work.name)">
             <div class="cv-item-head">
               <h3>{{ work.position || t.cvUntitled }}</h3>
               <span>{{ formatRange(work.startDate, work.endDate, work.isCurrent, work.dateFormat, cv.meta.locale, t.cvFieldPresent) }}</span>
@@ -87,8 +86,8 @@ const props = defineProps<{
         </section>
 
         <section class="cv-section" v-if="cv.projects.length > 0" :class="{ 'cv-preview-section--active': activeStep === 'projects' }">
-          <h2 data-page-block="title-projects">{{ t.cvSectionProjects }}</h2>
-          <div :data-page-block="`projects-${index}`" class="cv-item" v-for="(project, index) in cv.projects" :key="`project-${index}`" v-show="nonEmpty(project.name)">
+          <h2>{{ t.cvSectionProjects }}</h2>
+          <div class="cv-item" v-for="(project, index) in cv.projects" :key="`project-${index}`" v-show="nonEmpty(project.name)">
             <div class="cv-item-head">
               <h3>{{ project.name }}</h3>
               <span>{{ formatRange(project.startDate, project.endDate, project.isCurrent, project.dateFormat, cv.meta.locale, t.cvFieldPresent) }}</span>
@@ -104,9 +103,8 @@ const props = defineProps<{
         </section>
 
         <section class="cv-section" v-if="cv.education.length > 0" :class="{ 'cv-preview-section--active': activeStep === 'education' }">
-          <h2 data-page-block="title-education">{{ t.cvSectionEducation }}</h2>
+          <h2>{{ t.cvSectionEducation }}</h2>
           <div
-            :data-page-block="`education-${index}`"
             class="cv-item"
             v-for="(education, index) in cv.education"
             :key="`education-${index}`"

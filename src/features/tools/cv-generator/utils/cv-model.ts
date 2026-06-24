@@ -1,6 +1,6 @@
 import type { Locale } from '../../../../content/translations'
 import { cvThemePresets } from './cv-design'
-import { type CvFontId, cvFontRegistry, defaultFontForLocale, getCssFontFamily } from './cv-fonts'
+import { type CvFontId, cvFontRegistry, getCssFontFamily, isCvFontId } from './cv-fonts'
 
 export type CvTemplate = 'modern' | 'classic' | 'minimal'
 export type CvFontFamily = CvFontId
@@ -155,7 +155,7 @@ export const createProjectItem = (): CvProjectItem => ({
   highlights: [''],
 })
 
-export const createEmptyResume = (locale: Locale): CvResume => ({
+export const createEmptyResume = (locale: Locale = 'en'): CvResume => ({
   basics: {
     name: '',
     label: '',
@@ -222,26 +222,17 @@ const normalizeTemplate = (value: unknown): CvTemplate => {
   return 'modern'
 }
 
-const validFontFamilies: CvFontFamily[] = ['inter', 'roboto', 'open-sans', 'noto-sans', 'be-vietnam-pro']
-
-const normalizeFontFamily = (value: unknown): CvFontFamily => {
-  if (typeof value === 'string' && validFontFamilies.includes(value as CvFontFamily)) {
-    return value as CvFontFamily
-  }
-
-  // Legacy migration: 'serif' → 'inter'
-  return 'inter'
-}
+const normalizeFontFamily = (value: unknown): CvFontFamily => (isCvFontId(value) ? value : 'inter')
 
 const normalizeDate = (value: unknown): string => stringOrEmpty(value)
 
-const normalizeDateFormat = (value: unknown): 'month' | 'year' => value === 'year' ? 'year' : 'month'
+const normalizeDateFormat = (value: unknown): 'month' | 'year' => (value === 'year' ? 'year' : 'month')
+
 const normalizeIsCurrent = (endDateRaw: string, isCurrentRaw: unknown): boolean => {
   if (typeof isCurrentRaw === 'boolean') {
     return isCurrentRaw
   }
-  const end = stringOrEmpty(endDateRaw).toLowerCase()
-  return end === 'present' || end === 'hien tai' || end === 'hiện tại'
+  return stringOrEmpty(endDateRaw).trim().toLowerCase() === 'present'
 }
 
 const normalizeWork = (value: unknown): CvWorkItem[] => {
@@ -337,7 +328,7 @@ const normalizeProjects = (value: unknown): CvProjectItem[] => {
   })
 }
 
-export const normalizeResume = (value: unknown, locale: Locale): CvResume => {
+export const normalizeResume = (value: unknown, locale: Locale = 'en'): CvResume => {
   if (typeof value !== 'object' || value === null) {
     return createEmptyResume(locale)
   }
@@ -381,7 +372,7 @@ export const normalizeResume = (value: unknown, locale: Locale): CvResume => {
 
 export const cloneResume = (resume: CvResume): CvResume => JSON.parse(JSON.stringify(resume)) as CvResume
 
-export const sampleResumeEn: CvResume = {
+export const sampleResume: CvResume = {
   basics: {
     name: 'Alex Nguyen',
     label: 'Senior Frontend Engineer',
@@ -490,104 +481,3 @@ export const sampleResumeEn: CvResume = {
     lastModified: new Date().toISOString(),
   },
 }
-
-export const sampleResumeVi: CvResume = {
-  basics: {
-    name: 'Nguyen Minh Dang',
-    label: 'Ky su Frontend cap cao',
-    email: 'dang.nguyen@example.com',
-    phone: '+84 934 567 890',
-    url: 'https://dangportfolio.dev',
-    location: {
-      address: 'Thu Duc, TP. Ho Chi Minh, Viet Nam',
-    },
-    summary:
-      'Ky su san pham chuyen ve Frontend voi hon 7 nam kinh nghiem xay dung SaaS, toi uu trai nghiem nguoi dung va dong bo voi muc tieu kinh doanh.',
-    profiles: [
-      {
-        network: 'LinkedIn',
-        url: 'https://linkedin.com/in/dangnguyen',
-      },
-      {
-        network: 'GitHub',
-        url: 'https://github.com/dangnguyen',
-      },
-    ],
-  },
-  work: [
-    {
-      name: 'Skyline Labs',
-      position: 'Senior Frontend Engineer',
-      startDate: '2021-05',
-      endDate: '',
-      isCurrent: true,
-      dateFormat: 'month',
-      url: 'https://skylinelabs.example',
-      summary: 'Phat trien he thong dashboard da tenant cho nhom san pham B2B.',
-      highlights: [
-        'Rut ngan 30% thoi gian release nhan nho bo component tai su dung.',
-        'Nang diem hieu nang va kha nang truy cap cua trang quan tri.',
-      ],
-    },
-  ],
-  education: [
-    {
-      institution: 'Dai hoc Khoa hoc Tu nhien TP.HCM',
-      studyType: 'Cu nhan',
-      area: 'Cong nghe thong tin',
-      score: '8.4/10',
-      startDate: '2014-09',
-      endDate: '2018-06',
-      isCurrent: false,
-      dateFormat: 'month',
-      url: 'https://hcmus.edu.vn',
-      courses: ['Kien truc phan mem', 'Phan tich va thiet ke he thong'],
-    },
-  ],
-  skills: [
-    {
-      name: 'Frontend',
-      level: 'Chuyen sau',
-      keywords: ['Vue 3', 'TypeScript', 'Pinia', 'Performance Optimization'],
-    },
-    {
-      name: 'Lam viec lien phong ban',
-      level: 'Tot',
-      keywords: ['Product Discovery', 'A/B Testing', 'Mentoring'],
-    },
-  ],
-  languages: [
-    {
-      language: 'Tieng Viet',
-      fluency: 'Ban ngu',
-      certificate: '',
-    },
-    {
-      language: 'Tieng Anh',
-      fluency: 'Thanh thao trong cong viec',
-      certificate: 'TOEIC 900',
-    },
-  ],
-  projects: [
-    {
-      name: 'Resume Studio',
-      description: 'Cong cu tao CV da mau voi kha nang preview truc tiep va xuat PDF.',
-      startDate: '2025-01',
-      endDate: '2025-11',
-      isCurrent: false,
-      dateFormat: 'month',
-      url: 'https://resumestudio.example',
-      highlights: ['Ho tro 3 template ATS-friendly.', 'Luu tu dong vao trinh duyet de tranh mat du lieu.'],
-    },
-  ],
-  meta: {
-    template: 'modern',
-    themeColor: '#0f766e',
-    fontFamily: 'be-vietnam-pro',
-    locale: 'vi',
-    version: 'https://jsonresume.org/schema/',
-    lastModified: new Date().toISOString(),
-  },
-}
-
-export const sampleResumeByLocale = (locale: Locale): CvResume => (locale === 'vi' ? sampleResumeVi : sampleResumeEn)

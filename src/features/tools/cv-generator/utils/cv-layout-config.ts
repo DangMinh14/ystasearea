@@ -2,9 +2,9 @@ import type { CvTemplate } from './cv-model'
 import { cvTemplateDesign, resolveCvTheme, type CvThemePalette, type CvTemplateDesign } from './cv-design'
 
 /**
- * Shared layout config consumed by both the HTML preview (via CSS variables)
- * and the jsPDF renderer. All spatial values are in mm so they translate
- * directly to both CSS `mm` units and jsPDF coordinates.
+ * Layout config that feeds the HTML preview via CSS custom properties.
+ * Spatial values are in mm so the A4 page renders at true print dimensions
+ * (and prints identically through the export iframe).
  */
 export type CvPageConfig = {
   width: number   // mm

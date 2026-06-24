@@ -17,9 +17,9 @@ defineProps<{
 .profile-image-wrap {
   position: relative;
   margin: 0;
-  width: clamp(420px, 42vw, 480px);
-  height: clamp(420px, 42vw, 480px);
-  justify-self: end;
+  width: min(440px, 100%);
+  aspect-ratio: 1 / 1;
+  justify-self: center;
   overflow: visible;
 }
 
@@ -41,7 +41,7 @@ defineProps<{
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 132%;
+  width: 118%;
   max-width: none;
   transform: translateX(-50%);
   border-radius: var(--radius-md);
@@ -55,11 +55,16 @@ defineProps<{
   transform: translateX(-50%) translateY(-4px);
 }
 
+@media (min-width: 1024px) {
+  .profile-image-wrap {
+    justify-self: end;
+  }
+}
+
 @media (max-width: 1023px) {
   .profile-image-wrap {
-    justify-self: start;
-    width: clamp(340px, 76vw, 420px);
-    height: clamp(340px, 76vw, 420px);
+    width: min(360px, 82vw);
+    margin-inline: auto;
   }
 }
 </style>

@@ -118,12 +118,41 @@ const scrollToSection = (id: string) => {
 
 @media (min-width: 1024px) {
   .profile-hero {
-    grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
     padding-block: clamp(var(--space-7), 5.2vw, var(--space-11));
   }
 
   .profile-hero__content {
     padding-left: clamp(var(--space-2), 2vw, var(--space-6));
+  }
+}
+
+@media (max-width: 1023px) {
+  .profile-hero {
+    min-height: 0;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .profile-hero__content {
+    max-width: 100%;
+    justify-items: center;
+  }
+
+  .profile-hero__actions,
+  .profile-hero__section-links {
+    justify-content: center;
+  }
+
+  .profile-hero__intro {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-hero {
+    padding: var(--space-5) var(--space-4);
+    border-radius: var(--radius-lg);
   }
 }
 </style>

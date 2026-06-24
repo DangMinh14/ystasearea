@@ -1,10 +1,9 @@
-import { computed, reactive, ref, watch, type Ref } from 'vue'
-import type { Locale } from '../../../../content/translations'
+import { computed, reactive, ref, watch } from 'vue'
 import {
   cloneResume,
   createEmptyResume,
   normalizeResume,
-  sampleResumeByLocale,
+  sampleResume,
   type CvResume,
 } from '../utils/cv-model'
 
@@ -43,8 +42,8 @@ const downloadTextFile = (filename: string, text: string) => {
   URL.revokeObjectURL(url)
 }
 
-export const useCvGenerator = (locale: Ref<Locale>) => {
-  const cv = reactive<CvResume>(createEmptyResume(locale.value))
+export const useCvGenerator = () => {
+  const cv = reactive<CvResume>(createEmptyResume())
   const importError = ref('')
   const importSuccess = ref(false)
   const copied = ref(false)
@@ -125,30 +124,19 @@ export const useCvGenerator = (locale: Ref<Locale>) => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (!raw) {
-        cv.meta.locale = locale.value
         hydrated.value = true
         return
       }
 
       const parsed = JSON.parse(raw) as unknown
-      const normalized = normalizeResume(parsed, locale.value)
-      replaceResume(cv, normalized)
-      locale.value = normalized.meta.locale
+      replaceResume(cv, normalizeResume(parsed))
     } catch (error) {
       console.error('Failed to hydrate CV generator state', error)
-      replaceResume(cv, createEmptyResume(locale.value))
+      replaceResume(cv, createEmptyResume())
     } finally {
       hydrated.value = true
     }
   }
-
-  watch(
-    () => locale.value,
-    (nextLocale) => {
-      cv.meta.locale = nextLocale
-      saveToStorage()
-    }
-  )
 
   watch(
     () => cv,
@@ -159,14 +147,14 @@ export const useCvGenerator = (locale: Ref<Locale>) => {
   )
 
   const resetAll = () => {
-    const next = createEmptyResume(locale.value)
+    const next = createEmptyResume()
     setTimestamp(next)
     replaceResume(cv, next)
     clearTransientState()
   }
 
   const loadSample = () => {
-    const next = cloneResume(sampleResumeByLocale(locale.value))
+    const next = cloneResume(sampleResume)
     setTimestamp(next)
     replaceResume(cv, next)
     clearTransientState()
@@ -175,10 +163,9 @@ export const useCvGenerator = (locale: Ref<Locale>) => {
   const importFromJson = (text: string) => {
     try {
       const parsed = JSON.parse(text) as unknown
-      const next = normalizeResume(parsed, locale.value)
+      const next = normalizeResume(parsed)
       setTimestamp(next)
       replaceResume(cv, next)
-      locale.value = next.meta.locale
       importSuccess.value = true
       importError.value = ''
       if (importSuccessTimer !== null) {
@@ -201,8 +188,7 @@ export const useCvGenerator = (locale: Ref<Locale>) => {
   }
 
   const downloadSampleJson = () => {
-    const sample = sampleResumeByLocale(locale.value)
-    downloadTextFile('cv-sample.json', JSON.stringify(sample, null, 2))
+    downloadTextFile('cv-sample.json', JSON.stringify(sampleResume, null, 2))
   }
 
   const copyJson = async () => {
