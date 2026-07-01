@@ -62,9 +62,31 @@
   opacity: 0.5;
 }
 
+/* Cursor-reactive emerald spotlight (position set via --spot-x/--spot-y in JS). */
+.app-shell__spotlight {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    460px circle at var(--spot-x, 50%) var(--spot-y, 28%),
+    color-mix(in srgb, var(--accent-color) 20%, transparent),
+    transparent 62%
+  );
+  opacity: 0.7;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .app-shell__aurora {
     animation: none !important;
+  }
+
+  .app-shell__spotlight {
+    display: none;
+  }
+}
+
+@media (hover: none) {
+  .app-shell__spotlight {
+    display: none;
   }
 }
 
@@ -263,15 +285,6 @@
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: var(--radius-sm);
-}
-
-/* ---------- Footer ---------- */
-.app-footer {
-  padding: var(--space-4) var(--space-5);
-  text-align: center;
-  margin-top: auto;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
 }
 
 /* ---------- Back to top ---------- */

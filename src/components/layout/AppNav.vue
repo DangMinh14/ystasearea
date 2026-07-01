@@ -1,10 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   isOpen: boolean
-  homeLabel: string
-  blogLabel: string
-  gamesLabel: string
-  toolsLabel: string
+  links: Array<{ id: string; label: string }>
 }>()
 
 const emit = defineEmits<{
@@ -18,9 +15,14 @@ const handleNavigate = () => {
 
 <template>
   <nav class="app-nav" :class="{ 'app-nav--open': isOpen }" aria-label="Primary navigation">
-    <RouterLink class="app-nav__link" to="/home" @click="handleNavigate">{{ homeLabel }}</RouterLink>
-    <RouterLink class="app-nav__link" to="/blog" @click="handleNavigate">{{ blogLabel }}</RouterLink>
-    <RouterLink class="app-nav__link" to="/games" @click="handleNavigate">{{ gamesLabel }}</RouterLink>
-    <RouterLink class="app-nav__link" to="/tools" @click="handleNavigate">{{ toolsLabel }}</RouterLink>
+    <RouterLink
+      v-for="link in links"
+      :key="link.id"
+      class="app-nav__link"
+      :to="{ path: '/home', hash: `#${link.id}` }"
+      @click="handleNavigate"
+    >
+      {{ link.label }}
+    </RouterLink>
   </nav>
 </template>

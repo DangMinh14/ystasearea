@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { Locale } from '../../content/translations'
 import AppNav from './AppNav.vue'
 
-defineProps<{
+const props = defineProps<{
   brandName: string
   languageLabel: string
-  homeLabel: string
-  blogLabel: string
-  gamesLabel: string
-  toolsLabel: string
+  experienceLabel: string
+  skillsLabel: string
+  projectsLabel: string
+  contactLabel: string
   isDark: boolean
   currentLocale: Locale
 }>()
@@ -20,6 +20,13 @@ const emit = defineEmits<{
 }>()
 
 const navOpen = ref(false)
+
+const links = computed(() => [
+  { id: 'work-experience', label: props.experienceLabel },
+  { id: 'technical-skills', label: props.skillsLabel },
+  { id: 'portfolio', label: props.projectsLabel },
+  { id: 'contact', label: props.contactLabel },
+])
 
 const toggleNav = () => {
   navOpen.value = !navOpen.value
@@ -37,19 +44,12 @@ const chooseLocale = (locale: Locale) => {
 <template>
   <header class="app-header">
     <div class="app-header__inner surface">
-      <RouterLink class="app-header__brand" to="/home" @click="closeNav">
+      <RouterLink class="app-header__brand" :to="{ path: '/home', hash: '' }" @click="closeNav">
         <span class="app-header__mark" aria-hidden="true"></span>
         <strong>{{ brandName }}</strong>
       </RouterLink>
 
-      <AppNav
-        :is-open="navOpen"
-        :home-label="homeLabel"
-        :blog-label="blogLabel"
-        :games-label="gamesLabel"
-        :tools-label="toolsLabel"
-        @close="closeNav"
-      />
+      <AppNav :is-open="navOpen" :links="links" @close="closeNav" />
 
       <div class="app-header__actions">
         <div class="app-header__locale" role="group" :aria-label="languageLabel">

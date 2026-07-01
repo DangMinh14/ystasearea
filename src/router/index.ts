@@ -10,6 +10,15 @@ const toolRoutes = toolRegistry.map((tool) => ({
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(to, _from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    if (to.hash) {
+      return { el: to.hash, top: 88, behavior: 'smooth' }
+    }
+    return { top: 0 }
+  },
   routes: [
     {
       path: '/',
@@ -24,24 +33,6 @@ const router = createRouter({
       meta: { showSidebar: true, fullWidth: false },
     },
     {
-      path: '/blog',
-      name: 'blog',
-      component: () => import('../views/BlogListView.vue'),
-      meta: { showSidebar: false, fullWidth: false },
-    },
-    {
-      path: '/blog/:slug',
-      name: 'blog-detail',
-      component: () => import('../views/BlogDetailView.vue'),
-      meta: { showSidebar: false, fullWidth: false },
-    },
-    {
-      path: '/games',
-      name: 'games',
-      component: () => import('../views/GamesView.vue'),
-      meta: { showSidebar: false, fullWidth: false },
-    },
-    {
       path: '/tools',
       component: () => import('../features/tools/layouts/ToolsLayout.vue'),
       meta: { showSidebar: false, fullWidth: true },
@@ -54,10 +45,6 @@ const router = createRouter({
         },
         ...toolRoutes,
       ],
-    },
-    {
-      path: '/posts',
-      redirect: '/blog',
     },
     {
       path: '/:pathMatch(.*)*',

@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { onBeforeUnmount, onMounted, provide, ref } from 'vue'
 import AppHeader from './AppHeader.vue'
-import AppSidebarWidgets from './AppSidebarWidgets.vue'
 import AppFooter from './AppFooter.vue'
 import { useThemeSettings } from '../../composables/useThemeSettings'
 import { useLocaleSettings } from '../../composables/useLocaleSettings'
@@ -13,21 +11,43 @@ import './app-layout.css'
 
 const { theme, isDarkTheme, setTheme, toggleTheme, hydrateTheme } = useThemeSettings()
 const { locale, t, hydrateLocale, changeLocale } = useLocaleSettings()
-const { quote, quoteLoading, quoteError, loadQuote } = useQuote()
+const { quote, quoteLoading, quoteError } = useQuote()
 const { catImageUrl, catLoading, dogImageUrl, dogLoading, loadCatImage, loadDogImage } = useMediaWidgets()
-const route = useRoute()
-const showBackToTop = ref(false)
 
-const isSidebarVisible = computed(() => route.meta.showSidebar === true)
+const showBackToTop = ref(false)
+const backgroundRef = ref<HTMLElement | null>(null)
+
+let pointerX = 50
+let pointerY = 30
+let ticking = false
+let motionAllowed = true
+
+const applyPointer = () => {
+  ticking = false
+  backgroundRef.value?.style.setProperty('--spot-x', `${pointerX}%`)
+  backgroundRef.value?.style.setProperty('--spot-y', `${pointerY}%`)
+}
+
+const onPointerMove = (event: PointerEvent) => {
+  if (!motionAllowed) return
+  pointerX = (event.clientX / window.innerWidth) * 100
+  pointerY = (event.clientY / window.innerHeight) * 100
+  if (!ticking) {
+    ticking = true
+    requestAnimationFrame(applyPointer)
+  }
+}
 
 const onWindowScroll = () => {
-  showBackToTop.value = window.scrollY > 300
+  showBackToTop.value = window.scrollY > 320
 }
 
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+// Context is kept intact for downstream consumers/tests even though the
+// quote/pet widgets are no longer surfaced in the UI.
 const context: AppShellContext = {
   locale,
   t,
@@ -50,24 +70,28 @@ provide(appShellContextKey, context)
 onMounted(() => {
   hydrateTheme()
   hydrateLocale()
-  loadQuote()
-  loadCatImage()
-  loadDogImage()
   onWindowScroll()
   window.addEventListener('scroll', onWindowScroll, { passive: true })
+
+  motionAllowed = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (motionAllowed && window.matchMedia('(pointer: fine)').matches) {
+    window.addEventListener('pointermove', onPointerMove, { passive: true })
+  }
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onWindowScroll)
+  window.removeEventListener('pointermove', onPointerMove)
 })
 </script>
 
 <template>
   <div class="app-shell">
-    <div class="app-shell__background" aria-hidden="true">
+    <div ref="backgroundRef" class="app-shell__background" aria-hidden="true">
       <span class="app-shell__aurora app-shell__aurora--a"></span>
       <span class="app-shell__aurora app-shell__aurora--b"></span>
       <span class="app-shell__aurora app-shell__aurora--c"></span>
+      <span class="app-shell__spotlight"></span>
       <span class="app-shell__grid"></span>
     </div>
 
@@ -75,44 +99,29 @@ onBeforeUnmount(() => {
       <AppHeader
         :brand-name="t.brandName"
         :language-label="t.languageLabel"
-        :home-label="t.navHome"
-        :blog-label="t.navBlog"
-        :games-label="t.navGames"
-        :tools-label="t.navTools"
+        :experience-label="t.navExperience"
+        :skills-label="t.navSkills"
+        :projects-label="t.navProjects"
+        :contact-label="t.navContact"
         :is-dark="isDarkTheme"
         :current-locale="locale"
         @toggle-theme="toggleTheme"
         @change-locale="changeLocale"
       />
 
-      <div class="app-shell__main-grid" :class="isSidebarVisible ? 'app-shell__main-grid--with-sidebar' : 'app-shell__main-grid--no-sidebar'">
-        <main class="app-shell__main page-enter">
-          <slot />
-        </main>
-        <AppSidebarWidgets
-          v-if="isSidebarVisible"
-          :quote-title="t.quoteTitle"
-          :quote-loading-text="t.quoteLoading"
-          :quote-error-text="t.quoteError"
-          :quote="quote"
-          :quote-loading="quoteLoading"
-          :quote-error="quoteError"
-          :cat-title="t.catTitle"
-          :cat-button="t.catButton"
-          :cat-loading-text="t.catLoading"
-          :cat-image-url="catImageUrl"
-          :cat-loading="catLoading"
-          :dog-title="t.dogTitle"
-          :dog-button="t.dogButton"
-          :dog-loading-text="t.dogLoading"
-          :dog-image-url="dogImageUrl"
-          :dog-loading="dogLoading"
-          @refresh-cat="loadCatImage"
-          @refresh-dog="loadDogImage"
-        />
-      </div>
+      <main class="app-shell__main page-enter">
+        <slot />
+      </main>
 
-      <AppFooter :copy="t.footerCopy" />
+      <AppFooter
+        :brand-name="t.brandName"
+        :tagline="t.footerTagline"
+        :contact-title="t.footerContactTitle"
+        :follow-title="t.footerFollowTitle"
+        :location="t.footerLocation"
+        :copy="t.footerCopy"
+        :tools-label="t.navTools"
+      />
     </div>
 
     <Transition name="back-to-top">

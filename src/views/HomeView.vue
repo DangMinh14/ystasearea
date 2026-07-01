@@ -3,8 +3,11 @@ import { inject, onBeforeUnmount, onMounted, ref, type ComponentPublicInstance }
 import ExperienceTimeline from '../components/home/ExperienceTimeline.vue'
 import ProfileHero from '../components/home/ProfileHero.vue'
 import SkillCardEnhanced from '../components/home/SkillCardEnhanced.vue'
+import UiButton from '../components/ui/UiButton.vue'
 import type { ExperienceNode, SkillCategory } from '../components/home/types'
 import { appShellContextKey, type AppShellContext } from '../composables/appShellContext'
+import { SOCIALS, LINKEDIN_URL } from '../content/profile'
+import cvFile from '../assets/documents/CV Nguyen Minh Dang - Software Engineer.pdf'
 
 const shell = inject<AppShellContext>(appShellContextKey)
 
@@ -16,11 +19,11 @@ type HomeSectionId = 'work' | 'portfolio' | 'skills' | 'education' | 'social'
 type RevealPhase = 'hidden' | 'entering' | 'visible'
 
 const sectionLinks = [
-  { id: 'work-experience', label: 'Work Experience' },
-  { id: 'portfolio', label: 'Portfolio' },
-  { id: 'technical-skills', label: 'Technical Skills' },
+  { id: 'work-experience', label: 'Experience' },
+  { id: 'portfolio', label: 'Projects' },
+  { id: 'technical-skills', label: 'Skills' },
   { id: 'education', label: 'Education' },
-  { id: 'social-profiles', label: 'Social Profiles' },
+  { id: 'contact', label: 'Contact' },
 ]
 
 const experienceItems: ExperienceNode[] = [
@@ -223,6 +226,8 @@ onBeforeUnmount(() => {
         :cv-label="shell.t.value.homeViewCv"
         :image-alt="shell.t.value.homeImageAlt"
         :section-links="sectionLinks"
+        :available="shell.t.value.heroAvailable"
+        :location="shell.t.value.heroLocation"
       />
     </section>
 
@@ -312,25 +317,39 @@ onBeforeUnmount(() => {
     </section>
 
     <section
-      id="social-profiles"
+      id="contact"
       data-testid="home-section-social"
       data-section-id="social"
-      class="home-view__section home-view__simple-card home-view__card-hover"
+      class="home-view__section home-view__simple-card home-view__card-hover home-view__contact"
       :class="sectionRevealClass('social')"
       :ref="(element) => setSectionRef('social', element)"
     >
       <header class="home-view__section-header home-view__reveal-header">
-        <h2>Social Profiles</h2>
+        <h2>{{ shell.t.value.contactTitle }}</h2>
+        <p class="text-muted home-view__contact-text">{{ shell.t.value.contactText }}</p>
       </header>
-      <div class="home-view__social-grid home-view__reveal-content">
-        <a href="https://www.linkedin.com/in/dangnguyenminh1409" target="_blank" rel="noreferrer">
-          <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
-          LinkedIn
-        </a>
-        <a href="https://github.com/DangMinh1" target="_blank" rel="noreferrer">
-          <i class="fa-brands fa-github" aria-hidden="true"></i>
-          GitHub
-        </a>
+      <div class="home-view__contact-body home-view__reveal-content">
+        <div class="home-view__contact-actions">
+          <a :href="LINKEDIN_URL" target="_blank" rel="noreferrer noopener">
+            <UiButton size="lg">{{ shell.t.value.contactCtaPrimary }}</UiButton>
+          </a>
+          <a :href="cvFile" download="CV Nguyen Minh Dang - Software Engineer.pdf">
+            <UiButton variant="ghost" size="lg">{{ shell.t.value.contactCtaSecondary }}</UiButton>
+          </a>
+        </div>
+        <div class="home-view__contact-socials" aria-label="Social links">
+          <a
+            v-for="social in SOCIALS"
+            :key="social.id"
+            class="home-view__contact-social"
+            :href="social.url"
+            target="_blank"
+            rel="noreferrer noopener"
+            :aria-label="social.label"
+          >
+            <i :class="social.icon" aria-hidden="true"></i>
+          </a>
+        </div>
       </div>
     </section>
   </section>
@@ -488,6 +507,58 @@ onBeforeUnmount(() => {
   color: var(--accent-color);
   border-color: var(--accent-color);
   background: var(--accent-soft);
+}
+
+.home-view__contact-text {
+  max-width: 52ch;
+  line-height: 1.7;
+}
+
+.home-view__contact-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.home-view__contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.home-view__contact-socials {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.home-view__contact-social {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  transition: transform var(--motion-base) var(--ease-standard),
+    color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    background-color var(--motion-base) var(--ease-standard);
+}
+
+.home-view__contact-social:hover {
+  transform: translateY(-3px);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  background: var(--accent-soft);
+}
+
+@media (max-width: 640px) {
+  .home-view__contact-socials {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 767px) {
