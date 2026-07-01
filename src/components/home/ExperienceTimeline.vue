@@ -38,9 +38,13 @@ const toggleResponsibilities = (id: string) => {
         <header class="experience-timeline__header">
           <h3 :data-testid="`timeline-role-${item.id}`" class="experience-timeline__role">{{ item.role }}</h3>
           <p :data-testid="`timeline-company-${item.id}`" class="experience-timeline__company">
-            {{ item.company }}
+            {{ item.company }}<span v-if="item.employmentType" class="experience-timeline__type"> · {{ item.employmentType }}</span>
           </p>
           <p :data-testid="`timeline-period-${item.id}`" class="experience-timeline__period">{{ item.period }}</p>
+          <p v-if="item.location" class="experience-timeline__location">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            {{ item.location }}
+          </p>
         </header>
 
         <section class="experience-timeline__achievements">
@@ -204,6 +208,25 @@ const toggleResponsibilities = (id: string) => {
 .experience-timeline__period {
   font-size: 0.92rem;
   color: color-mix(in srgb, var(--text-secondary) 82%, transparent);
+}
+
+.experience-timeline__type {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.experience-timeline__location {
+  margin: 2px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.86rem;
+  color: var(--text-faint);
+}
+
+.experience-timeline__location i {
+  font-size: 0.78rem;
+  color: var(--accent-color);
 }
 
 .experience-timeline__achievements {

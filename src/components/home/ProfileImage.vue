@@ -101,7 +101,7 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%;
+  object-position: center 28%;
 }
 
 .profile-image__ring {

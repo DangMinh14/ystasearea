@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CONTACT, SOCIALS } from '../../content/profile'
+import vietnamFlag from '../../assets/images/vietnam_flag.png'
 
 defineProps<{
   brandName: string
@@ -22,17 +23,23 @@ defineProps<{
         </div>
         <p class="app-footer__tagline">{{ tagline }}</p>
         <p class="app-footer__location">
-          <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+          <img class="app-footer__flag" :src="vietnamFlag" alt="Vietnam" />
           {{ location }}
         </p>
       </div>
 
       <div class="app-footer__col">
         <h4 class="app-footer__col-title">{{ contactTitle }}</h4>
-        <a class="app-footer__contact-link" :href="CONTACT.phoneHref">
-          <i class="fa-solid fa-phone" aria-hidden="true"></i>
-          {{ CONTACT.phoneDisplay }}
-        </a>
+        <div class="app-footer__contact-list">
+          <a class="app-footer__contact-link" :href="CONTACT.phoneHref">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            {{ CONTACT.phoneDisplay }}
+          </a>
+          <a class="app-footer__contact-link" :href="CONTACT.emailHref">
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            {{ CONTACT.email }}
+          </a>
+        </div>
       </div>
 
       <div class="app-footer__col">
@@ -117,8 +124,17 @@ defineProps<{
   font-size: 0.92rem;
 }
 
-.app-footer__location i {
-  color: var(--accent-color);
+.app-footer__flag {
+  width: 22px;
+  height: 15px;
+  border-radius: 3px;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--border-subtle);
+}
+
+.app-footer__contact-list {
+  display: grid;
+  gap: var(--space-2);
 }
 
 .app-footer__col-title {

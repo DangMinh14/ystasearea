@@ -13,6 +13,8 @@ defineProps<{
   sectionLinks: Array<{ id: string; label: string }>
   available?: string
   location?: string
+  experienceYears?: string
+  experienceLabel?: string
 }>()
 
 const scrollToSection = (id: string) => {
@@ -37,6 +39,11 @@ const scrollToSection = (id: string) => {
       <p class="profile-hero__role text-eyebrow">{{ role }}</p>
       <h1 class="profile-hero__name">{{ name }}</h1>
       <p class="profile-hero__intro">{{ intro }}</p>
+
+      <div v-if="experienceYears" class="profile-hero__stat">
+        <span class="profile-hero__stat-value text-mono">{{ experienceYears }}</span>
+        <span class="profile-hero__stat-label">{{ experienceLabel }}</span>
+      </div>
 
       <div class="profile-hero__actions">
         <UiButton data-testid="profile-techstack-button" size="lg" @click="scrollToSection('portfolio')">
@@ -145,6 +152,29 @@ const scrollToSection = (id: string) => {
   line-height: 1.7;
 }
 
+.profile-hero__stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 16px;
+  width: fit-content;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+  background: var(--accent-soft);
+}
+
+.profile-hero__stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  line-height: 1;
+}
+
+.profile-hero__stat-label {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
 .profile-hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -216,6 +246,10 @@ const scrollToSection = (id: string) => {
   .profile-hero__actions,
   .profile-hero__section-links {
     justify-content: center;
+  }
+
+  .profile-hero__stat {
+    margin-inline: auto;
   }
 
   .profile-hero__intro {

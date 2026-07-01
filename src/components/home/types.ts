@@ -7,6 +7,8 @@ export type ExperienceNode = {
   responsibilities: string[]
   tags: string[]
   metrics: string[]
+  employmentType?: string
+  location?: string
   avatarLabel?: string
   iconClass?: string
 }

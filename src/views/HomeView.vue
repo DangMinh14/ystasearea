@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { inject, onBeforeUnmount, onMounted, ref, type ComponentPublicInstance } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref, type ComponentPublicInstance } from 'vue'
 import ExperienceTimeline from '../components/home/ExperienceTimeline.vue'
 import ProfileHero from '../components/home/ProfileHero.vue'
 import SkillCardEnhanced from '../components/home/SkillCardEnhanced.vue'
 import UiButton from '../components/ui/UiButton.vue'
 import type { ExperienceNode, SkillCategory } from '../components/home/types'
 import { appShellContextKey, type AppShellContext } from '../composables/appShellContext'
-import { SOCIALS, LINKEDIN_URL } from '../content/profile'
+import { SOCIALS, LINKEDIN_URL, ABOUT, CONTACT } from '../content/profile'
 import cvFile from '../assets/documents/CV Nguyen Minh Dang - Software Engineer.pdf'
 
 const shell = inject<AppShellContext>(appShellContextKey)
@@ -15,7 +15,9 @@ if (!shell) {
   throw new Error('HomeView requires shell context')
 }
 
-type HomeSectionId = 'work' | 'portfolio' | 'skills' | 'education' | 'social'
+const aboutSegments = computed(() => ABOUT[shell.locale.value])
+
+type HomeSectionId = 'about' | 'work' | 'portfolio' | 'skills' | 'education' | 'social'
 type RevealPhase = 'hidden' | 'entering' | 'visible'
 
 const sectionLinks = [
@@ -30,10 +32,12 @@ const experienceItems: ExperienceNode[] = [
   {
     id: 'mantu',
     company: 'Mantu',
-    role: 'Software Engineer',
-    period: 'October 2024 - Present',
+    role: 'Associate Software Engineer',
+    employmentType: 'Full-time',
+    location: 'Ho Chi Minh City, Vietnam',
+    period: 'Oct 2024 - Present',
     highlights: [
-      'Take responsibility for developing and maintaining 7 core systems in the People Management ecosystem.',
+      'Develop and maintain 7 core systems in the People Management ecosystem.',
       'Migrated APIs from .NET Framework to .NET Core 8 and upgraded EF 4.8 to EF Core for better maintainability.',
       'Optimized SQL queries and improved UI for both existing and new features.',
     ],
@@ -42,27 +46,56 @@ const experienceItems: ExperienceNode[] = [
       'Built and enhanced HR modules such as employee profiles, contracts, and access management.',
       'Collaborated with product and QA to deliver stable sprint releases with better UX quality.',
     ],
-    tags: ['ASP.NET Core', 'MVC', 'EF Core', '.NET Core 8', 'MS SQL'],
+    tags: ['ASP.NET Core', 'Vue.js', 'MVC', 'EF Core', '.NET Core 8', 'MS SQL', 'Microservices', 'CI/CD'],
     metrics: ['7 core systems'],
     iconClass: 'fa-solid fa-building',
   },
   {
+    id: 'mindx',
+    company: 'MindX Technology School',
+    role: 'Teacher Assistant',
+    employmentType: 'Part-time',
+    location: 'Ho Chi Minh City, Vietnam · On-site',
+    period: 'Mar 2024 - Sep 2024',
+    highlights: [
+      'Guided students through hands-on game programming and Scratch projects.',
+      'Supported lesson delivery and one-on-one mentoring in the classroom.',
+    ],
+    responsibilities: [],
+    tags: ['Game Programming', 'Scratch', 'Teaching'],
+    metrics: [],
+    iconClass: 'fa-solid fa-chalkboard-user',
+  },
+  {
     id: 'fpt-academy',
     company: 'FPT Software Academy',
-    role: 'Java Engineer Intern',
-    period: 'May 2024 - July 2024',
+    role: 'Java Software Engineer',
+    employmentType: 'Internship',
+    period: 'May 2024 - Jul 2024',
     highlights: [
-      'Gained hands-on experience in Java development with RESTful API implementation.',
-      'Strengthened coding mindset by practicing unit testing and clean implementation flow.',
-      'Applied professional UI/UX design principles in internship projects.',
+      'Completed an internship program focused on Java development.',
+      'Built RESTful APIs and wrote unit tests, sharpening coding mindset and software development skills.',
     ],
-    responsibilities: [
-      'Participated in internship delivery cycles and API feature assignments.',
-      'Supported backend feature implementation and testing with mentors.',
-    ],
+    responsibilities: [],
     tags: ['Java', 'RESTful API', 'Unit Testing'],
-    metrics: ['Internship Program'],
+    metrics: [],
     iconClass: 'fa-solid fa-graduation-cap',
+  },
+  {
+    id: 'otrafy',
+    company: 'Otrafy',
+    role: 'Quality Assurance Intern',
+    employmentType: 'Internship',
+    location: 'Remote',
+    period: 'Jul 2023 - Oct 2023',
+    highlights: [
+      'Wrote and executed test cases to safeguard product quality.',
+      'Collaborated on QA processes to support reliable releases.',
+    ],
+    responsibilities: [],
+    tags: ['Test Cases', 'Quality Assurance', 'Manual Testing'],
+    metrics: [],
+    iconClass: 'fa-solid fa-clipboard-check',
   },
 ]
 
@@ -115,8 +148,9 @@ const skillCategories: SkillCategory[] = [
   },
 ]
 
-const revealSectionIds: HomeSectionId[] = ['work', 'portfolio', 'skills', 'education', 'social']
+const revealSectionIds: HomeSectionId[] = ['about', 'work', 'portfolio', 'skills', 'education', 'social']
 const sectionPhase = ref<Record<HomeSectionId, RevealPhase>>({
+  about: 'hidden',
   work: 'hidden',
   portfolio: 'hidden',
   skills: 'hidden',
@@ -228,7 +262,25 @@ onBeforeUnmount(() => {
         :section-links="sectionLinks"
         :available="shell.t.value.heroAvailable"
         :location="shell.t.value.heroLocation"
+        :experience-years="shell.t.value.heroExperienceYears"
+        :experience-label="shell.t.value.heroExperienceLabel"
       />
+    </section>
+
+    <section
+      id="about"
+      data-testid="home-section-about"
+      data-section-id="about"
+      class="home-view__section home-view__simple-card home-view__card-hover"
+      :class="sectionRevealClass('about')"
+      :ref="(element) => setSectionRef('about', element)"
+    >
+      <header class="home-view__section-header home-view__reveal-header">
+        <h2>{{ shell.t.value.aboutTitle }}</h2>
+      </header>
+      <p class="home-view__about home-view__reveal-content">
+        <template v-for="(seg, i) in aboutSegments" :key="i"><mark v-if="seg.hl" class="home-view__hl">{{ seg.t }}</mark><span v-else>{{ seg.t }}</span></template>
+      </p>
     </section>
 
     <section
@@ -327,6 +379,10 @@ onBeforeUnmount(() => {
       <header class="home-view__section-header home-view__reveal-header">
         <h2>{{ shell.t.value.contactTitle }}</h2>
         <p class="text-muted home-view__contact-text">{{ shell.t.value.contactText }}</p>
+        <a class="home-view__contact-email" :href="CONTACT.emailHref">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          {{ CONTACT.email }}
+        </a>
       </header>
       <div class="home-view__contact-body home-view__reveal-content">
         <div class="home-view__contact-actions">
@@ -476,6 +532,19 @@ onBeforeUnmount(() => {
   gap: var(--space-3);
 }
 
+.home-view__about {
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+  line-height: 1.85;
+  color: var(--text-secondary);
+  max-width: 70ch;
+}
+
+.home-view__hl {
+  background: none;
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
 .home-view__feature-links,
 .home-view__social-grid {
   display: flex;
@@ -512,6 +581,25 @@ onBeforeUnmount(() => {
 .home-view__contact-text {
   max-width: 52ch;
   line-height: 1.7;
+}
+
+.home-view__contact-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--accent-color);
+  width: fit-content;
+}
+
+.home-view__contact-email:hover {
+  text-decoration: underline;
+}
+
+.home-view__contact-email i {
+  font-size: 0.85rem;
 }
 
 .home-view__contact-body {
