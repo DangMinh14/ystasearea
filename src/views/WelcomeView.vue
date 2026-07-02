@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router'
 import { translations, type Locale } from '../content/translations'
 
 const router = useRouter()
-const locale = (localStorage.getItem('ystasearea-locale') as Locale) || 'vi'
-const t = translations[locale] ?? translations.vi
+const locale = (localStorage.getItem('ystasearea-locale') as Locale) || 'en'
+const t = translations[locale] ?? translations.en
 
 const WELCOME_KEY = 'ystasearea-welcome-seen'
 

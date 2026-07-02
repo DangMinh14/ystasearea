@@ -6,15 +6,8 @@ const THEME_KEY = 'ystasearea-theme'
 
 const isTheme = (value: string): value is AppTheme => value === 'light' || value === 'dark'
 
-const getSystemTheme = (): AppTheme =>
-  typeof window !== 'undefined' &&
-  window.matchMedia &&
-  window.matchMedia('(prefers-color-scheme: light)').matches
-    ? 'light'
-    : 'dark'
-
 export const useThemeSettings = () => {
-  const theme = ref<AppTheme>('dark')
+  const theme = ref<AppTheme>('light')
 
   const applyTheme = () => {
     document.documentElement.setAttribute('data-theme', theme.value)
@@ -32,7 +25,9 @@ export const useThemeSettings = () => {
 
   const hydrateTheme = () => {
     const savedTheme = localStorage.getItem(THEME_KEY)
-    theme.value = savedTheme && isTheme(savedTheme) ? savedTheme : getSystemTheme()
+    if (savedTheme && isTheme(savedTheme)) {
+      theme.value = savedTheme
+    }
     applyTheme()
   }
 

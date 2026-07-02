@@ -4,7 +4,7 @@ import { translations, type Locale } from '../content/translations'
 const LOCALE_KEY = 'ystasearea-locale'
 
 export const useLocaleSettings = () => {
-  const locale = ref<Locale>('vi')
+  const locale = ref<Locale>('en')
 
   const hydrateLocale = () => {
     const savedLocale = localStorage.getItem(LOCALE_KEY)

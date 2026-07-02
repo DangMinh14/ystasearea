@@ -27,7 +27,7 @@
   "homeRole": "Software Engineer",
   "homeName": "Minh Dang",
   "aboutTitle": "About",
-  "homeIntro": "I am a full-stack-minded software engineer, currently focused on building frontend web products with Vue and TypeScript. I value clean architecture, practical tooling, and fast iteration.",
+  "homeIntro": "I am a full-stack software engineer, building web products end to end with ASP.NET Core (C#) on the backend and Vue with TypeScript on the frontend. I value clean architecture, practical tooling, and fast iteration.",
   "homeViewProjects": "TechStack",
   "homeViewCv": "Download CV",
   "homeImageAlt": "Portrait of Minh Dang",
