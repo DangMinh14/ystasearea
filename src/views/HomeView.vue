@@ -309,19 +309,60 @@ onBeforeUnmount(() => {
     >
       <header class="home-view__section-header home-view__reveal-header">
         <p class="text-eyebrow">Selected work</p>
-        <h2>Featured Project</h2>
+        <h2>Featured Projects</h2>
       </header>
-      <article class="home-view__feature home-view__reveal-content">
-        <h3>Ystase Area - Personal Productivity &amp; Tooling Platform</h3>
-        <p>
-          Built a personal platform using Vue 3 + TypeScript with a suite of productivity tools including a multilingual
-          CV builder and preview-to-PDF consistency.
-        </p>
-        <div class="home-view__feature-links">
-          <a href="https://github.com/DangMinh14/ystasearea" target="_blank" rel="noreferrer">GitHub Repo</a>
-          <a href="https://www.ystasearea.space" target="_blank" rel="noreferrer">Live Site</a>
-        </div>
-      </article>
+      <div class="home-view__feature-list home-view__reveal-content">
+        <article class="home-view__feature">
+          <h3>Ystase Area - Personal Productivity &amp; Tooling Platform</h3>
+          <p>
+            Built a personal platform using Vue 3 + TypeScript with a suite of productivity tools including a multilingual
+            CV builder and preview-to-PDF consistency.
+          </p>
+          <div class="home-view__feature-tags">
+            <span>Vue 3</span><span>TypeScript</span><span>Vite</span><span>Tailwind CSS v4</span>
+          </div>
+          <div class="home-view__feature-links">
+            <a href="https://github.com/DangMinh14/ystasearea" target="_blank" rel="noreferrer">GitHub Repo</a>
+            <a href="https://www.ystasearea.space" target="_blank" rel="noreferrer">Live Site</a>
+          </div>
+        </article>
+
+        <article class="home-view__feature">
+          <h3>Ystask - Personal Productivity &amp; Tooling Platform</h3>
+          <p>
+            Full-stack platform combining 13 browser-only instant tools with habit, expense, and job-application trackers.
+            Vue 3 + TypeScript frontend with a neo-brutalism design system; ASP.NET Core 10 REST API with EF Core 10,
+            JWT auth with rotating refresh tokens, and PostgreSQL on Neon, deployed via Docker on Render.
+          </p>
+          <div class="home-view__feature-tags">
+            <span>Vue 3</span><span>TypeScript</span><span>ASP.NET Core 10</span><span>EF Core 10</span>
+            <span>PostgreSQL</span><span>Docker</span>
+          </div>
+          <div class="home-view__feature-links">
+            <a href="https://github.com/DangMinh14/ystask" target="_blank" rel="noreferrer">GitHub Repo (Frontend)</a>
+            <a href="https://github.com/DangMinh14/ystask-api" target="_blank" rel="noreferrer">GitHub Repo (API)</a>
+            <a href="https://ystask.vercel.app/" target="_blank" rel="noreferrer">Live Site</a>
+          </div>
+        </article>
+
+        <article class="home-view__feature">
+          <h3>Thé Noir - Full-Stack Commerce Platform</h3>
+          <p>
+            Dark-luxury landing page and full commerce system for a fictional tea brand: cart, checkout, order history,
+            and a 7-panel admin dashboard. Next.js 16 + React 19 frontend with Framer Motion; ASP.NET Core 10 API with
+            EF Core 10, JWT auth, PostgreSQL on Neon, Cloudinary image uploads, and Resend transactional email.
+          </p>
+          <div class="home-view__feature-tags">
+            <span>Next.js 16</span><span>React 19</span><span>TypeScript</span><span>ASP.NET Core 10</span>
+            <span>EF Core 10</span><span>PostgreSQL</span><span>Cloudinary</span>
+          </div>
+          <div class="home-view__feature-links">
+            <a href="https://github.com/DangMinh14/the-noir" target="_blank" rel="noreferrer">GitHub Repo (Frontend)</a>
+            <a href="https://github.com/DangMinh14/the-noir-api" target="_blank" rel="noreferrer">GitHub Repo (API)</a>
+            <a href="https://the-noir-seven.vercel.app/" target="_blank" rel="noreferrer">Live Site</a>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section
@@ -530,6 +571,32 @@ onBeforeUnmount(() => {
 .home-view__basic-info {
   display: grid;
   gap: var(--space-3);
+}
+
+.home-view__feature-list {
+  display: grid;
+  gap: clamp(var(--space-5), 3vw, var(--space-7));
+}
+
+.home-view__feature-list .home-view__feature:not(:last-child) {
+  padding-bottom: clamp(var(--space-5), 3vw, var(--space-7));
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.home-view__feature-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.home-view__feature-tags > span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.7rem;
 }
 
 .home-view__about {
